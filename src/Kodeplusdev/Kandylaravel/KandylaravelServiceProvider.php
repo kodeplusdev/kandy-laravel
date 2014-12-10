@@ -28,11 +28,28 @@ class KandylaravelServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-        $this->app['kandy'] = $this->app->share(function($app)
+        $this->app['Kandylaravel'] = $this->app->share(function($app)
         {
-            return new KandyLaravel;
+            return new Kandylaravel;
         });
+
+        $this->registerVideo();
+
+        /*$this->app->booting(function()
+            {
+                $loader = \Illuminate\Foundation\AliasLoader::getInstance();
+                $loader->alias('Kandylaravel', 'Kodeplusdev\Kandylaravel\Facades\Kandylaravel');
+            });*/
 	}
+    private function registerVideo()
+    {
+        $this->app->bind(
+            'kandylaravel::video',
+            function () {
+                return new Video();
+            }
+        );
+    }
 
 	/**
 	 * Get the services provided by the provider.

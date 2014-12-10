@@ -1,9 +1,9 @@
-<?php namespace Kodeplusdev\KandyLaravel;
+<?php namespace Kodeplusdev\Kandylaravel;
 
-class KandyLaravel {
+class Kandylaravel {
 
     public static function version(){
-        return "v1";
+        return "v0";
     }
 
 }
