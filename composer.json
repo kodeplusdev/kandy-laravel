@@ -1,0 +1,23 @@
+{
+    "name": "kodeplusdev/kandylaravel",
+    "description": "",
+    "authors": [
+        {
+            "name": "Kandy Laravel",
+            "email": "kodeplusdev@gmail.com",
+            "homepage": "http://kodeplus.net"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "autoload": {
+        "classmap": [
+            "src/migrations"
+        ],
+        "psr-0": {
+            "Kodeplusdev\\Kandylaravel\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
