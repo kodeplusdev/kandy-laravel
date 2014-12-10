@@ -28,7 +28,10 @@ class KandylaravelServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		//
+        $this->app['kandy'] = $this->app->share(function($app)
+        {
+            return new KandyLaravel;
+        });
 	}
 
 	/**

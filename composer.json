@@ -1,6 +1,7 @@
 {
     "name": "kodeplusdev/kandylaravel",
-    "description": "",
+    "description": "Kandy Laravel",
+    "license": "MIT",
     "authors": [
         {
             "name": "Kandy Laravel",
