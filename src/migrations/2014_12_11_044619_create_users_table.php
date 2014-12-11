@@ -13,7 +13,7 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        $tableName = \Config::get("kandylaravel::user_table");
+        $tableName = \Config::get("kandylaravel::kandy_user_table");
         $userIdColumn = \Config::get("kandylaravel::user_id_column");
         $passwordColumn = \Config::get("kandylaravel::password_column");
 
@@ -23,7 +23,8 @@ class CreateUsersTable extends Migration
                 $table->increments('id');
                 $table->string($userIdColumn);
                 $table->string($passwordColumn);
-                $table->string('main_user_id');
+                $table->string('main_user_id')->nullable()->default(NULL);
+                $table->timestamps();
             }
         );
     }

@@ -2,17 +2,13 @@
 
 use Illuminate\Support\Facades\Facade;
 
-class Kandylaravel extends Facade
-{
+class RestClient extends Facade {
 
     /**
      * Get the registered name of the component.
      *
      * @return string
      */
-    protected static function getFacadeAccessor()
-    {
-        return 'kandylaravel';
-    }
+    protected static function getFacadeAccessor() { return 'kandylaravel::restclient'; }
+
 }
- 
