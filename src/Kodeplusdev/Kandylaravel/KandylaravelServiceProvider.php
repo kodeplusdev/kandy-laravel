@@ -1,7 +1,7 @@
 <?php namespace Kodeplusdev\Kandylaravel;
 
 use Illuminate\Support\ServiceProvider;
-
+use Illuminate\Html\HtmlBuilder;
 class KandylaravelServiceProvider extends ServiceProvider {
 
 	/**
@@ -11,15 +11,16 @@ class KandylaravelServiceProvider extends ServiceProvider {
 	 */
 	protected $defer = false;
 
-	/**
-	 * Bootstrap the application events.
-	 *
-	 * @return void
-	 */
-	public function boot()
-	{
-		$this->package('kodeplusdev/kandylaravel');
-	}
+
+    /**
+     * Bootstrap the application events.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $this->package('kodeplusdev/kandylaravel');
+    }
 
 	/**
 	 * Register the service provider.
@@ -28,12 +29,10 @@ class KandylaravelServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-        $this->app['Kandylaravel'] = $this->app->share(function($app)
-        {
-            return new Kandylaravel;
-        });
+
 
         $this->registerVideo();
+        $this->registerKandyLaravel();
 
         /*$this->app->booting(function()
             {
@@ -50,6 +49,18 @@ class KandylaravelServiceProvider extends ServiceProvider {
             }
         );
     }
+    private function registerKandyLaravel()
+    {
+        $this->app->bind(
+            'kandylaravel::KandyLaravel',
+            function () {
+                return new Kandylaravel(
+                    $this->app->make('Illuminate\Html\HtmlBuilder')
+                );
+            }
+        );
+    }
+
 
 	/**
 	 * Get the services provided by the provider.
