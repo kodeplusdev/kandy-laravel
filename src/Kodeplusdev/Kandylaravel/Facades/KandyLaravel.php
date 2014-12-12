@@ -1,18 +1,28 @@
-<?php namespace Kodeplusdev\Kandylaravel\Facades;
+<?php
+/**
+ * Bootstrapper Image facade
+ */
+
+namespace Kodeplusdev\Kandylaravel\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class Kandylaravel extends Facade
+/**
+ * Facade for the Label class
+ *
+ * @package Bootstrapper\Facades
+ * @see     Bootstrapper\Label
+ */
+class KandyLaravel extends Facade
 {
 
     /**
-     * Get the registered name of the component.
-     *
+     * {@inheritdoc}
      * @return string
      */
     protected static function getFacadeAccessor()
     {
-        return 'kandylaravel';
+        return 'kandylaravel::KandyLaravel';
     }
+
 }
- 

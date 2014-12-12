@@ -1,21 +1,16 @@
 <?php namespace Kodeplusdev\Kandylaravel;
 
-use Kodeplusdev\Kandylaravel\Models;
-
 class Kandylaravel
 {
     const API_BASE_URL = 'https://api.kandy.io/v1/';
+    const KANDY_CSS = 'packages/kodeplusdev/kandylaravel/assets/css/kandylaravel.css';
+    const KANDY_JS = 'packages/kodeplusdev/kandylaravel/assets/js/kandylaravel.js';
+
     public $domainAccessToken;
 
     public function __construct()
     {
-        // TODO: Call request get domain access token
-        $result = $this->getDomainAccessToken();
-        if ($result['success'] == true) {
-            $this->domainAccessToken = $result['data'];
-        } else {
-           // Catch errors
-        }
+
     }
 
     public function getDomainAccessToken()
@@ -53,13 +48,20 @@ class Kandylaravel
 
     /**
      * @param      $username
-     * @param null $mainUserId
+     * @param string|integer $mainUserId
      *
      * @return array
      * @throws RestClientException
      */
     public function createUser($username, $mainUserId = null)
     {
+        $result = $this->getDomainAccessToken();
+        if ($result['success'] == true) {
+            $this->domainAccessToken = $result['data'];
+        } else {
+            // Catch errors
+        }
+
         $userIdColumn   = \Config::get('kandylaravel::user_id_column');
         $kandyPwdColumn = \Config::get('kandylaravel::password_column');
 
@@ -108,9 +110,39 @@ class Kandylaravel
         }
     }
 
-    public function getUser()
-    {
+    /**
+     * HTML
+     *
+     * @var \Illuminate\Html\HtmlBuilder
+     */
+    public $html;
 
+    /**
+     * @return mixed
+     */
+    public function css()
+    {
+        $return = $this->add('style', asset(self::KANDY_CSS));
+        return $return;
     }
 
+    /**
+     * @return mixed
+     */
+    public function js()
+    {
+        $return = $this->add('script', asset(self::KANDY_JS));
+        return $return;
+    }
+
+    /**
+     * @param $type
+     * @param $location
+     *
+     * @return mixed
+     */
+    protected function add($type, $location)
+    {
+        return $this->html->$type($location);
+    }
 }

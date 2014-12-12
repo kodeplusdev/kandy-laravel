@@ -1,7 +1,7 @@
 <?php namespace Kodeplusdev\Kandylaravel;
 
 use Illuminate\Support\ServiceProvider;
-
+use Illuminate\Html\HtmlBuilder;
 class KandylaravelServiceProvider extends ServiceProvider {
 
 	/**
@@ -28,10 +28,16 @@ class KandylaravelServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-        $this->app['Kandylaravel'] = $this->app->share(function($app)
-        {
-            return new Kandylaravel;
-        });
+//        $this->app['kandylaravel::Kandylaravel'] = $this->app->share(function($app)
+//        {
+//            $kandy = new Kandylaravel;
+//
+////            $kandy->html = $this->app->make('Illuminate\Html\HtmlBuilder');
+//
+//            return $kandy;
+//        });
+
+        $this->registerKandyLaravel();
 
         $this->registerVideo();
 
@@ -41,12 +47,29 @@ class KandylaravelServiceProvider extends ServiceProvider {
                 $loader->alias('Kandylaravel', 'Kodeplusdev\Kandylaravel\Facades\Kandylaravel');
             });*/
 	}
+
     private function registerVideo()
     {
         $this->app->bind(
             'kandylaravel::video',
             function () {
                 return new Video();
+            }
+        );
+    }
+
+    private function registerKandyLaravel()
+    {
+        $this->app->bind(
+            'kandylaravel::KandyLaravel',
+            function () {
+                $kandy = new Kandylaravel(
+//                    $this->app->make('Illuminate\Html\HtmlBuilder')
+                );
+
+                $kandy->html = $this->app->make('Illuminate\Html\HtmlBuilder');
+
+                return $kandy;
             }
         );
     }
