@@ -4,9 +4,15 @@ class Kandylaravel
 {
     const API_BASE_URL = 'https://api.kandy.io/v1/';
     const KANDY_CSS = 'packages/kodeplusdev/kandylaravel/assets/css/kandylaravel.css';
-    const KANDY_JS = 'packages/kodeplusdev/kandylaravel/assets/js/kandylaravel.js';
+    const KANDY_JS_CUSTOM = 'packages/kodeplusdev/kandylaravel/assets/js/kandylaravel.js';
+    const KANDY_JS_FCS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/fcs/1.0.0/fcs.js';
+    const KANDY_JS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/1.1.2/kandy.js';
+    const KANDY_JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js';
 
     public $domainAccessToken;
+    public $username = null;
+    public $password = null;
+    public $apiKey;
 
     public function __construct()
     {
@@ -123,6 +129,13 @@ class Kandylaravel
             );
         }
     }
+    /*
+     * GET USER
+     */
+    public function getUser($userId){
+        $model = KandyUsers::where("main_user_id", $userId)->first();
+        return $model;
+    }
 
     /**
      * HTML
@@ -130,7 +143,19 @@ class Kandylaravel
      * @var \Illuminate\Html\HtmlBuilder
      */
     public $html;
+    public function init($userId){
+        $kandyUser =  $this->getUser($userId);
+        if($kandyUser){
+            $this->username = $kandyUser->user_id;
+            $this->password = $kandyUser->password;
+        }
+        $this->apiKey = \Config::get('kandylaravel::key');
 
+        $return = $this->css();
+        $return .=$this->js();
+
+        return $return;
+    }
     /**
      * @return mixed
      */
@@ -141,13 +166,23 @@ class Kandylaravel
     }
 
     /**
-     * @return mixed
-     */
+ * @return mixed
+ */
     public function js()
     {
-        $return = $this->add('script', asset(self::KANDY_JS));
+        $return = "";
+        $jqueryReload = \Config::get('kandylaravel::key');
+        if($jqueryReload){
+            $return .= $this->add('script', asset(self::KANDY_JQUERY));
+        }
+        $return .= $this->add('script', self::KANDY_JS_FCS);
+        $return .= $this->add('script', self::KANDY_JS);
+        $return .= "<script>window.login = function() {KandyAPI.Phone.login('". $this->apiKey ."', '". $this->username ."', '".$this->password."')};</script>";
+        $return .= $this->add('script', asset(self::KANDY_JS_CUSTOM));
+
         return $return;
     }
+
 
     /**
      * @param $type

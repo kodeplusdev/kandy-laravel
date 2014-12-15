@@ -4,7 +4,6 @@
  */
 
 namespace Kodeplusdev\Kandylaravel;
-use Illuminate\Support\Facades\View;
 /**
  * Creates bootstrap 3 compliant labels
  *
@@ -12,51 +11,28 @@ use Illuminate\Support\Facades\View;
  */
 class Video extends RenderedObject
 {
-
     /**
-     * Constant for primary labels
+     * @var string The ID of the video
      */
-    const LABEL_PRIMARY = 'label-primary';
-
+    protected  $id ="";
     /**
-     * Constant for success labels
+     * @var string The Title of the video
      */
-    const LABEL_SUCCESS = 'label-success';
+    protected  $title = "Title";
 
-    /**
-     * Constant for info labels
-     */
-    const LABEL_INFO = 'label-info';
+    protected $class = 'kandyVideo';
 
-    /**
-     * Constant for warning labels
-     */
-    const LABEL_WARNING = 'label-warning';
+    protected $width = '340px';
 
-    /**
-     * Constant for danger labels
-     */
-    const LABEL_DANGER = 'label-danger';
-
-    /**
-     * Constant for default labels
-     */
-    const LABEL_DEFAULT = 'label-default';
-
-    /**
-     * @var string The type of the label
-     */
-    protected $type = 'label-default';
+    protected $height = '250px';
 
     /**
      * @var string The contents of the label
      */
     protected $contents;
-    /**
-     * @var string The contents of the label
-     */
-    protected $title;
+    public function init($data){
 
+    }
     /**
      * Renders the label
      *
@@ -72,9 +48,45 @@ class Video extends RenderedObject
      * @param string $contents The contents of the label
      * @return $this
      */
-    public function show($data)
+    public function show($data = array())
     {
-        $this->contents = View::make('kandylaravel::Video.video', $data)->render();
+        if(!isset($data["title"])){
+            $data["title"] = $this->title;
+        } else {
+            $this->title = $data['title'];
+        }
+        if(!isset($data["id"])){
+            $data["id"] = "video-" . rand();
+        } else {
+            $this->id = $data["id"];
+        }
+
+        if(!isset($data["class"])){
+            $data["class"] = $this->class;
+        } else {
+            $this->class = $data["class"];
+        }
+        if(!isset($data["htmlOptions"])){
+            $data['htmlOptions'] = array();
+        }
+
+        if(!isset($data["htmlOptions"]["width"])){
+            $data['htmlOptions']['width'] = $this->width;
+        } else {
+            $this->width = $data['htmlOptions']['width'];
+        }
+
+        if(!isset($data["htmlOptions"]["height"])){
+            $data['htmlOptions']['height'] = $this->height;
+        } else {
+            $this->width = $data['htmlOptions']['height'];
+        }
+        $style = "";
+        foreach($data['htmlOptions'] as $key => $value){
+            $style.= $key . ":" . $value . ";";
+        }
+        $data["style"] = $style;
+        $this->contents = \View::make('kandylaravel::Video.video', $data)->render();
         return $this;
     }
 }

@@ -37,4 +37,6 @@ return array(
 
     'ssl_verify' => false,
 
+    'jquery_reload' => false,
+
 );

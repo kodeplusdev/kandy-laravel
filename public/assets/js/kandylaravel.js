@@ -19,21 +19,6 @@ setup = function() {
         }
     });
 }
-
-answerVideoCall = function() {
-    changeUIState("ANSWERING_CALL");
-    KandyAPI.Phone.answerVideoCall();
-}
-
-makeCall = function() {
-    KandyAPI.Phone.makeVideoCall($('#callOutUserId').val());
-    changeUIState('CALLING');
-}
-
-endCall = function() {
-    KandyAPI.Phone.endCall();
-    changeUIState('READY_FOR_CALLING');
-}
 $(document).ready(function(){
     setup();
     login();
