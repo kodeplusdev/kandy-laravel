@@ -14,15 +14,19 @@ class CreateUsersTable extends Migration
     public function up()
     {
         $tableName = \Config::get("kandylaravel::kandy_user_table");
-        $userIdColumn = \Config::get("kandylaravel::user_id_column");
-        $passwordColumn = \Config::get("kandylaravel::password_column");
 
         Schema::create(
             $tableName,
-            function (Blueprint $table) use ($userIdColumn, $passwordColumn) {
+            function (Blueprint $table) {
                 $table->increments('id');
-                $table->string($userIdColumn);
-                $table->string($passwordColumn);
+                $table->string('user_id');
+                $table->string('first_name')->nullable();
+                $table->string('last_name')->nullable();
+                $table->string('password');
+                $table->string('email');
+                $table->string('domain_name');
+                $table->string('api_key');
+                $table->string('api_secret');
                 $table->string('main_user_id')->nullable()->default(NULL);
                 $table->timestamps();
             }

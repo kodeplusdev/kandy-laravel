@@ -48,12 +48,13 @@ class Kandylaravel
 
     /**
      * @param      $username
-     * @param string|integer $mainUserId
+     * @param      $email
+     * @param null $mainUserId
      *
      * @return array
      * @throws RestClientException
      */
-    public function createUser($username, $mainUserId = null)
+    public function createUser($username, $email, $mainUserId = null)
     {
         $result = $this->getDomainAccessToken();
         if ($result['success'] == true) {
@@ -62,23 +63,24 @@ class Kandylaravel
             // Catch errors
         }
 
-        $userIdColumn   = \Config::get('kandylaravel::user_id_column');
-        $kandyPwdColumn = \Config::get('kandylaravel::password_column');
-
         $params     = array(
             'key' => $this->domainAccessToken
         );
         $postFields = array(
             'user_id' => $username,
+            'user_email' => $email
         );
 
         $postFieldsString = json_encode($postFields);
 
         $fieldsString = http_build_query($params);
-        $url = Kandylaravel::API_BASE_URL . 'domains/users' . '?' . $fieldsString;
+        $url = Kandylaravel::API_BASE_URL . 'domains/users/user_id' . '?' . $fieldsString;
+        $headers = array(
+            'Content-Type: application/json'
+        );
 
         try {
-            $response = (new RestClient())->post($url, $postFieldsString)->getContent();
+            $response = (new RestClient())->post($url, $postFieldsString, $headers)->getContent();
         } catch (Exception $ex) {
             return array(
                 'success' => false,
@@ -88,18 +90,30 @@ class Kandylaravel
 
         $response = json_decode($response);
         if ($response) {
-            $user = new KandyUsers();
-            $user->$userIdColumn = 'demo';  // $response->result->user_id
-            $user->$kandyPwdColumn = 'a1234567'; // $response->result->user_password
-            $user->main_user_id = $mainUserId;
-            if ($user->save()) {
-                return array(
-                    'success' => true
-                );
+            if (!empty($response->result)) {
+                $res = $response->result;
+                $user = new KandyUsers();
+                $user->user_id = $res->user_id;
+                $user->password = $res->user_password;
+                $user->email = $email;
+                $user->domain_name = $res->domain_name;
+                $user->api_key = $res->user_api_key;
+                $user->api_secret = $res->user_api_secret;
+                $user->main_user_id = $mainUserId;
+                if ($user->save()) {
+                    return array(
+                        'success' => true
+                    );
+                } else {
+                    return array(
+                        'success' => false,
+                        'message' => 'Cannot create kandy user!'
+                    );
+                }
             } else {
                 return array(
                     'success' => false,
-                    'message' => 'Cannot create kandy user!'
+                    'message' => $response->message
                 );
             }
         } else {
