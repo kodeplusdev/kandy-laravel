@@ -144,6 +144,53 @@ class Kandylaravel
     }
 
 
+    /**
+     * Get a list of kandy users
+     *
+     * @param int $type Type of users:
+     *                      type = 1, get all kandy users
+     *                      type = 2, get kandy users who are tied to any framework users
+     *                      type = 3, get kandy users who are not tied to any framework users
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public function listUser($type = 1)
+    {
+        if ($type == 1) {
+            $models = KandyUsers::all();
+        } else {
+            if ($type == 2) {
+                $models = KandyUsers::whereNotNull('main_user_id')->get();
+            } else {
+                if ($type == 3) {
+                    $models = KandyUsers::whereNull('main_user_id')->get();
+                }
+            }
+        }
+
+        return $models;
+    }
+
+    /**
+     * Assign user
+     *
+     * @param $mainUserId
+     * @param $user_id
+     * @return bool
+     */
+    public function assignUser($mainUserId, $user_id)
+    {
+        $kandyUser = KandyUsers::find($user_id);
+        $kandyUser->main_user_id = $mainUserId;
+        $result = $kandyUser->save();
+        return $result;
+    }
+
+    /**
+     * HTMLer
+     *
+     * @var \Illuminate\Html\HtmlBuilder
+     */
+    public $html;
     public function init($userId){
         $kandyUser =  $this->getUser($userId);
         if($kandyUser){
