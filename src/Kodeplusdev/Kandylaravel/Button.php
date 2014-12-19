@@ -178,11 +178,11 @@ class Button extends RenderedObject
         
         if(isset($data['htmlOptions'])){
             $this->htmlOptions = $data["htmlOptions"];
-        } else {
-            $this->style = "";
             foreach($data['htmlOptions'] as $key => $value){
                 $this->style.= $key . ":" . $value . ";";
             }
+        } else {
+            $this->style = "";
         }
 
         $data["style"] = $this->style;
@@ -200,16 +200,19 @@ class Button extends RenderedObject
         return $this->contents;
     }
 
-    /**
-     * Creates a normal label
-     *
-     * @param string $contents The contents of the label
-     * @return $this
-     */
-    public function show($data = array())
+
+    public function videoCall($data = array())
     {
         $this->init($data);
-        $this->contents = \View::make('kandylaravel::Button.answerVideo', $this->data)->render();
+        $this->contents = \View::make('kandylaravel::Button.videoCall', $this->data)->render();
+        return $this;
+    }
+
+
+    public function voiceCall($data = array())
+    {
+        $this->init($data);
+        $this->contents = \View::make('kandylaravel::Button.voiceCall', $this->data)->render();
         return $this;
     }
 }

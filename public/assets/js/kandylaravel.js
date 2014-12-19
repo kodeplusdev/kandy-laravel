@@ -8,13 +8,13 @@ setup = function () {
         listeners: {
             loginsuccess: loginsuccess_callback,
             loginfailed: loginfailed_callback,
-            callincoming: callincoming_callback,
+            callincoming: kandy_incoming_call_callback,
             // when an outgoing call is connected
             oncall: oncall_callback,
             // when an incoming call is connected
             // you indicated that you are answering the call
-            callanswered: callanswered_callback,
-            callended: callended_callback,
+            callanswered: kandy_callanswered_callback,
+            callended: kandy_callended_callback,
             localvideoinitialized: localvideoinitialized_callback,
             // a video tag is being provided (required for both audio and video calls)
             // you must insert it into the DOM for communication to happen (although for audio calls, it can remain hidden)
@@ -23,6 +23,18 @@ setup = function () {
     });
 }
 
+kandy_incoming_call_callback = function (call, isAnonymous) {
+    callincoming_callback(call, isAnonymous);
+    changeAnswerButtonState('BEING_CALLED');
+}
+kandy_callanswered_callback = function (call, isAnonymous) {
+    callanswered_callback(call, isAnonymous);
+    changeAnswerButtonState("ON_CALL");
+}
+kandy_callended_callback = function(){
+    callended_callback();
+    changeAnswerButtonState("READY_FOR_CALLING");
+}
 changeAnswerButtonState = function (state) {
     switch (state) {
         case 'READY_FOR_CALLING':
@@ -69,6 +81,23 @@ kandy_makeCall = function (target) {
     KandyAPI.Phone.makeVideoCall($('.kandyVideoAnswerButton .kandyVideoButtonCallOut #callOutUserId').val());
     changeAnswerButtonState("CALLING");
 }
+
+/*
+ Event when answer a voice call
+ */
+kandy_answerVoiceCall = function (target) {
+    changeAnswerButtonState("ANSWERING_CALL");
+    answerVideoCall_callback("ANSWERING_CALL");
+    KandyAPI.Phone.answerVoiceCall();
+}
+/*
+ Event when click call button
+ */
+kandy_makeVoiceCall = function (target) {
+
+    KandyAPI.Phone.makeVoiceCall($('.kandyVideoAnswerButton .kandyVideoButtonCallOut #callOutUserId').val());
+    changeAnswerButtonState("CALLING");
+}
 /*
  Event when click end call button
  */
@@ -77,6 +106,11 @@ kandy_endCall = function (target) {
     endCall_callback('READY_FOR_CALLING');
     changeAnswerButtonState("READY_FOR_CALLING");
 }
+
+kandy_incomingCall = function(){
+
+}
+
 /*
  Jquery Ready
  */
