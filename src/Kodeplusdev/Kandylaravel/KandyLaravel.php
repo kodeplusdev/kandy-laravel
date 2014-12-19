@@ -185,12 +185,6 @@ class Kandylaravel
         return $result;
     }
 
-    /**
-     * HTMLer
-     *
-     * @var \Illuminate\Html\HtmlBuilder
-     */
-    public $html;
     public function init($userId){
         $kandyUser =  $this->getUser($userId);
         if($kandyUser){
