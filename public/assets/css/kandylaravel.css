@@ -5,3 +5,27 @@
 .kandyVideo .video{
     display: block;
 }
+.kandyVideo .title{
+    margin: 5px 0px;
+}
+.kandyVideoAnswerButton .kandyVideoButton{
+    margin: 15px 0px;
+}
+.kandyVideoAnswerButton .kandyVideoButton input{
+    width:90px;height:23px;
+    float: left;
+    margin-right:5px;
+}
+.kandyVideoAnswerButton .kandyVideoButton input[type='text']{
+    width:250px;
+    height:23px;
+}
+.kandyVideoAnswerButton .kandyVideoButton input[type='button']{
+    width:90px;height:23px;
+}
+.kandyVideoAnswerButton .someonesCalling{
+    display: none;
+}
+.kandyVideoAnswerButton .someonesCalling{
+    display: none;
+}

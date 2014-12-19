@@ -41,19 +41,31 @@ class KandylaravelServiceProvider extends ServiceProvider {
 
         $this->registerVideo();
 
-        /*$this->app->booting(function()
-            {
-                $loader = \Illuminate\Foundation\AliasLoader::getInstance();
-                $loader->alias('Kandylaravel', 'Kodeplusdev\Kandylaravel\Facades\Kandylaravel');
-            });*/
+        $this->registerButton();
 	}
 
+    /**
+     *
+     */
     private function registerVideo()
     {
         $this->app->bind(
             'kandylaravel::video',
             function () {
                 return new Video();
+            }
+        );
+    }
+
+    /**
+     *
+     */
+    private function registerButton()
+    {
+        $this->app->bind(
+            'kandylaravel::Button',
+            function () {
+                return new Button();
             }
         );
     }

@@ -13,7 +13,13 @@ class Kandylaravel
     public $username = null;
     public $password = null;
     public $apiKey;
-
+    /**
+     * HTML
+     *
+     * @var \Illuminate\Html\HtmlBuilder
+     */
+    public $html;
+    public $contents;
     public function __construct()
     {
 
@@ -137,12 +143,7 @@ class Kandylaravel
         return $model;
     }
 
-    /**
-     * HTML
-     *
-     * @var \Illuminate\Html\HtmlBuilder
-     */
-    public $html;
+
     public function init($userId){
         $kandyUser =  $this->getUser($userId);
         if($kandyUser){
