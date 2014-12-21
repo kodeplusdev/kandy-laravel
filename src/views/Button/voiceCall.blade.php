@@ -1,4 +1,4 @@
-<div class="kandyVideoAnswerButton" id="{{$id}}">
+<div class="{{$class}}" id="{{$id}}" {{$htmlOptionAttributes}}>
     <div class="kandyVideoButton kandyVideoButtonSomeonesCalling" id="{{$incomingCall['id']}}" style="display:none">
         <label>{{$incomingCall['label']}}</label>
         <input class="btmAnswerVideoCall" type="button" value="{{$incomingCall['btnLabel']}}"

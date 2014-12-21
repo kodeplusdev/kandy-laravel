@@ -26,6 +26,7 @@ class Video extends RenderedObject
 
     protected $height = '250px';
 
+    protected $htmlOptions = array("style" => "width: 340px; height: 250px;background-color: darkslategray;");
     /**
      * @var string The contents of the label
      */
@@ -64,28 +65,28 @@ class Video extends RenderedObject
         if(!isset($data["class"])){
             $data["class"] = $this->class;
         } else {
+            $data["class"] = $this->class ." ". $data["class"];
             $this->class = $data["class"];
         }
         if(!isset($data["htmlOptions"])){
-            $data['htmlOptions'] = array();
+            $data['htmlOptions'] = $this->htmlOptions;
+        }
+        $htmlOptionsAttributes = "";
+        if(!empty($data['htmlOptions'])){
+            if(!isset($data["htmlOptions"]["style"])){
+                $data['htmlOptions']['style'] = $this->htmlOptions["style"];
+            } else {
+                $this->htmlOptions = $data['htmlOptions'];
+            }
+
+            foreach($data['htmlOptions'] as $key => $value){
+                if($key != "id" && $key != "class"){
+                    $htmlOptionsAttributes.= $key . "= '" . $value . "'";
+                }
+            }
         }
 
-        if(!isset($data["htmlOptions"]["width"])){
-            $data['htmlOptions']['width'] = $this->width;
-        } else {
-            $this->width = $data['htmlOptions']['width'];
-        }
-
-        if(!isset($data["htmlOptions"]["height"])){
-            $data['htmlOptions']['height'] = $this->height;
-        } else {
-            $this->width = $data['htmlOptions']['height'];
-        }
-        $style = "";
-        foreach($data['htmlOptions'] as $key => $value){
-            $style.= $key . ":" . $value . ";";
-        }
-        $data["style"] = $style;
+        $data["htmlOptionsAttributes"] = $htmlOptionsAttributes;
         $this->contents = \View::make('kandylaravel::Video.video', $data)->render();
         return $this;
     }

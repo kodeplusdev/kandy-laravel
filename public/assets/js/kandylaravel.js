@@ -39,28 +39,28 @@ changeAnswerButtonState = function (state) {
     switch (state) {
         case 'READY_FOR_CALLING':
 
-            $('.kandyVideoAnswerButton .kandyVideoButtonSomeonesCalling').hide();
-            $('.kandyVideoAnswerButton .kandyVideoButtonCallOut').show();
-            $('.kandyVideoAnswerButton .kandyVideoButtonCalling').hide();
-            $('.kandyVideoAnswerButton .kandyVideoButtonOnCall').hide();
+            $('.kandyButton .kandyVideoButtonSomeonesCalling').hide();
+            $('.kandyButton .kandyVideoButtonCallOut').show();
+            $('.kandyButton .kandyVideoButtonCalling').hide();
+            $('.kandyButton .kandyVideoButtonOnCall').hide();
             break;
         case 'BEING_CALLED':
-            $('.kandyVideoAnswerButton .kandyVideoButtonSomeonesCalling').show();
-            $('.kandyVideoAnswerButton .kandyVideoButtonCallOut').hide();
-            $('.kandyVideoAnswerButton .kandyVideoButtonCalling').hide();
-            $('.kandyVideoAnswerButton .kandyVideoButtonOnCall').hide();
+            $('.kandyButton .kandyVideoButtonSomeonesCalling').show();
+            $('.kandyButton .kandyVideoButtonCallOut').hide();
+            $('.kandyButton .kandyVideoButtonCalling').hide();
+            $('.kandyButton .kandyVideoButtonOnCall').hide();
             break;
         case 'CALLING':
-            $('.kandyVideoAnswerButton .kandyVideoButtonSomeonesCalling').hide();
-            $('.kandyVideoAnswerButton .kandyVideoButtonCallOut').hide();
-            $('.kandyVideoAnswerButton .kandyVideoButtonCalling').show();
-            $('.kandyVideoAnswerButton .kandyVideoButtonOnCall').hide();
+            $('.kandyButton .kandyVideoButtonSomeonesCalling').hide();
+            $('.kandyButton .kandyVideoButtonCallOut').hide();
+            $('.kandyButton .kandyVideoButtonCalling').show();
+            $('.kandyButton .kandyVideoButtonOnCall').hide();
             break;
         case 'ON_CALL':
-            $('.kandyVideoAnswerButton .kandyVideoButtonSomeonesCalling').hide();
-            $('.kandyVideoAnswerButton .kandyVideoButtonCallOut').hide();
-            $('.kandyVideoAnswerButton .kandyVideoButtonCalling').hide();
-            $('.kandyVideoAnswerButton .kandyVideoButtonOnCall').show();
+            $('.kandyButton .kandyVideoButtonSomeonesCalling').hide();
+            $('.kandyButton .kandyVideoButtonCallOut').hide();
+            $('.kandyButton .kandyVideoButtonCalling').hide();
+            $('.kandyButton .kandyVideoButtonOnCall').show();
             break;
     }
 }
@@ -78,7 +78,7 @@ kandy_answerVideoCall = function (target) {
  */
 kandy_makeCall = function (target) {
 
-    KandyAPI.Phone.makeVideoCall($('.kandyVideoAnswerButton .kandyVideoButtonCallOut #callOutUserId').val());
+    KandyAPI.Phone.makeVideoCall($('.kandyButton .kandyVideoButtonCallOut #callOutUserId').val());
     changeAnswerButtonState("CALLING");
 }
 
@@ -95,7 +95,7 @@ kandy_answerVoiceCall = function (target) {
  */
 kandy_makeVoiceCall = function (target) {
 
-    KandyAPI.Phone.makeVoiceCall($('.kandyVideoAnswerButton .kandyVideoButtonCallOut #callOutUserId').val());
+    KandyAPI.Phone.makeVoiceCall($('.kandyButton .kandyVideoButtonCallOut #callOutUserId').val());
     changeAnswerButtonState("CALLING");
 }
 /*

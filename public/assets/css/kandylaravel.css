@@ -8,24 +8,32 @@
 .kandyVideo .title{
     margin: 5px 0px;
 }
-.kandyVideoAnswerButton .kandyVideoButton{
+
+
+.kandyButton{
+    overflow: auto;
+}
+/*
+=====KANDY VIDEO CALL STYLE=====
+*/
+.kandyButton .kandyButtonComponent{
     margin: 15px 0px;
 }
-.kandyVideoAnswerButton .kandyVideoButton input{
+.kandyButton .kandyButtonComponent input{
     width:90px;height:23px;
     float: left;
     margin-right:5px;
 }
-.kandyVideoAnswerButton .kandyVideoButton input[type='text']{
+.kandyButton .kandyButtonComponent input[type='text']{
     width:250px;
     height:23px;
 }
-.kandyVideoAnswerButton .kandyVideoButton input[type='button']{
+.kandyButton .kandyButtonComponent input[type='button']{
     width:90px;height:23px;
 }
-.kandyVideoAnswerButton .someonesCalling{
+.kandyButton .kandyButtonComponent .someonesCalling{
     display: none;
 }
-.kandyVideoAnswerButton .someonesCalling{
+.kandyButton .kandyButtonComponent .someonesCalling{
     display: none;
 }

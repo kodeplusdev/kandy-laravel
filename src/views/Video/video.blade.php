@@ -1,5 +1,4 @@
-<div class="kandyVideo newClass1">
+<div class="{{$class}}">
 <p class="title">{{$title}}</p>
-<span class="video video2" id="{{$id}}"
-      style="{{$style}}"></span>
+<span class="video" id="{{$id}}" {{$htmlOptionsAttributes}}></span>
 </div>
