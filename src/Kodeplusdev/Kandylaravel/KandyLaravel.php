@@ -66,6 +66,44 @@ class Kandylaravel
     }
 
     /**
+     * Get domain
+     *
+     * @return array
+     */
+    public function getDomain()
+    {
+        $params     = array(
+            'key' => \Config::get('kandylaravel::key'),
+            'domain_api_secret' => \Config::get('kandylaravel::domain_api_secret')
+        );
+
+        $fieldsString = http_build_query($params);
+        $url = Kandylaravel::API_BASE_URL . 'domains/details' . '?' . $fieldsString;
+
+        try {
+            $response = (new RestClient())->get($url)->getContent();
+        } catch (Exception $ex) {
+            return array(
+                'success' => false,
+                'message' => $ex->getMessage()
+            );
+        }
+
+        $response = json_decode($response);
+        if ($response->message == 'success') {
+            return array(
+                'success' => true,
+                'data' => $response->result->domain->domain_name,
+            );
+        } else {
+            return array(
+                'success' => false,
+                'message' => $response->message
+            );
+        }
+    }
+
+    /**
      * @param      $username
      * @param      $email
      * @param null $mainUserId
@@ -222,18 +260,37 @@ class Kandylaravel
     public function syncUsers()
     {
         $kandyUsers = $this->listUser(self::KANDY_USER_ALL, true);
+        $getDomainNameResponse = $this->getDomain();
+        if ($getDomainNameResponse['success']) {
+            $domainName = $getDomainNameResponse['data'];
+        } else {
+            // todo: catch error: cannot get domain name
+        }
+        $receivedUsers = array();
+
         foreach ($kandyUsers as $kandyUser) {
+            array_push($receivedUsers, $kandyUser->user_id);
             $model = KandyUsers::whereuser_id($kandyUser->user_id)->first();
             $now = date("Y-m-d H:i:s");
             if (empty($model)) {
+                // Create a new record
                 $model = new KandyUsers();
                 $model->user_id = $kandyUser->user_id;
                 $model->created_at = $now;
             }
+            $model->first_name = $kandyUser->user_first_name;
+            $model->last_name = $kandyUser->user_last_name;
+            $model->email = $kandyUser->user_email;
+            $model->domain_name = $kandyUser->domain_name;
+            $model->api_key = $kandyUser->user_api_key;
+            $model->api_secret = $kandyUser->user_api_secret;
+
             $model->password = $kandyUser->user_password;
             $model->updated_at = $now;
             $model->save();
         }
+        // Delete records which no longer exist on server
+        KandyUsers::wheredomain_name($domainName)->whereNotIn('user_id', $receivedUsers)->delete();
     }
 
     /**
