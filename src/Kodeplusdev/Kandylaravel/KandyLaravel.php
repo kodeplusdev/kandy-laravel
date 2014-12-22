@@ -263,34 +263,39 @@ class Kandylaravel
         $getDomainNameResponse = $this->getDomain();
         if ($getDomainNameResponse['success']) {
             $domainName = $getDomainNameResponse['data'];
+            \DB::transaction(
+                function () use ($domainName, $kandyUsers) {
+                    $receivedUsers = array();
+                    foreach ($kandyUsers as $kandyUser) {
+                        array_push($receivedUsers, $kandyUser->user_id);
+                        $model = KandyUsers::whereuser_id($kandyUser->user_id)->first();
+                        $now = date("Y-m-d H:i:s");
+                        if (empty($model)) {
+                            // Create a new record
+                            $model = new KandyUsers();
+                            $model->user_id = $kandyUser->user_id;
+                            $model->created_at = $now;
+                        }
+                        $model->first_name = $kandyUser->user_first_name;
+                        $model->last_name = $kandyUser->user_last_name;
+                        $model->email = $kandyUser->user_email;
+                        $model->domain_name = $kandyUser->domain_name;
+                        $model->api_key = $kandyUser->user_api_key;
+                        $model->api_secret = $kandyUser->user_api_secret;
+
+                        $model->password = $kandyUser->user_password;
+                        $model->updated_at = $now;
+                        $model->save();
+                    }
+                    // Delete records which no longer exist on server
+                    KandyUsers::wheredomain_name($domainName)->whereNotIn('user_id', $receivedUsers)->delete();
+                }
+            );
+            $result = array('success' => true, 'message' => "Synchronization successfully");
         } else {
-            // todo: catch error: cannot get domain name
+            $result = array('success' => false, 'message' => "Cannot get domain name.");
         }
-        $receivedUsers = array();
-
-        foreach ($kandyUsers as $kandyUser) {
-            array_push($receivedUsers, $kandyUser->user_id);
-            $model = KandyUsers::whereuser_id($kandyUser->user_id)->first();
-            $now = date("Y-m-d H:i:s");
-            if (empty($model)) {
-                // Create a new record
-                $model = new KandyUsers();
-                $model->user_id = $kandyUser->user_id;
-                $model->created_at = $now;
-            }
-            $model->first_name = $kandyUser->user_first_name;
-            $model->last_name = $kandyUser->user_last_name;
-            $model->email = $kandyUser->user_email;
-            $model->domain_name = $kandyUser->domain_name;
-            $model->api_key = $kandyUser->user_api_key;
-            $model->api_secret = $kandyUser->user_api_secret;
-
-            $model->password = $kandyUser->user_password;
-            $model->updated_at = $now;
-            $model->save();
-        }
-        // Delete records which no longer exist on server
-        KandyUsers::wheredomain_name($domainName)->whereNotIn('user_id', $receivedUsers)->delete();
+        return $result;
     }
 
     /**
