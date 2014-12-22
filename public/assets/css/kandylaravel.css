@@ -1,11 +1,13 @@
-.kandyVideo{
+.kandyVideo {
     margin-right: 10px;
     float: left;
 }
-.kandyVideo .video{
+
+.kandyVideo .video {
     display: block;
 }
-.kandyVideo .title{
+
+.kandyVideo .title {
     margin: 5px 0px;
 }
 
@@ -13,39 +15,46 @@
 
 =====KANDY VIDEO CALL STYLE=====
 */
-.kandyButton{
+.kandyButton {
     overflow: auto;
-    padding: 3px 10px;
+    padding: 8px;
 }
-.kandyButton .kandyButtonComponent{
+
+.kandyButton .kandyButtonComponent {
     margin: 15px 0px;
 }
-.kandyButton .kandyButtonComponent input{
-    width:90px;height:23px;
+
+.kandyButton .kandyButtonComponent input {
+    width: 90px;
     float: left;
-    margin-right:5px;
+    margin-right: 5px;
 }
-.kandyButton .kandyButtonComponent input[type='text']{
-    width:250px;
-    height:23px;
+
+.kandyButton .kandyButtonComponent input[type='text'] {
+    width: 250px;
 }
-.kandyButton .kandyButtonComponent input[type='button']{
-    width:90px;height:23px;
+
+.kandyButton .kandyButtonComponent input[type='button'] {
+    width: 90px;
 }
-.kandyButton .kandyButtonComponent .someonesCalling{
-    display: none;
-}
-.kandyButton .kandyButtonComponent .someonesCalling{
+
+.kandyButton .kandyButtonComponent .someonesCalling {
     display: none;
 }
 
-.kandyButton .kandyVideoButtonOnCall{
+.kandyButton .kandyButtonComponent .someonesCalling {
     display: none;
 }
-.kandyButton .kandyVideoButtonCalling{
+
+.kandyButton .kandyVideoButtonOnCall {
     display: none;
 }
-.kandyButton .kandyVideoButtonSomeonesCalling{
+
+.kandyButton .kandyVideoButtonCalling {
+    display: none;
+}
+
+.kandyButton .kandyVideoButtonSomeonesCalling {
     display: none;
 }
 
@@ -88,10 +97,12 @@
     width: 130px;
     display: inline-block
 }
-.kandyAddressBook .kandyContactItem{
+
+.kandyAddressBook .kandyContactItem {
     padding: 5px;
 }
-.kandyAddressBook .kandySearchItem{
+
+.kandyAddressBook .kandySearchItem {
     padding: 5px;
 }
 
@@ -113,7 +124,8 @@
     display: inline-block;
     width: 275px
 }
-.kandyChat .kandyMessages{
-    width:100%;
+
+.kandyChat .kandyMessages {
+    width: 100%;
     min-height: 500px;
 }
