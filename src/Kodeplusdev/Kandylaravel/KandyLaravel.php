@@ -14,7 +14,6 @@ class Kandylaravel
     const KANDY_USER_ASSIGNED = 2;
     const KANDY_USER_UNASSIGNED = 3;
 
-
     public $domainAccessToken;
     public $username = null;
     public $password = null;

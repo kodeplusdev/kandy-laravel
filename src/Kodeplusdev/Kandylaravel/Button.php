@@ -20,7 +20,7 @@ class Button extends RenderedObject
 
     protected $style = "";
 
-    protected $components = array(
+    protected $options = array(
         "incomingCall" => array(
             "id" => "incomingCall",
             "class" => "kandyVideoButton kandyVideoButtonSomeonesCalling",
@@ -70,20 +70,23 @@ class Button extends RenderedObject
         }
         //init component
         $attributes = array("callOut", "calling", "onCall", "incomingCall");
+        if(!isset($data["options"])){
+            $data["options"] = array();
+        }
         foreach($attributes as $attr){
             //callOut Area Init
-            if (isset($data[$attr])) {
+            if (isset($data["options"][$attr])) {
                 //params
-                $comAttributes = $data[$attr];                //default value
-                $defaultComAttributes = $this->components[$attr];
+                $comAttributes = $data["options"][$attr];                //default value
+                $defaultComAttributes = $this->options[$attr];
                 foreach($comAttributes as $comAttributeKey => $comAttribute){
-                    if (!isset($data[$attr][$comAttributeKey])) {
-                        $data[$attr][$comAttributeKey] =$defaultComAttributes[$comAttributeKey];
+                    if (!isset($data["options"][$attr][$comAttributeKey])) {
+                        $data["options"][$attr][$comAttributeKey] =$defaultComAttributes[$comAttributeKey];
                     }
                 }
             } else {
                 //use default value
-                $data[$attr] = $this->components[$attr];
+                $data["options"][$attr] = $this->options[$attr];
             }
         }//end init component
 

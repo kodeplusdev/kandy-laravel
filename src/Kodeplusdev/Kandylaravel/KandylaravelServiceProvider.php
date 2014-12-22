@@ -39,6 +39,8 @@ class KandylaravelServiceProvider extends ServiceProvider {
         $this->registerStatus();
 
         $this->registerAddressBook();
+
+        $this->registerChat();
     }
 
     /**
@@ -89,6 +91,19 @@ class KandylaravelServiceProvider extends ServiceProvider {
             'kandylaravel::addressBook',
             function () {
                 return new AddressBookObject();
+            }
+        );
+    }
+
+    /**
+     *
+     */
+    private function registerChat()
+    {
+        $this->app->bind(
+            'kandylaravel::chat',
+            function () {
+                return new Chat();
             }
         );
     }

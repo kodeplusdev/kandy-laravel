@@ -9,13 +9,14 @@
     margin: 5px 0px;
 }
 
-
-.kandyButton{
-    overflow: auto;
-}
 /*
+
 =====KANDY VIDEO CALL STYLE=====
 */
+.kandyButton{
+    overflow: auto;
+    padding: 3px 10px;
+}
 .kandyButton .kandyButtonComponent{
     margin: 15px 0px;
 }
@@ -35,6 +36,16 @@
     display: none;
 }
 .kandyButton .kandyButtonComponent .someonesCalling{
+    display: none;
+}
+
+.kandyButton .kandyVideoButtonOnCall{
+    display: none;
+}
+.kandyButton .kandyVideoButtonCalling{
+    display: none;
+}
+.kandyButton .kandyVideoButtonSomeonesCalling{
     display: none;
 }
 
@@ -79,4 +90,30 @@
 }
 .kandyAddressBook .kandyContactItem{
     padding: 5px;
+}
+.kandyAddressBook .kandySearchItem{
+    padding: 5px;
+}
+
+/* KANDY CHAT STYLE */
+.kandyChat .imUsername {
+    display: inline-block;
+    width: 200px
+}
+
+.kandyChat .imMessageToSend {
+    width: 175px
+}
+
+.kandyChat .messages {
+    border: solid black 1px
+}
+
+.kandyChat .imMessage {
+    display: inline-block;
+    width: 275px
+}
+.kandyChat .kandyMessages{
+    width:100%;
+    min-height: 500px;
 }
