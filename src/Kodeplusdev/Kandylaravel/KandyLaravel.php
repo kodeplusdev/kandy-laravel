@@ -302,9 +302,13 @@ class Kandylaravel
      */
     public function assignUser($mainUserId, $user_id)
     {
-        $kandyUser = KandyUsers::findOrFail($user_id);
-        $kandyUser->main_user_id = $mainUserId;
-        $result = $kandyUser->save();
+        $kandyUser = KandyUsers::find($user_id);
+        if (empty($kandyUser)) {
+            $result = false;
+        } else {
+            $kandyUser->main_user_id = $mainUserId;
+            $result = $kandyUser->save();
+        }
         return $result;
     }
 
