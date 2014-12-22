@@ -3,16 +3,23 @@
 class Kandylaravel
 {
     const API_BASE_URL = 'https://api.kandy.io/v1/';
+
     const KANDY_CSS = 'packages/kodeplusdev/kandylaravel/assets/css/kandylaravel.css';
     const KANDY_JS_CUSTOM = 'packages/kodeplusdev/kandylaravel/assets/js/kandylaravel.js';
     const KANDY_JS_FCS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/fcs/3.0.0/fcs.js';
     const KANDY_JS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/1.1.4/kandy.js';
     const KANDY_JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js';
 
+    const KANDY_USER_ALL = 1;
+    const KANDY_USER_ASSIGNED = 2;
+    const KANDY_USER_UNASSIGNED = 3;
+
+
     public $domainAccessToken;
     public $username = null;
     public $password = null;
     public $apiKey;
+    
     /**
      * HTML
      *
@@ -135,14 +142,15 @@ class Kandylaravel
             );
         }
     }
+
     /*
      * GET USER
      */
-    public function getUser($userId){
+    public function getUser($userId)
+    {
         $model = KandyUsers::where("main_user_id", $userId)->first();
         return $model;
     }
-
 
     /**
      * Get a list of kandy users
@@ -151,23 +159,81 @@ class Kandylaravel
      *                      type = 1, get all kandy users
      *                      type = 2, get kandy users who are tied to any framework users
      *                      type = 3, get kandy users who are not tied to any framework users
+     * @param bool $remote Whether to list users from Kandy server or from local kandy_user table
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
-    public function listUser($type = 1)
+    public function listUser($type = self::KANDY_USER_ALL, $remote = false)
     {
-        if ($type == 1) {
-            $models = KandyUsers::all();
-        } else {
-            if ($type == 2) {
-                $models = KandyUsers::whereNotNull('main_user_id')->get();
+        $result = array();
+        if ($remote) {
+
+            $getTokenResponse = $this->getDomainAccessToken();
+            if ($getTokenResponse['success'] == true) {
+                $this->domainAccessToken = $getTokenResponse['data'];
             } else {
-                if ($type == 3) {
-                    $models = KandyUsers::whereNull('main_user_id')->get();
+                // Catch errors
+            }
+
+            $params     = array(
+                'key' => $this->domainAccessToken
+            );
+
+            $fieldsString = http_build_query($params);
+            $url = Kandylaravel::API_BASE_URL . 'domains/users' . '?' . $fieldsString;
+            $headers = array(
+                'Content-Type: application/json'
+            );
+
+            try {
+                $response = (new RestClient())->get($url, $headers)->getContent();
+            } catch (Exception $ex) {
+                return array(
+                    'success' => false,
+                    'message' => $ex->getMessage()
+                );
+            }
+            $response = json_decode($response);
+
+            if ($response) {
+                $data = $response->result;
+                $result = $data->users;
+            }
+        } else {
+            if ($type == self::KANDY_USER_ALL) {
+                $models = KandyUsers::all();
+            } else {
+                if ($type == self::KANDY_USER_ASSIGNED) {
+                    $models = KandyUsers::whereNotNull('main_user_id')->get();
+                } else {
+                    if ($type == self::KANDY_USER_UNASSIGNED) {
+                        $models = KandyUsers::whereNull('main_user_id')->get();
+                    }
                 }
             }
+            $result = $models;
         }
+        return $result;
+    }
 
-        return $models;
+    /**
+     * Get all users from Kandy and import/update to kandy_user
+     *
+     */
+    public function syncUsers()
+    {
+        $kandyUsers = $this->listUser(self::KANDY_USER_ALL, true);
+        foreach ($kandyUsers as $kandyUser) {
+            $model = KandyUsers::whereuser_id($kandyUser->user_id)->first();
+            $now = date("Y-m-d H:i:s");
+            if (empty($model)) {
+                $model = new KandyUsers();
+                $model->user_id = $kandyUser->user_id;
+                $model->created_at = $now;
+            }
+            $model->password = $kandyUser->user_password;
+            $model->updated_at = $now;
+            $model->save();
+        }
     }
 
     /**
@@ -179,9 +245,27 @@ class Kandylaravel
      */
     public function assignUser($mainUserId, $user_id)
     {
-        $kandyUser = KandyUsers::find($user_id);
+        $kandyUser = KandyUsers::findOrFail($user_id);
         $kandyUser->main_user_id = $mainUserId;
         $result = $kandyUser->save();
+        return $result;
+    }
+
+    /**
+     * Unassign user
+     *
+     * @param $mainUserId
+     * @return mixed
+     */
+    public function unassignUser($mainUserId)
+    {
+        $user = KandyUsers::wheremain_user_id($mainUserId)->first();
+        if (!empty($user)) {
+            $user->main_user_id = null;
+            $result = $user->save();
+        } else {
+            $result = true;
+        }
         return $result;
     }
 
@@ -198,6 +282,7 @@ class Kandylaravel
 
         return $return;
     }
+
     /**
      * @return mixed
      */
@@ -208,8 +293,9 @@ class Kandylaravel
     }
 
     /**
- * @return mixed
- */
+     *
+     * @return string
+     */
     public function js()
     {
         $return = "";
@@ -225,10 +311,11 @@ class Kandylaravel
         return $return;
     }
 
-
     /**
-     * @param $type
-     * @param $location
+     * Perform an action on a resource location
+     *
+     * @param string $type Type of action performed on html object. E.g: script
+     * @param string $location Location of the resource. E.g: kandylaravel.css
      *
      * @return mixed
      */
