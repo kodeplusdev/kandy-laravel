@@ -306,6 +306,7 @@ class Kandylaravel
      */
     public function assignUser($mainUserId, $user_id)
     {
+        KandyUsers::wheremain_user_id($mainUserId)->update(array('main_user_id' => null));
         $kandyUser = KandyUsers::find($user_id);
         if (empty($kandyUser)) {
             $result = false;
