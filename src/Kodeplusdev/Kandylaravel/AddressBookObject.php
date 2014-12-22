@@ -9,7 +9,7 @@ namespace Kodeplusdev\Kandylaravel;
  *
  * @package Bootstrapper
  */
-class Video extends RenderedObject
+class AddressBookObject extends RenderedObject
 {
     /**
      * @var string The ID of the video
@@ -18,11 +18,11 @@ class Video extends RenderedObject
     /**
      * @var string The Title of the video
      */
-    protected  $title = "Title";
+    protected  $title = "My Contact";
 
-    protected $class = 'kandyVideo';
+    protected $class = 'kandyAddressBook';
 
-    protected $htmlOptions = array("style" => "width: 340px; height: 250px;background-color: darkslategray;");
+    protected $htmlOptions = array();
     /**
      * @var string The contents of the label
      */
@@ -53,7 +53,7 @@ class Video extends RenderedObject
             $this->title = $data['title'];
         }
         if(!isset($data["id"])){
-            $data["id"] = "video-" . rand();
+            $data["id"] = "address-book-" . rand();
         } else {
             $this->id = $data["id"];
         }
@@ -83,7 +83,7 @@ class Video extends RenderedObject
         }
 
         $data["htmlOptionsAttributes"] = $htmlOptionsAttributes;
-        $this->contents = \View::make('kandylaravel::Video.video', $data)->render();
+        $this->contents = \View::make('kandylaravel::AddressBook.AddressBook', $data)->render();
         return $this;
     }
 }

@@ -9,7 +9,7 @@ namespace Kodeplusdev\Kandylaravel;
  *
  * @package Bootstrapper
  */
-class Video extends RenderedObject
+class Status extends RenderedObject
 {
     /**
      * @var string The ID of the video
@@ -20,9 +20,9 @@ class Video extends RenderedObject
      */
     protected  $title = "Title";
 
-    protected $class = 'kandyVideo';
+    protected $class = 'kandyStatus';
 
-    protected $htmlOptions = array("style" => "width: 340px; height: 250px;background-color: darkslategray;");
+    protected $htmlOptions = array("style" => "width: 100px;");
     /**
      * @var string The contents of the label
      */
@@ -83,7 +83,7 @@ class Video extends RenderedObject
         }
 
         $data["htmlOptionsAttributes"] = $htmlOptionsAttributes;
-        $this->contents = \View::make('kandylaravel::Video.video', $data)->render();
+        $this->contents = \View::make('kandylaravel::Status.status', $data)->render();
         return $this;
     }
 }

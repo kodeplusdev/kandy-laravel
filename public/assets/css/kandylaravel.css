@@ -37,3 +37,46 @@
 .kandyButton .kandyButtonComponent .someonesCalling{
     display: none;
 }
+
+/*KANDY ADDRESS BOOK */
+.kandyAddressBook .kandyAddressContactList {
+    background-color: lightslategray;
+    color: white;
+    width: 100%;
+    padding: 5px 10px;
+    border: 1px solid black
+}
+
+.kandyAddressBook .kandyAddressContactList .myContacts Title {
+    text-align: center;
+    text-decoration: underline
+}
+
+.kandyAddressBook .kandyDirectorySearch {
+    margin-top: 20px
+}
+
+.kandyAddressBook .kandyDirSearchTitle {
+    text-align: center;
+    text-decoration: underline
+}
+
+.kandyAddressBook .kandyDirSearchResults {
+    background-color: lightgray;
+    padding: 5px 10px;
+    width: 100%;
+    border: 1px solid black
+}
+
+.kandyAddressBook .userid {
+    width: 190px;
+    display: inline-block
+}
+
+.kandyAddressBook .presence {
+    width: 130px;
+    display: inline-block
+}
+.kandyAddressBook .kandyContactItem{
+    padding: 5px;
+}

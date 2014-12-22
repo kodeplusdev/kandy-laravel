@@ -2,6 +2,8 @@
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Html\HtmlBuilder;
+use Kodeplusdev\Kandylaravel\Facades\AddressBook;
+
 class KandylaravelServiceProvider extends ServiceProvider {
 
 	/**
@@ -26,23 +28,18 @@ class KandylaravelServiceProvider extends ServiceProvider {
 	 *
 	 * @return void
 	 */
-	public function register()
-	{
-//        $this->app['kandylaravel::Kandylaravel'] = $this->app->share(function($app)
-//        {
-//            $kandy = new Kandylaravel;
-//
-////            $kandy->html = $this->app->make('Illuminate\Html\HtmlBuilder');
-//
-//            return $kandy;
-//        });
-
+    public function register()
+    {
         $this->registerKandyLaravel();
 
         $this->registerVideo();
 
         $this->registerButton();
-	}
+
+        $this->registerStatus();
+
+        $this->registerAddressBook();
+    }
 
     /**
      *
@@ -57,6 +54,7 @@ class KandylaravelServiceProvider extends ServiceProvider {
         );
     }
 
+
     /**
      *
      */
@@ -66,6 +64,31 @@ class KandylaravelServiceProvider extends ServiceProvider {
             'kandylaravel::Button',
             function () {
                 return new Button();
+            }
+        );
+    }
+
+    /**
+     *
+     */
+    private function registerStatus()
+    {
+        $this->app->bind(
+            'kandylaravel::status',
+            function () {
+                return new Status();
+            }
+        );
+    }
+    /**
+     *
+     */
+    private function registerAddressBook()
+    {
+        $this->app->bind(
+            'kandylaravel::addressBook',
+            function () {
+                return new AddressBookObject();
             }
         );
     }
