@@ -37,7 +37,7 @@ kandy_loginsuccess_callback = function () {
     if($( ".kandyChat").length){
         kandy_loadContacts_chat();
         setInterval(kandy_getIms, 3000);
-        kandy_chat_events();
+
     }
     //call user callback
     if (typeof loginsuccess_callback == 'function') {
@@ -253,7 +253,7 @@ kandy_loadContacts_addressBook = function () {
             }
         },
         function () {
-            alert("Error");
+            console.log("Error kandy_loadContacts_addressBook");
         }
     );
 
@@ -323,7 +323,7 @@ kandy_addToContacts = function (userId) {
                 }
             },
             function (statusCode) {
-                alert("Error getting contact details: " + statusCode)
+                console.log("Error getting contact details: " + statusCode)
             }
         );
     }
@@ -336,7 +336,7 @@ kandy_removeFromContacts = function (nickname) {
     KandyAPI.Phone.removeFromPersonalAddressBook(nickname,
         kandy_loadContacts_addressBook,  // function to call on success
         function () {
-            alert("Error");
+            console.log('Error kandy_removeFromContacts ');
         }
     );
 };
@@ -367,7 +367,7 @@ kandy_searchDirectoryByUserName = function () {
             }
         },
         function (val) {
-            alert('Error');
+            console.log('Error kandy_searchDirectoryByUserName ');
         }
     );
 };
@@ -378,13 +378,7 @@ kandy_searchDirectoryByUserName = function () {
 /**
  * Enter event to send message with kandyChat
  */
-kandy_chat_events = function(){
-    $(".kandyChat .imMessageToSend").keydown(function (e) {
-        if (e.keyCode == 13) {
-            $('.btnSendMessage').click();
-        }
-    });
-}
+
 /**
  * Load Contact for KandyChat
  */
@@ -450,7 +444,7 @@ kandy_getIms = function () {
             }
         },
         function () {
-            alert("error receiving IMs");
+            console.log("error receiving IMs");
         }
     )
 };
