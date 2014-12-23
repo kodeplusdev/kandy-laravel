@@ -5,7 +5,7 @@
 
     <form class="kandyDirectorySearch" onsubmit="return false;">
         User: <input id="kandySearchUserName" type="text" value=""/>
-        <input type="submit" value="Search" onclick="kandy_searchDirectoryByUserName();return false;" style="width:90px;"/>
+        <input type="submit" value="Search" onclick="kandy_searchDirectoryByUserName();return false;"/>
         (asterisk for wildcard)
     </form>
 

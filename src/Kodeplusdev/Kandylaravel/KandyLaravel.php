@@ -28,14 +28,13 @@ class Kandylaravel
     public $apiKey;
 
     /**
-     * TODO: Should rename to $htmlBuilder
      *
      * @var \Illuminate\Html\HtmlBuilder
      */
-    public $html;
+    public $htmlBuilder;
 
     /**
-     * TODO: comment?
+     * Contents of the widget
      *
      * @var
      */
@@ -429,7 +428,7 @@ class Kandylaravel
      */
     protected function add($type, $location)
     {
-        return $this->html->$type($location);
+        return $this->htmlBuilder->$type($location);
     }
 
     /**

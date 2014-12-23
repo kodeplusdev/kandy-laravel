@@ -24,14 +24,7 @@ class Button extends RenderedObject
     protected $htmlOptions = array();
 
     /**
-     * TODO: add comment
-     *
-     * @var string
-     */
-    protected $style = "";
-
-    /**
-     * TODO: add comment
+     * Default component options
      *
      * @var array
      */
@@ -62,9 +55,16 @@ class Button extends RenderedObject
                 "btnLabel" => "End Call",
             )
         );
-
+    /**
+     * Data of widget
+     * @var array
+     */
     protected $data = array();
 
+    /**
+     * Contents of widget
+     * @var string
+     */
     protected $contents;
 
     /**
@@ -77,16 +77,10 @@ class Button extends RenderedObject
         return $this->contents;
     }
 
-    public function videoCall($data = array())
-    {
-        $this->init($data);
-        $this->contents = \View::make(
-            'kandylaravel::Button.videoCall',
-            $this->data
-        )->render();
-        return $this;
-    }
-
+    /**
+     * Initialize data of widget
+     * @param $data
+     */
     public function init($data)
     {
         //init Id
@@ -153,6 +147,26 @@ class Button extends RenderedObject
         $this->data = $data;
     }
 
+    /**
+     * Show a VideoCall Widget
+     * @param array $data
+     * @return $this
+     */
+    public function videoCall($data = array())
+    {
+        $this->init($data);
+        $this->contents = \View::make(
+            'kandylaravel::Button.videoCall',
+            $this->data
+        )->render();
+        return $this;
+    }
+
+    /**
+     * Show a VoiceCall Widget
+     * @param array $data
+     * @return $this
+     */
     public function voiceCall($data = array())
     {
         $this->init($data);
@@ -160,6 +174,7 @@ class Button extends RenderedObject
             'kandylaravel::Button.voiceCall',
             $this->data
         )->render();
+
         return $this;
     }
 }

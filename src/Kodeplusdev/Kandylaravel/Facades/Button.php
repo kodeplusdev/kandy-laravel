@@ -21,9 +21,8 @@ class Button extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        //TODO: why Button has B in capital whereas others are in lower case
         // (e.g kandylaravel::chat)
-        return 'kandylaravel::Button';
+        return 'kandylaravel::button';
     }
 
 }

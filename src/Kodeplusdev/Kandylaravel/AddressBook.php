@@ -29,28 +29,17 @@ class AddressBook extends RenderedObject
     protected $htmlOptions = array();
 
     /**
+     * Data of widget
+     * @var array
+     */
+    protected $data = array();
+
+    /**
      * @var string The html contents of the Address book
      */
     protected $contents;
 
     public function init($data)
-    {
-
-    }
-
-    public function render()
-    {
-        return $this->contents;
-    }
-
-    /**
-     * Show a address book object
-     *
-     * @param array $data A list of attributes of the address book
-     *
-     * @return AddressBook An address book object
-     */
-    public function show($data = array())
     {
         if (!isset($data["title"])) {
             $data["title"] = $this->title;
@@ -91,10 +80,31 @@ class AddressBook extends RenderedObject
         }
 
         $data["htmlOptionsAttributes"] = $htmlOptionsAttributes;
+
+        $this->data = $data;
+    }
+
+    public function render()
+    {
+        return $this->contents;
+    }
+
+    /**
+     * Show a address book object
+     *
+     * @param array $data A list of attributes of the address book
+     *
+     * @return AddressBook An address book object
+     */
+    public function show($data = array())
+    {
+        $this->init($data);
+
         $this->contents = \View::make(
             'kandylaravel::AddressBook.AddressBook',
-            $data
+            $this->data
         )->render();
+
         return $this;
     }
 }

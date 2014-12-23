@@ -54,7 +54,10 @@ class KandylaravelServiceProvider extends ServiceProvider
             function () {
                 $kandy = new Kandylaravel();
 
-                $kandy->html = $this->app->make('Illuminate\Html\HtmlBuilder');
+                $kandy->htmlBuilder = $this->app->make
+                    (
+                        'Illuminate\Html\HtmlBuilder'
+                    );
 
                 return $kandy;
             }
@@ -80,7 +83,7 @@ class KandylaravelServiceProvider extends ServiceProvider
     private function registerButton()
     {
         $this->app->bind(
-            'kandylaravel::Button',
+            'kandylaravel::button',
             function () {
                 return new Button();
             }

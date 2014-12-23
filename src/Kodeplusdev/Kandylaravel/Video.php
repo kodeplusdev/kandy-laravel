@@ -31,38 +31,21 @@ class Video extends RenderedObject
     );
 
     /**
+     * Data of widget
+     * @var array
+     */
+    protected $data = array();
+
+    /**
      * @var string The html contents of the video
      */
     protected $contents;
 
     /**
-     * TODO: remove it? remove other init() function in other classes if needed
-     *
-     * @param $data
+     * Initialize data of widget
+     * @param array $data
      */
     public function init($data)
-    {
-
-    }
-
-    /**
-     * Renders the content
-     *
-     * @return string Html content
-     */
-    public function render()
-    {
-        return $this->contents;
-    }
-
-    /**
-     * Show a video object
-     *
-     * @param array $data A list of attributes of the video
-     *
-     * @return Video A video object
-     */
-    public function show($data = array())
     {
         if (!isset($data["title"])) {
             $data["title"] = $this->title;
@@ -103,8 +86,32 @@ class Video extends RenderedObject
         }
 
         $data["htmlOptionsAttributes"] = $htmlOptionsAttributes;
-        $this->contents = \View::make('kandylaravel::Video.video', $data)
+        $this->data = $data;
+    }
+
+    /**
+     * Renders the content
+     *
+     * @return string Html content
+     */
+    public function render()
+    {
+        return $this->contents;
+    }
+
+    /**
+     * Show a video object
+     *
+     * @param array $data A list of attributes of the video
+     *
+     * @return Video A video object
+     */
+    public function show($data = array())
+    {
+        $this->init($data);
+        $this->contents = \View::make('kandylaravel::Video.video', $this->data)
             ->render();
+
         return $this;
     }
 }

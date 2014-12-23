@@ -179,7 +179,7 @@ kandy_answerVideoCall = function (target) {
 /*
  Event when click call button
  */
-kandy_makeCall = function (target) {
+kandy_makeVideoCall = function (target) {
 
     KandyAPI.Phone.makeVideoCall($('.kandyButton .kandyVideoButtonCallOut #callOutUserId').val());
     changeAnswerButtonState("CALLING");

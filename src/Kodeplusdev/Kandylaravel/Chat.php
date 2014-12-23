@@ -25,7 +25,7 @@ class Chat extends RenderedObject
     protected $htmlOptions = array();
 
     /**
-     * TODO: comment on it.
+     * Default component options
      *
      * @var array
      */
@@ -45,30 +45,22 @@ class Chat extends RenderedObject
         );
 
     /**
+     * Data of widget
+     * @var array
+     */
+    protected $data = array();
+
+    /**
      * @var The html content of the Chat
      */
     protected $contents;
 
+    /**
+     * Initialize data of widget
+     * @param $data
+     */
     public function init($data)
     {
-
-    }
-
-    public function render()
-    {
-        return $this->contents;
-    }
-
-    /**
-     * Show a Chat object
-     *
-     * @param array $data A list of attributes of the Chat
-     *
-     * @return Chat A chat object
-     */
-    public function show($data = array())
-    {
-
         if (!isset($data["id"])) {
             $data["id"] = "chat-" . rand();
         } else {
@@ -125,8 +117,29 @@ class Chat extends RenderedObject
         }
 
         $data["htmlOptionsAttributes"] = $htmlOptionsAttributes;
-        $this->contents = \View::make('kandylaravel::Chat.chat', $data)->render(
-        );
+        $this->data = $data;
+    }
+
+    public function render()
+    {
+        return $this->contents;
+    }
+
+    /**
+     * Show a Chat object
+     *
+     * @param array $data A list of attributes of the Chat
+     *
+     * @return Chat A chat object
+     */
+    public function show($data = array())
+    {
+        $this->init($data);
+        $this->contents = \View::make(
+            'kandylaravel::Chat.chat',
+            $this->data
+        )->render();
+
         return $this;
     }
 }

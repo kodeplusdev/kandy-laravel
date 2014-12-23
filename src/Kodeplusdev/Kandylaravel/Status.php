@@ -14,11 +14,10 @@ class Status extends RenderedObject
     protected $id = "";
 
     /**
-     * TODO: The default title should be "Status" instead of "Title"
      *
      * @var string The Title of the status
      */
-    protected $title = "Title";
+    protected $title = "My Status";
 
     /**
      * @var string The css class of the status
@@ -33,33 +32,21 @@ class Status extends RenderedObject
     );
 
     /**
+     * Data of widget
+     * @var array
+     */
+    protected $data = array();
+
+    /**
      * @var string The html contents of the Status
      */
     protected $contents;
 
+    /**
+     * Initialize data of widget
+     * @param $data
+     */
     public function init($data)
-    {
-
-    }
-
-    /**
-     * Renders the label
-     *
-     * @return string
-     */
-    public function render()
-    {
-        return $this->contents;
-    }
-
-    /**
-     * Show the status object
-     *
-     * @param array $data A list of attributes of the Status
-     *
-     * @return Status A status object
-     */
-    public function show($data = array())
     {
         if (!isset($data["title"])) {
             $data["title"] = $this->title;
@@ -100,8 +87,35 @@ class Status extends RenderedObject
         }
 
         $data["htmlOptionsAttributes"] = $htmlOptionsAttributes;
-        $this->contents = \View::make('kandylaravel::Status.status', $data)
-            ->render();
+        $this->data = $data;
+    }
+
+    /**
+     * Renders the label
+     *
+     * @return string
+     */
+    public function render()
+    {
+        return $this->contents;
+    }
+
+    /**
+     * Show the status object
+     *
+     * @param array $data A list of attributes of the Status
+     *
+     * @return Status A status object
+     */
+    public function show($data = array())
+    {
+        $this->init($data);
+
+        $this->contents = \View::make(
+            'kandylaravel::Status.status',
+            $this->data
+        )->render();
+
         return $this;
     }
 }
