@@ -1,34 +1,52 @@
 <?php
-/**
- * Bootstrapper label class
- */
-
 namespace Kodeplusdev\Kandylaravel;
 
 /**
- * Creates bootstrap 3 compliant labels
+ * Class Chat that renders a Chat object
  *
- * @package Bootstrapper
+ * @package Kandylaravel
  */
 class Chat extends RenderedObject
 {
 
+    /**
+     * @var string The ID of the Chat
+     */
     protected $id = "";
+
+    /**
+     * @var string The css class of the Chat
+     */
     protected $class = 'kandyChat';
+
+    /**
+     * @var array A list of html options of the Chat
+     */
     protected $htmlOptions = array();
-    protected $options = array(
-        "contact" => array(
-            "id" => "kandyChatContact",
-            "label" => "Contact",
-        ),
-        "message" => array(
-            "id" => "kandyChatMessage",
-            "label" => "Messages",
-        ),
-        "user" => array(
-            "name" => "Me"
-        )
-    );
+
+    /**
+     * TODO: comment on it.
+     *
+     * @var array
+     */
+    protected $options
+        = array(
+            "contact" => array(
+                "id"    => "kandyChatContact",
+                "label" => "Contact",
+            ),
+            "message" => array(
+                "id"    => "kandyChatMessage",
+                "label" => "Messages",
+            ),
+            "user"    => array(
+                "name" => "Me"
+            )
+        );
+
+    /**
+     * @var The html content of the Chat
+     */
     protected $contents;
 
     public function init($data)
@@ -41,6 +59,13 @@ class Chat extends RenderedObject
         return $this->contents;
     }
 
+    /**
+     * Show a Chat object
+     *
+     * @param array $data A list of attributes of the Chat
+     *
+     * @return Chat A chat object
+     */
     public function show($data = array())
     {
 
@@ -59,7 +84,7 @@ class Chat extends RenderedObject
 
         //init options
         $attributes = array("contact", "message", "user");
-        if(!isset($data["options"])){
+        if (!isset($data["options"])) {
             $data["options"] = array();
         }
         foreach ($attributes as $attr) {
@@ -70,7 +95,8 @@ class Chat extends RenderedObject
                 $defaultComAttributes = $this->options[$attr];
                 foreach ($comAttributes as $comAttributeKey => $comAttribute) {
                     if (!isset($data["options"][$attr][$comAttributeKey])) {
-                        $data["options"][$attr][$comAttributeKey] = $defaultComAttributes[$comAttributeKey];
+                        $data["options"][$attr][$comAttributeKey]
+                            = $defaultComAttributes[$comAttributeKey];
                     }
                 }
             } else {
@@ -99,7 +125,8 @@ class Chat extends RenderedObject
         }
 
         $data["htmlOptionsAttributes"] = $htmlOptionsAttributes;
-        $this->contents = \View::make('kandylaravel::Chat.chat', $data)->render();
+        $this->contents = \View::make('kandylaravel::Chat.chat', $data)->render(
+        );
         return $this;
     }
 }

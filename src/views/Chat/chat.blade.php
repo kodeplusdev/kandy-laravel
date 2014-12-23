@@ -7,7 +7,6 @@
         <div id="{{$options['message']['id']}}">
             {{$options['message']['label']}}: <input class= "imMessageToSend" type="text" />
         </div>
-
         <input class="btnSendMessage" type="submit" onclick="kandy_sendIm();return false;" value="Send"/>  <br/>
     </form>
     <div class="kandyMessages"></div>

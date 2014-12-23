@@ -2,11 +2,11 @@
 namespace Kodeplusdev\Kandylaravel;
 
 /**
- * Class Status that render a Status object
+ * Creates bootstrap 3 compliant labels
  *
  * @package Kandylaravel
  */
-class Status extends RenderedObject
+class AddressBook extends RenderedObject
 {
     /**
      * @var string The ID of the video
@@ -14,26 +14,22 @@ class Status extends RenderedObject
     protected $id = "";
 
     /**
-     * TODO: The default title should be "Status" instead of "Title"
-     *
-     * @var string The Title of the status
+     * @var string The Title of the address book
      */
-    protected $title = "Title";
+    protected $title = "My Contact";
 
     /**
-     * @var string The css class of the status
+     * @var string The css class of the address book
      */
-    protected $class = 'kandyStatus';
+    protected $class = 'kandyAddressBook';
 
     /**
-     * @var array A list of html options of the Status
+     * @var array A list of html options of the address book
      */
-    protected $htmlOptions = array(
-        "style" => "width: 100px;"
-    );
+    protected $htmlOptions = array();
 
     /**
-     * @var string The html contents of the Status
+     * @var string The html contents of the Address book
      */
     protected $contents;
 
@@ -42,22 +38,17 @@ class Status extends RenderedObject
 
     }
 
-    /**
-     * Renders the label
-     *
-     * @return string
-     */
     public function render()
     {
         return $this->contents;
     }
 
     /**
-     * Show the status object
+     * Show a address book object
      *
-     * @param array $data A list of attributes of the Status
+     * @param array $data A list of attributes of the address book
      *
-     * @return Status A status object
+     * @return AddressBook An address book object
      */
     public function show($data = array())
     {
@@ -68,7 +59,7 @@ class Status extends RenderedObject
         }
 
         if (!isset($data["id"])) {
-            $data["id"] = "video-" . rand();
+            $data["id"] = "address-book-" . rand();
         } else {
             $this->id = $data["id"];
         }
@@ -100,8 +91,10 @@ class Status extends RenderedObject
         }
 
         $data["htmlOptionsAttributes"] = $htmlOptionsAttributes;
-        $this->contents = \View::make('kandylaravel::Status.status', $data)
-            ->render();
+        $this->contents = \View::make(
+            'kandylaravel::AddressBook.AddressBook',
+            $data
+        )->render();
         return $this;
     }
 }

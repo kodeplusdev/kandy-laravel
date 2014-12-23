@@ -1,33 +1,34 @@
-<?php namespace Kodeplusdev\Kandylaravel;
+<?php
+namespace Kodeplusdev\Kandylaravel;
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Html\HtmlBuilder;
-use Kodeplusdev\Kandylaravel\Facades\AddressBook;
+use Illuminate\Support\ServiceProvider;
 
-class KandylaravelServiceProvider extends ServiceProvider {
+class KandylaravelServiceProvider extends ServiceProvider
+{
 
-	/**
-	 * Indicates if loading of the provider is deferred.
-	 *
-	 * @var bool
-	 */
-	protected $defer = false;
+    /**
+     * Indicates if loading of the provider is deferred.
+     *
+     * @var bool
+     */
+    protected $defer = false;
 
-	/**
-	 * Bootstrap the application events.
-	 *
-	 * @return void
-	 */
-	public function boot()
-	{
-		$this->package('kodeplusdev/kandylaravel');
-	}
+    /**
+     * Bootstrap the application events.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $this->package('kodeplusdev/kandylaravel');
+    }
 
-	/**
-	 * Register the service provider.
-	 *
-	 * @return void
-	 */
+    /**
+     * Register the service provider.
+     *
+     * @return void
+     */
     public function register()
     {
         $this->registerKandyLaravel();
@@ -44,7 +45,24 @@ class KandylaravelServiceProvider extends ServiceProvider {
     }
 
     /**
-     *
+     * Register Kandy Laravel
+     */
+    private function registerKandyLaravel()
+    {
+        $this->app->bind(
+            'kandylaravel::KandyLaravel',
+            function () {
+                $kandy = new Kandylaravel();
+
+                $kandy->html = $this->app->make('Illuminate\Html\HtmlBuilder');
+
+                return $kandy;
+            }
+        );
+    }
+
+    /**
+     * Register Video
      */
     private function registerVideo()
     {
@@ -56,9 +74,8 @@ class KandylaravelServiceProvider extends ServiceProvider {
         );
     }
 
-
     /**
-     *
+     * Register Button
      */
     private function registerButton()
     {
@@ -71,7 +88,7 @@ class KandylaravelServiceProvider extends ServiceProvider {
     }
 
     /**
-     *
+     * Register Status
      */
     private function registerStatus()
     {
@@ -82,21 +99,22 @@ class KandylaravelServiceProvider extends ServiceProvider {
             }
         );
     }
+
     /**
-     *
+     * Register address book
      */
     private function registerAddressBook()
     {
         $this->app->bind(
             'kandylaravel::addressBook',
             function () {
-                return new AddressBookObject();
+                return new AddressBook();
             }
         );
     }
 
     /**
-     *
+     * Register Chat
      */
     private function registerChat()
     {
@@ -108,30 +126,14 @@ class KandylaravelServiceProvider extends ServiceProvider {
         );
     }
 
-    private function registerKandyLaravel()
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
     {
-        $this->app->bind(
-            'kandylaravel::KandyLaravel',
-            function () {
-                $kandy = new Kandylaravel(
-//                    $this->app->make('Illuminate\Html\HtmlBuilder')
-                );
-
-                $kandy->html = $this->app->make('Illuminate\Html\HtmlBuilder');
-
-                return $kandy;
-            }
-        );
+        return array();
     }
-
-	/**
-	 * Get the services provided by the provider.
-	 *
-	 * @return array
-	 */
-	public function provides()
-	{
-		return array();
-	}
 
 }

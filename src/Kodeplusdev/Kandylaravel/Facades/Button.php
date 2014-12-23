@@ -1,6 +1,6 @@
 <?php
 /**
- * Bootstrapper Image facade
+ * Kandy Button facade
  */
 
 namespace Kodeplusdev\Kandylaravel\Facades;
@@ -8,10 +8,10 @@ namespace Kodeplusdev\Kandylaravel\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * Facade for the Label class
+ * Facade for the Button class
  *
- * @package Bootstrapper\Facades
- * @see     Bootstrapper\Label
+ * @package Kodeplusdev\Kandylaravel\Facades
+ * @see     Kodeplusdev\Kandylaravel\Button
  */
 class Button extends Facade
 {
@@ -21,6 +21,8 @@ class Button extends Facade
      */
     protected static function getFacadeAccessor()
     {
+        //TODO: why Button has B in capital whereas others are in lower case
+        // (e.g kandylaravel::chat)
         return 'kandylaravel::Button';
     }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Bootstrapper Image facade
+ * Kandy AddressBook facade
  */
 
 namespace Kodeplusdev\Kandylaravel\Facades;
@@ -8,13 +8,14 @@ namespace Kodeplusdev\Kandylaravel\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * Facade for the Label class
+ * Facade for the AddressBook class
  *
- * @package Bootstrapper\Facades
- * @see     Bootstrapper\Label
+ * @package Kodeplusdev\Kandylaravel\Facades
+ * @see     Kodeplusdev\Kandylaravel\AddressBook
  */
 class AddressBook extends Facade
-{   /**
+{
+    /**
      * {@inheritdoc}
      * @return string
      */

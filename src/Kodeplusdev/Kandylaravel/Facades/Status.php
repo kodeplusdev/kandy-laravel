@@ -1,6 +1,6 @@
 <?php
 /**
- * Bootstrapper Image facade
+ * Kandy Status facade
  */
 
 namespace Kodeplusdev\Kandylaravel\Facades;
@@ -8,10 +8,10 @@ namespace Kodeplusdev\Kandylaravel\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * Facade for the Label class
+ * Facade for the Status class
  *
- * @package Bootstrapper\Facades
- * @see     Bootstrapper\Label
+ * @package Kodeplusdev\Kandylaravel\Facades
+ * @see     Kodeplusdev\Kandylaravel\Status
  */
 class Status extends Facade
 {

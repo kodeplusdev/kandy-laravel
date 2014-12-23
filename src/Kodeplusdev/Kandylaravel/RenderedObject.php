@@ -7,7 +7,7 @@ namespace Kodeplusdev\Kandylaravel;
 /**
  * Rendered Object abstract class
  *
- * @package Bootstrapper
+ * @package Kandylaravel
  */
 abstract class RenderedObject
 {
@@ -46,6 +46,7 @@ abstract class RenderedObject
      * Set the attributes of the object
      *
      * @param array $attributes The attributes to use
+     *
      * @return $this
      */
     public function withAttributes(array $attributes)

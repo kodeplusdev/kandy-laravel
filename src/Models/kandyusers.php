@@ -1,8 +1,9 @@
 <?php
 namespace Kodeplusdev\Kandylaravel;
 
+use Config;
 use Illuminate\Database\Eloquent\Model as Eloquent;
-use \Config;
+
 class KandyUsers extends Eloquent
 {
     /**
@@ -15,8 +16,7 @@ class KandyUsers extends Eloquent
     /**
      * Create a new Eloquent model instance.
      *
-     * @param  array  $attributes
-     * @return void
+     * @param array $attributes
      */
     public function __construct(array $attributes = array())
     {

@@ -27,7 +27,7 @@ class CreateUsersTable extends Migration
                 $table->string('domain_name');
                 $table->string('api_key');
                 $table->string('api_secret');
-                $table->string('main_user_id')->nullable()->default(NULL);
+                $table->string('main_user_id')->nullable()->default(null);
                 $table->timestamps();
             }
         );

@@ -1,89 +1,110 @@
 <?php
-/**
- * Bootstrapper label class
- */
-
 namespace Kodeplusdev\Kandylaravel;
+
 /**
- * Creates bootstrap 3 compliant labels
+ * Class Video that renders a video object
  *
- * @package Bootstrapper
+ * @package Kandylaravel
  */
 class Video extends RenderedObject
 {
     /**
      * @var string The ID of the video
      */
-    protected  $id ="";
+    protected $id = "";
+
     /**
      * @var string The Title of the video
      */
-    protected  $title = "Title";
+    protected $title = "Title";
 
+    /**
+     * @var string The css class of the video
+     */
     protected $class = 'kandyVideo';
 
-    protected $htmlOptions = array("style" => "width: 340px; height: 250px;background-color: darkslategray;");
     /**
-     * @var string The contents of the label
+     * @var array Default html options of the video
+     */
+    protected $htmlOptions = array(
+        "style" => "width: 340px; height: 250px;background-color: darkslategray;"
+    );
+
+    /**
+     * @var string The html contents of the video
      */
     protected $contents;
-    public function init($data){
+
+    /**
+     * TODO: remove it? remove other init() function in other classes if needed
+     *
+     * @param $data
+     */
+    public function init($data)
+    {
 
     }
+
     /**
-     * Renders the label
+     * Renders the content
      *
-     * @return string
+     * @return string Html content
      */
     public function render()
     {
         return $this->contents;
     }
+
     /**
-     * Creates a normal label
+     * Show a video object
      *
-     * @param string $contents The contents of the label
-     * @return $this
+     * @param array $data A list of attributes of the video
+     *
+     * @return Video A video object
      */
     public function show($data = array())
     {
-        if(!isset($data["title"])){
+        if (!isset($data["title"])) {
             $data["title"] = $this->title;
         } else {
             $this->title = $data['title'];
         }
-        if(!isset($data["id"])){
+
+        if (!isset($data["id"])) {
             $data["id"] = "video-" . rand();
         } else {
             $this->id = $data["id"];
         }
 
-        if(!isset($data["class"])){
+        if (!isset($data["class"])) {
             $data["class"] = $this->class;
         } else {
-            $data["class"] = $this->class ." ". $data["class"];
+            $data["class"] = $this->class . " " . $data["class"];
             $this->class = $data["class"];
         }
-        if(!isset($data["htmlOptions"])){
+
+        if (!isset($data["htmlOptions"])) {
             $data['htmlOptions'] = $this->htmlOptions;
         }
+
         $htmlOptionsAttributes = "";
-        if(!empty($data['htmlOptions'])){
-            if(!isset($data["htmlOptions"]["style"])){
+        if (!empty($data['htmlOptions'])) {
+            if (!isset($data["htmlOptions"]["style"])) {
                 $data['htmlOptions']['style'] = $this->htmlOptions["style"];
             } else {
                 $this->htmlOptions = $data['htmlOptions'];
             }
 
-            foreach($data['htmlOptions'] as $key => $value){
-                if($key != "id" && $key != "class"){
-                    $htmlOptionsAttributes.= $key . "= '" . $value . "'";
+            foreach ($data['htmlOptions'] as $key => $value) {
+                if ($key != "id" && $key != "class") {
+                    $htmlOptionsAttributes .= $key . "= '" . $value . "'";
                 }
             }
         }
 
         $data["htmlOptionsAttributes"] = $htmlOptionsAttributes;
-        $this->contents = \View::make('kandylaravel::Video.video', $data)->render();
+        $this->contents = \View::make('kandylaravel::Video.video', $data)
+            ->render();
         return $this;
     }
 }
