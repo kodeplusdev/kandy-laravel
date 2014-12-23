@@ -342,21 +342,23 @@ class Kandylaravel
      * Assign an application user to a Kandy user
      *
      * @param int $mainUserId Application User Id
-     * @param int $user_id Kandy user id
+     * @param int $user_id Kandy user id, null in case random assignment.
      *
      * @return bool True if success, false if fail
      */
     public function assignUser($mainUserId, $user_id)
     {
-        KandyUsers::wheremain_user_id($mainUserId)->update(
-            array('main_user_id' => null)
-        );
-        $kandyUser = KandyUsers::find($user_id);
+        KandyUsers::wheremain_user_id($mainUserId)->update(array('main_user_id' => null));
+        $kandyUser = is_null($user_id) ? KandyUsers::whereNull('main_user_id')->first() : KandyUsers::find($user_id);
         if (empty($kandyUser)) {
-            $result = false;
+            $result = array('success' => false, 'message' => 'Cannot find the Kandy user.');
         } else {
             $kandyUser->main_user_id = $mainUserId;
-            $result = $kandyUser->save();
+            if ($kandyUser->save()) {
+                $result = array('success' => true, 'message' => 'Assign successfully', 'user' => $kandyUser->user_id);
+            } else {
+                $result = array('success' => false, 'message' => 'Cannot assign the Kandy user.');
+            }
         }
         return $result;
     }
