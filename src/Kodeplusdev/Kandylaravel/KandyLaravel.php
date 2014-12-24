@@ -455,7 +455,12 @@ class Kandylaravel
         $return .= $this->add('script', self::KANDY_JS);
         $return .= "<script>window.login = function() {KandyAPI.Phone.login('"
             . $this->apiKey . "', '" . $this->username . "', '"
-            . $this->password . "')};</script>";
+            . $this->password . "')};
+            $(window).unload(function() {
+                KandyAPI.Phone.logout(function () {
+                });
+            });
+            </script>";
         $return .= $this->add('script', asset(self::KANDY_JS_CUSTOM));
 
         return $return;
