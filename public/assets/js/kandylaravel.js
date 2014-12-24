@@ -119,6 +119,7 @@ kandy_oncall_callback = function (call) {
     if (typeof oncall_callback == 'function') {
         oncall_callback(call);
     }
+    changeAnswerButtonState("ON_CALL");
 }
 
 /**
