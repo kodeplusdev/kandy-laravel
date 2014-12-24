@@ -11,7 +11,7 @@ class Button extends RenderedObject
     /**
      * @var string The ID of the Button
      */
-    protected $id = "kandyVideoAnswerButton";
+    protected $id = "kandyButton";
 
     /**
      * @var string The css class of the button

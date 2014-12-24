@@ -33,5 +33,9 @@
            value="{{$options['onCall']['btnLabel']}}"
            onclick="kandy_endCall(this)"/>
 </div>
+
+<div class="videoVoiceCallHolder">
+    <span class="video"></span>
+</div>
 <!-- end oncall -->
 </div>
