@@ -49,7 +49,7 @@ II. PACKAGE SETUP
 	```
     app\config\packages\kodeplusdev\kandylaravel\config.php
 	```
-	Login to [kandy.io](https://kandy.io) to retrieve the ```api key``` and ```domain_api_secret``` for the domain
+	Login to [kandy.io](https://www.kandy.io) to retrieve the ```api key``` and ```domain_api_secret``` for the domain
 
 6. Define service provider and alias for Kandy in ```kandylaravel\app\config\app.php```
 	```php
