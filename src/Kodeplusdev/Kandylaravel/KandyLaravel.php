@@ -453,16 +453,36 @@ class Kandylaravel
         }
         $return .= $this->add('script', self::KANDY_JS_FCS);
         $return .= $this->add('script', self::KANDY_JS);
-        $return .= "<script>window.login = function() {KandyAPI.Phone.login('"
-            . $this->apiKey . "', '" . $this->username . "', '"
-            . $this->password . "')};
-            $(window).unload(function() {
-                KandyAPI.Phone.logout(function () {
-                });
-            });
-            </script>";
+        $return .= "<script>
+                    window.login = function() {
+                        KandyAPI.Phone.login('" . $this->apiKey . "', '" . $this->username . "', '" . $this->password . "');
+                    };
+                    </script>";
         $return .= $this->add('script', asset(self::KANDY_JS_CUSTOM));
 
+        return $return;
+    }
+
+    /**
+     * Return logout script
+     *
+     * @return string
+     */
+    public function logout()
+    {
+        $return = "";
+        $jqueryReload = \Config::get('kandylaravel::key');
+        if ($jqueryReload) {
+            $return .= $this->add('script', asset(self::KANDY_JQUERY));
+        }
+        $return .= $this->add('script', self::KANDY_JS_FCS);
+        $return .= $this->add('script', self::KANDY_JS);
+        $return .= $this->add('script', asset(self::KANDY_JS_CUSTOM));
+        $return .= "<script>
+                       window.kandy_logout = function() {
+                                KandyAPI.Phone.logout();
+                            };
+                    </script>";
         return $return;
     }
 }

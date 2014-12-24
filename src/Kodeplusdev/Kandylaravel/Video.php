@@ -16,7 +16,7 @@ class Video extends RenderedObject
     /**
      * @var string The Title of the video
      */
-    protected $title = "Title";
+    protected $title = "My Video";
 
     /**
      * @var string The css class of the video

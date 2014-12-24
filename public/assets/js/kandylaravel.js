@@ -4,6 +4,7 @@
 setup = function () {
     // initialize KandyAPI.Phone, passing a config JSON object that contains listeners (event callbacks)
     KandyAPI.Phone.setup({
+        allowAutoLogin: true,
         // respond to Kandy events...
         listeners: {
             loginsuccess: kandy_loginsuccess_callback,
@@ -23,6 +24,7 @@ setup = function () {
         }
     });
 }
+
 /**
  * Login Success Callback
  */
@@ -42,6 +44,11 @@ kandy_loginsuccess_callback = function () {
     //call user callback
     if (typeof loginsuccess_callback == 'function') {
         loginsuccess_callback();
+    }
+
+    //call user logout if exists
+    if (typeof kandy_logout == 'function') {
+        kandy_logout();
     }
 }
 
@@ -411,7 +418,7 @@ kandy_sendIm = function () {
     var uuid = KandyAPI.Phone.sendIm(username, message,
         function () {
             $('.kandyChat .kandyMessages').append('<div>' +
-            '<span class="imUsername">' + displayName + '</span>' +
+            '<b><span class="imUsername">' + displayName + ':</span></b>' +
             '<span class="imMessage">' + message + '</span>' +
             '</div>');
             $('.kandyChat .imMessageToSend').val('');
@@ -435,7 +442,7 @@ kandy_getIms = function () {
                     var msg = data.messages[i].message.text
 
                     $('.kandyChat .kandyMessages').append('<div>' +
-                    '<span class="imUsername">' + username + '</span>' +
+                    '<b><span class="imUsername">' + username + ':</span></b>' +
                     '<span class="imMessage">' + msg + '</span>' +
                     '</div>');
                 } else {
