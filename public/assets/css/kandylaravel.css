@@ -57,6 +57,9 @@
 .kandyButton .kandyVideoButtonSomeonesCalling {
     display: none;
 }
+.kandyButton .videoVoiceCallHolder{
+    display: none;
+}
 
 /*KANDY ADDRESS BOOK */
 .kandyAddressBook .kandyAddressContactList {

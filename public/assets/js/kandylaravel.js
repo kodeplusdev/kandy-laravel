@@ -65,6 +65,12 @@ kandy_loginfailed_callback = function () {
  * @param videoTag
  */
 kandy_localvideoinitialized_callback = function (videoTag) {
+
+    //have video widget
+    if($(".kandyVideo").length){
+        $('#myVideo').append(videoTag);
+    }
+
     if (typeof localvideoinitialized_callback == 'function') {
         localvideoinitialized_callback(videoTag);
     }
@@ -76,6 +82,14 @@ kandy_localvideoinitialized_callback = function (videoTag) {
  */
 kandy_remotevideoinitialized_callack = function (videoTag) {
 
+    //have video widget
+    if($(".kandyVideo").length){
+        $('#theirVideo').append(videoTag);
+    }
+    //have voice call widget
+    if($(".kandyButton .videoVoiceCallHolder").length){
+        $('.kandyButton .videoVoiceCallHolder .video').append(videoTag);
+    }
     if (typeof remotevideoinitialized_callack == 'function') {
         remotevideoinitialized_callack(videoTag);
     }
@@ -133,7 +147,11 @@ kandy_callanswered_callback = function (call, isAnonymous) {
  * kandy callended callback
  */
 kandy_callended_callback = function () {
-    callended_callback();
+    //have video widget
+    if($(".kandyVideo").length){
+        $('#theirVideo').empty();
+        $('#myVideo').empty();
+    }
     if (typeof callended_callback == 'function') {
         callended_callback();
     }
