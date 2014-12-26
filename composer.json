@@ -28,6 +28,12 @@
         ],
         "post-update-cmd": [
             "php artisan asset:publish kodeplusdev/kandylaravel"
+        ],
+        "post-package-update" : [
+            "php artisan asset:publish kodeplusdev/kandylaravel"
+        ],
+        "post-package-install" : [
+            "php artisan asset:publish kodeplusdev/kandylaravel"
         ]
     },
     "minimum-stability": "stable"
