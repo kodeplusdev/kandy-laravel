@@ -1,6 +1,5 @@
 //========================KANDY SETUP AND LISTENER CALLBACK ==============
 
-
 setup = function () {
     // initialize KandyAPI.Phone, passing a config JSON object that contains listeners (event callbacks)
     KandyAPI.Phone.setup({
@@ -60,6 +59,7 @@ kandy_loginfailed_callback = function () {
         loginfailed_callback();
     }
 }
+
 /**
  * Local Video Initialized callback
  * @param videoTag
@@ -76,6 +76,7 @@ kandy_localvideoinitialized_callback = function (videoTag) {
     }
 
 }
+
 /**
  * Remote Video Initialized Callback
  * @param videoTag
@@ -133,6 +134,7 @@ kandy_incoming_call_callback = function (call, isAnonymous) {
     }
     changeAnswerButtonState('BEING_CALLED');
 }
+
 /**
  * kandy call answered callback
  * @param call
@@ -144,6 +146,7 @@ kandy_callanswered_callback = function (call, isAnonymous) {
     }
     changeAnswerButtonState("ON_CALL");
 }
+
 /**
  * kandy callended callback
  */
@@ -158,6 +161,7 @@ kandy_callended_callback = function () {
     }
     changeAnswerButtonState("READY_FOR_CALLING");
 }
+
 /**
  * Change AnswerButtonState with KandyButton Widget
  * @param state
@@ -202,6 +206,7 @@ kandy_answerVideoCall = function (target) {
         answerVideoCall_callback("ANSWERING_CALL");
     }
 }
+
 /*
  Event when click call button
  */
@@ -223,6 +228,7 @@ kandy_answerVoiceCall = function (target) {
     }
 
 }
+
 /*
  Event when click call button
  */
@@ -231,6 +237,7 @@ kandy_makeVoiceCall = function (target) {
     KandyAPI.Phone.makeVoiceCall($('.kandyButton .kandyVideoButtonCallOut #callOutUserId').val());
     changeAnswerButtonState("CALLING");
 }
+
 /*
  Event when click end call button
  */
@@ -284,6 +291,7 @@ kandy_loadContacts_addressBook = function () {
     );
 
 }
+
 /**
  * Change current user status with kandyAddressBook
  * @param status
@@ -354,6 +362,7 @@ kandy_addToContacts = function (userId) {
         );
     }
 };
+
 /**
  * Remove a user from Contact List with kandyAddressBook
  * @param nickname
@@ -366,6 +375,7 @@ kandy_removeFromContacts = function (nickname) {
         }
     );
 };
+
 /**
  * Search contact list by username with kandyAddressBook
  */
@@ -413,12 +423,10 @@ kandy_loadContacts_chat = function () {
         function (results) {
             var div = null;
             if (results.length == 0) {
-                $(".kandyChat .imToContact").empty();
+                emptyContact();
             } else {
                 for (i = 0; i < results.length; i++) {
-                    $('.kandyChat .imToContact').append(
-                        '<option value="' + results[i].contact_user_name + '">' + results[i].contact_user_name + '</option>'
-                    );
+                    prependContact(results[i].contact_user_name);
                 }
             }
         },
@@ -427,26 +435,30 @@ kandy_loadContacts_chat = function () {
         }
     );
 };
+
 /**
  * Send a message with kandyChat
  */
-kandy_sendIm = function () {
+kandy_sendIm = function (username) {
     var displayName = $('.kandyChat .kandy_current_username').val();
-    var username = $('.kandyChat .imToContact').val();
-    var message = $('.kandyChat .imMessageToSend').val();
-    var uuid = KandyAPI.Phone.sendIm(username, message,
-        function () {
-            $('.kandyChat .kandyMessages').append('<div>' +
-            '<b><span class="imUsername">' + displayName + ':</span></b>' +
-            '<span class="imMessage">' + message + '</span>' +
-            '</div>');
-            $('.kandyChat .imMessageToSend').val('');
+    var inputMessage = $('.kandyChat .imMessageToSend[data-user="' + username + '"]');
+    var message = inputMessage.val();
+    inputMessage.val('');
+    var uuid = KandyAPI.Phone.sendIm(username, message, function () {
+            var newMessage = '<div class="my-message">\
+                    <b><span class="imUsername">' + displayName + ':</span></b>\
+                    <span class="imMessage">' + message + '</span>\
+                </div>';
+            var messageDiv = $('.kandyChat .kandyMessages[data-user="' + username + '"]');
+            messageDiv.append(newMessage);
+            messageDiv.scrollTop(messageDiv[0].scrollHeight);
         },
         function () {
             alert("IM send failed");
         }
     );
 };
+
 /**
  * Get messages with kandyChat
  */
@@ -457,13 +469,30 @@ kandy_getIms = function () {
             for (i = 0; i < data.messages.length; ++i) {
                 var msg = data.messages[i];
                 if (msg.messageType == 'chat') {
-                    var username = data.messages[i].sender.user_id;
-                    var msg = data.messages[i].message.text
+                    // Get user info
+                    var username = data.messages[i].sender.full_user_id;
+                    var shortName = data.messages[i].sender.user_id;
 
-                    $('.kandyChat .kandyMessages').append('<div>' +
-                    '<b><span class="imUsername">' + username + ':</span></b>' +
-                    '<span class="imMessage">' + msg + '</span>' +
-                    '</div>');
+                    // Process tabs
+                    if (!$(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + username + "']").length) {
+                        prependContact(username);
+                    }
+                    if (!$('input.imMessageToSend').is(':focus')) {
+                        moveContactToTopAndSetActive(username);
+                    } else {
+                        moveContactToTop(username);
+                    }
+
+                    // Process message
+                    var msg = data.messages[i].message.text
+                    var newMessage = '<div class="their-message">\
+                            <b><span class="imUsername">' + shortName + ':</span></b>\
+                            <span class="imMessage">' + msg + '</span>\
+                        </div>';
+
+                    var messageDiv = $('.kandyChat .kandyMessages[data-user="' + username + '"]');
+                    messageDiv.append(newMessage);
+                    messageDiv.scrollTop(messageDiv[0].scrollHeight);
                 } else {
                     //alert("received " + msg.messageType + ": ");
                 }
@@ -474,6 +503,76 @@ kandy_getIms = function () {
         }
     )
 };
+
+/* Tab */
+
+/**
+ * Empty all contacts
+ *
+ */
+var emptyContact = function () {
+    $(liTabWrapSelector).html("");
+    $(liContentWrapSelector).html("");
+}
+
+/**
+ * Prepend a contact
+ *
+ * @param user
+ */
+var prependContact = function (user) {
+    var liContact = getLiContact(user);
+    $(liTabWrapSelector).prepend(liContact);
+    if (!$(liContentWrapSelector + " li[" + userHoldingAttribute + "='" + user + "']").length) {
+        var liContent = getLiContent(user);
+        $(liContentWrapSelector).prepend(liContent);
+    }
+}
+
+/**
+ * Get current active user name
+ *
+ * @returns {*|jQuery}
+ */
+var getActiveContact = function () {
+    var user = $(liTabWrapSelector + " li." + activeClass).attr(userHoldingAttribute);
+    return user;
+}
+
+/**
+ * Set focus to a user
+ *
+ * @param user
+ */
+var setFocusContact = function (user) {
+    $(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + user + "']").trigger("click");
+}
+
+/**
+ * Move a contact user to top of the list
+ *
+ * @param user
+ */
+var moveContactToTop = function (user) {
+    var contact = $(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + user + "']").parent();
+    var active = contact.hasClass(activeClass);
+    // Remove
+    contact.remove();
+    // Add to top
+    prependContact(user, active);
+
+}
+
+/**
+ * Move a contact user to top of the list set set focus to it
+ *
+ * @param user
+ */
+var moveContactToTopAndSetActive = function (user) {
+    moveContactToTop(user);
+    setFocusContact(user);
+    $(liTabWrapSelector).scrollTop(0);
+}
 
 // ======================JQUERY READY =======================
 $(document).ready(function () {
