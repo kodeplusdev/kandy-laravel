@@ -1,6 +1,6 @@
 <?php
 namespace Kodeplusdev\Kandylaravel;
-
+use Kodeplusdev\Kandylaravel\Console;
 use Illuminate\Html\HtmlBuilder;
 use Illuminate\Support\ServiceProvider;
 
