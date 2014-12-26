@@ -45,14 +45,7 @@ class KandylaravelServiceProvider extends ServiceProvider
 
         $this->registerChat();
         $this->app['artisan']->call("asset:publish", array("kodeplusdev/kandylaravel"));
-       // $this->publishAssets();
-    }
 
-    /**
-     * Auto publish assets when update core
-     */
-    public function publishAssets(){
-        $this->app['artisan']->call("asset:publish", array("kodeplusdev/kandylaravel"));
     }
 
     /**
