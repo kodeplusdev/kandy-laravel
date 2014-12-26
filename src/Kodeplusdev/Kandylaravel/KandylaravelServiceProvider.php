@@ -151,9 +151,6 @@ class KandylaravelServiceProvider extends ServiceProvider
         $this->registerInstallCommand();
 
         $this->commands(
-            'kandylaravel::commands.migrate',
-            'kandylaravel::commands.config',
-            'kandylaravel::commands.assets',
             'kandylaravel::commands.install'
         );
     }
