@@ -44,8 +44,8 @@ class KandylaravelServiceProvider extends ServiceProvider
         $this->registerAddressBook();
 
         $this->registerChat();
-
-        $this->publishAssets();
+        $this->app['artisan']->call("asset:publish", array("kodeplusdev/kandylaravel"));
+       // $this->publishAssets();
     }
 
     /**
