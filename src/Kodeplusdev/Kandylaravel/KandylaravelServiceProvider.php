@@ -45,7 +45,7 @@ class KandylaravelServiceProvider extends ServiceProvider
 
         $this->registerChat();
 
-        //$this->publishAssets();
+        $this->publishAssets();
     }
 
     /**
