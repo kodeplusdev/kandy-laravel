@@ -23,8 +23,6 @@ class KandylaravelServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->package('kodeplusdev/kandylaravel');
-        //include __DIR__.'/../../routes.php';
-        Artisan::call('asset:publish kodeplusdev/kandylaravel');
     }
 
     /**
@@ -47,6 +45,8 @@ class KandylaravelServiceProvider extends ServiceProvider
         $this->registerAddressBook();
 
         $this->registerChat();
+
+        $this->app['artisan']->call("asset:publish kodeplusdev/kandylaravel");
     }
 
     /**
@@ -154,6 +154,9 @@ class KandylaravelServiceProvider extends ServiceProvider
         $this->registerInstallCommand();
 
         $this->commands(
+            'kandylaravel::commands.migrate',
+            'kandylaravel::commands.config',
+            'kandylaravel::commands.assets',
             'kandylaravel::commands.install'
         );
     }
