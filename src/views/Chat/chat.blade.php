@@ -1,5 +1,8 @@
 <div class="row {{$class}} cd-tabs" id="{{$id}}" {{$htmlOptionsAttributes}} >
     <input type="hidden" class="kandy_current_username" value="{{$options['user']['name']}}"/>
+    <div>
+        Contacts:
+    </div>
     <nav>
         <ul class="cd-tabs-navigation">
         </ul>

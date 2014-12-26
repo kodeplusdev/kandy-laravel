@@ -135,11 +135,15 @@
 }
 
 .my-message {
-     color: #0995FF;
- }
+    color: #0995FF;
+}
 
 .their-message {
     color: #F47063;
+}
+
+.kandyChat .btnSendMessage {
+    width: 100%;
 }
 
 /* CSS for tab */
@@ -314,9 +318,10 @@
 
 .input-message {
     float: left;
-    width: 80%;
+    width: 87%;
 }
 
 .button-send {
+    width: 12%;
     float: right;
 }
