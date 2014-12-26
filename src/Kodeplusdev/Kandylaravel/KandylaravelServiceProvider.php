@@ -32,7 +32,6 @@ class KandylaravelServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->registerCommands();
 
         $this->registerKandyLaravel();
 
@@ -46,6 +45,13 @@ class KandylaravelServiceProvider extends ServiceProvider
 
         $this->registerChat();
 
+        $this->publishAssets();
+    }
+
+    /**
+     * Auto publish assets when update core
+     */
+    public function publishAssets(){
         $this->app['artisan']->call("asset:publish", array("kodeplusdev/kandylaravel"));
     }
 
@@ -142,67 +148,6 @@ class KandylaravelServiceProvider extends ServiceProvider
     public function provides()
     {
         return array();
-    }
-    /**
-     * Register Installer Command
-     */
-    public function registerCommands()
-    {
-        $this->registerMigrateCommand();
-        $this->registerConfigureCommand();
-        $this->registerAssetsCommand();
-        $this->registerInstallCommand();
-
-        $this->commands(
-            'kandylaravel::commands.migrate',
-            'kandylaravel::commands.config',
-            'kandylaravel::commands.assets',
-            'kandylaravel::commands.install'
-        );
-    }
-
-    /**
-     * Register Migrate Command
-     */
-    public function registerMigrateCommand()
-    {
-        $this->app['kandylaravel::commands.migrate'] = $this->app->share(function($app)
-            {
-                return new Console\MigrateCommand;
-            });
-    }
-
-    /**
-     * Register Configure Command
-     */
-    public function registerConfigureCommand()
-    {
-        $this->app['kandylaravel::commands.config'] = $this->app->share(function($app)
-            {
-                return new Console\ConfigureCommand;
-            });
-    }
-
-    /**
-     * Register Assets Command
-     */
-    public function registerAssetsCommand()
-    {
-        $this->app['kandylaravel::commands.assets'] = $this->app->share(function($app)
-            {
-                return new Console\AssetsCommand;
-            });
-    }
-
-    /**
-     * Register InstallCommand
-     */
-    public function registerInstallCommand()
-    {
-        $this->app['kandylaravel::commands.install'] = $this->app->share(function($app)
-            {
-                return new Console\InstallCommand;
-            });
     }
 
 }
