@@ -23,7 +23,7 @@ class KandylaravelServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->package('kodeplusdev/kandylaravel');
-        $this->app['artisan']->call('asset:publish kodeplusdev/kandylaravel');
+        //$this->app['artisan']->call('asset:publish kodeplusdev/kandylaravel');
     }
 
     /**
