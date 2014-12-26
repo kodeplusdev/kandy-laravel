@@ -130,5 +130,193 @@
 
 .kandyChat .kandyMessages {
     width: 100%;
-    min-height: 500px;
+    height: 425px;
+    overflow: auto;
+}
+
+.my-message {
+     color: #0995FF;
+ }
+
+.their-message {
+    color: #F47063;
+}
+
+/* CSS for tab */
+
+.row.cd-tabs {
+    position: relative;
+    width: 90%;
+    max-width: 960px;
+    margin: 2em 0;
+    height: 500px!important;
+}
+
+.cd-tabs nav {
+    width: 20%;
+    height: 100%;
+    float: left;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 5px;
+    box-shadow: inset 0px 1px 2px #aaa;
+}
+
+.cd-tabs-navigation {
+    width: 100%;
+    margin: 0;
+}
+
+.cd-tabs-navigation li {
+    float: left;
+    width: 98%;
+}
+
+.cd-tabs-navigation a {
+    background-color: #ffffff !important;
+    position: relative;
+    display: block;
+    height: 60px;
+    width: 100%;
+    font-size: 12px;
+    font-size: 0.75rem;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 700;
+    color: #c3c2b9;
+    padding: 18px 10px;
+}
+
+.no-touch .cd-tabs-navigation a:hover {
+    color: #29324e;
+    background-color: rgba(233, 230, 202, 0.3);
+}
+
+.cd-tabs-navigation a.selected {
+    background-color: #ffffff !important;
+    color: #29324e;
+}
+
+.cd-tabs-navigation a::before {
+    /* icons */
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    margin-left: -10px;
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+    background-repeat: no-repeat;
+}
+
+.cd-tabs-navigation a[data-content='inbox']::before {
+    background-position: 0 0;
+}
+
+.cd-tabs-navigation a[data-content='new']::before {
+    background-position: -20px 0;
+}
+
+.cd-tabs-navigation a[data-content='gallery']::before {
+    background-position: -40px 0;
+}
+
+.cd-tabs-navigation a[data-content='store']::before {
+    background-position: -60px 0;
+}
+
+.cd-tabs-navigation a[data-content='settings']::before {
+    background-position: -80px 0;
+}
+
+.cd-tabs-navigation a[data-content='trash']::before {
+    background-position: -100px 0;
+}
+
+.cd-tabs-navigation a[data-content='inbox'].selected::before {
+    background-position: 0 -20px;
+}
+
+.cd-tabs-navigation a[data-content='new'].selected::before {
+    background-position: -20px -20px;
+}
+
+.cd-tabs-navigation a[data-content='gallery'].selected::before {
+    background-position: -40px -20px;
+}
+
+.cd-tabs-navigation a[data-content='store'].selected::before {
+    background-position: -60px -20px;
+}
+
+.cd-tabs-navigation a[data-content='settings'].selected::before {
+    background-position: -80px -20px;
+}
+
+.cd-tabs-navigation a[data-content='trash'].selected::before {
+    background-position: -100px -20px;
+}
+
+.cd-tabs-content {
+    background: #ffffff;
+    height: 100%;
+    width: 80%;
+    float: left;
+    margin: 0;
+}
+
+.cd-tabs-content li {
+    display: none;
+    padding: 0 1.4em;
+}
+
+.cd-tabs-content li.selected {
+    display: block;
+    -webkit-animation: cd-fade-in 0.5s;
+    -moz-animation: cd-fade-in 0.5s;
+    animation: cd-fade-in 0.5s;
+}
+
+.cd-tabs-content li p {
+    font-size: 14px;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: #8493bf;
+    margin-bottom: 2em;
+}
+
+@-webkit-keyframes cd-fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@-moz-keyframes cd-fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes cd-fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.input-message {
+    float: left;
+    width: 80%;
+}
+
+.button-send {
+    float: right;
 }
