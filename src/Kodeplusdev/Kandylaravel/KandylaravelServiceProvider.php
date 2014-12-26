@@ -3,6 +3,7 @@ namespace Kodeplusdev\Kandylaravel;
 use Kodeplusdev\Kandylaravel\Console;
 use Illuminate\Html\HtmlBuilder;
 use Illuminate\Support\ServiceProvider;
+use Artisan;
 
 class KandylaravelServiceProvider extends ServiceProvider
 {
@@ -22,6 +23,7 @@ class KandylaravelServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->package('kodeplusdev/kandylaravel');
+        $this->app['artisan']->call('asset:publish kodeplusdev/kandylaravel');
     }
 
     /**
