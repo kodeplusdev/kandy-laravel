@@ -52,7 +52,10 @@ class KandylaravelServiceProvider extends ServiceProvider
      * Auto publish assets when update core
      */
     public function publishAssets(){
-        $this->app['artisan']->call("asset:publish", array("kodeplusdev/kandylaravel"));
+        if(isset($this->app['artisan'])){
+            $this->app['artisan']->call("asset:publish", array("kodeplusdev/kandylaravel"));
+        }
+
     }
 
     /**
