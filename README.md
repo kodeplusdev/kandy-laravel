@@ -6,11 +6,11 @@ A simple Kandy-api-wrapped package for Laravel
 ---
 
 ## Requirements
-============
+---
 * PHP 5.4+
 
 ## Package Setup
-============
+---
 
 ### Add kandylaravel to your composer.json file
 
@@ -69,15 +69,16 @@ Define service provider and alias for Kandy in ```kandylaravel\app\config\app.ph
 ```
 
 ## Usage
-============
+---
 
-### Prepare Kandy css/javascript and log-in Kandy user who is associated with userId:
+### Register
+Prepare Kandy css/javascript and log-in Kandy user who is associated with userId:
 
 ```php
 {{KandyLaravel::init($userId);}}
 ```
 
-### Use Kandy Widget anywhere on the page:
+### Use Kandy Widget:
 
 **Kandy Video**
 ```php
@@ -229,7 +230,7 @@ Define service provider and alias for Kandy in ```kandylaravel\app\config\app.ph
 ```
 
 ## KANDY APIs
-============
+---
 
 Refer to:  ```kandylaravel\src\Kodeplusdev\Kandylaravel\KandyLaravel.php```
 
