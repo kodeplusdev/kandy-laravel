@@ -1,248 +1,289 @@
----
 # kandylaravel v1
 ---
 
-I. REQUIREMENTS
+A simple Kandy-api-wrapped package for Laravel
+
+---
+
+## Requirements
 ============
 * PHP 5.4+
 
-II. PACKAGE SETUP
+## Package Setup
 ============
-1. Create a database for your application. Update the config file ```app/config/database.php```. Default configuration:
 
-	```
-	'driver'    => 'mysql',
-	'host'      => 'localhost',
-	'database'  => 'kandylaravel',
-	'username'  => 'root',
-	'password'  => '',
-	'charset'   => 'utf8',
-	'collation' => 'utf8_unicode_ci',
-	'prefix'    => '',
-	```
-2. Declare kandylaravel package in composer.json:
-	```
-	"require": {
-        "laravel/framework": "4.2.*",
-        "toddish/verify": "3.*", // This is one user login package, you could use others
-        "kodeplusdev/kandylaravel": "dev-master"
-    },
-	```
+### Add kandylaravel to your composer.json file
+
+```php
+"require": {
+    "laravel/framework": "4.2.*",
+    "toddish/verify": "3.*", // This is a user authentication package, you may use others
+    ... // Others
+    "kodeplusdev/kandylaravel": "dev-master"
+},
+```
+
+Then, run a composer update on the command line from the root of your project:
 	
-	And run the composer to download the package:
-	
-	```
-	composer update
-	```
+```
+composer update
+```
 
-3. Run the database migrate to create some db tables:
-	```
-    php artisan migrate --package="kodeplusdev/kandylaravel"
-	```     
+### Database Migration
 
-4. Run the public command to public default js/css and prepare the config file:
-	```
-    php artisan asset:publish kodeplusdev/kandylaravel
-	```
+Migrate the database tables for kandylaravel. Run these on the command line from the root of your project:
 
-5. Config file will be generated at
-	```
+```
+php artisan migrate --package="kodeplusdev/kandylaravel"
+```
+
+### Configuration
+
+Configuration file is be generated at
+
+```
     app\config\packages\kodeplusdev\kandylaravel\config.php
-	```
-	Login to [kandy.io](https://www.kandy.io) to retrieve the ```api key``` and ```domain_api_secret``` for the domain
+```
 
-6. Define service provider and alias for Kandy in ```kandylaravel\app\config\app.php```
-	```php
-	"providers" => array(
-        ...	// Others
-        'Kodeplusdev\Kandylaravel\KandylaravelServiceProvider',
-	),
-	// Other configs
-	'aliases' => array(
-        ...	// Others
-        'KandyVideo'        => 'Kodeplusdev\Kandylaravel\Facades\Video',
-        'KandyButton'       => 'Kodeplusdev\Kandylaravel\Facades\Button',
-        'KandyStatus'       => 'Kodeplusdev\Kandylaravel\Facades\Status',
-        'KandyAddressBook'  => 'Kodeplusdev\Kandylaravel\Facades\AddressBook',
-        'KandyChat'         => 'Kodeplusdev\Kandylaravel\Facades\Chat',
-        'KandyLaravel'      => 'Kodeplusdev\Kandylaravel\Facades\KandyLaravel',
-    ),
-	```
+Login to [kandy.io](https://www.kandy.io) to retrieve the ```api key``` and ```domain_api_secret``` for the domain
 
-III. HOW TO USE KANDY WIDGETS
+### Provider and Alias
+
+Define service provider and alias for Kandy in ```kandylaravel\app\config\app.php```
+```php
+"providers" => array(
+    ...	// Others
+    'Kodeplusdev\Kandylaravel\KandylaravelServiceProvider',
+),
+
+// Other configurations
+'aliases' => array(
+    ...	// Others
+    'KandyVideo'        => 'Kodeplusdev\Kandylaravel\Facades\Video',
+    'KandyButton'       => 'Kodeplusdev\Kandylaravel\Facades\Button',
+    'KandyStatus'       => 'Kodeplusdev\Kandylaravel\Facades\Status',
+    'KandyAddressBook'  => 'Kodeplusdev\Kandylaravel\Facades\AddressBook',
+    'KandyChat'         => 'Kodeplusdev\Kandylaravel\Facades\Chat',
+    'KandyLaravel'      => 'Kodeplusdev\Kandylaravel\Facades\KandyLaravel',
+),
+```
+
+## Usage
 ============
-1. Prepare Kandy css/javascript and log-in Kandy user who is associated with userId:
 
-	```
-    {{KandyLaravel::init($userId);}}
-	```
-2. Use Kandy Widget anywhere on the page:
+### Prepare Kandy css/javascript and log-in Kandy user who is associated with userId:
 
-	a) Kandy Video
-	```php
-        {{
-            KandyButton::videoCall(array(
-                "id"      => "kandyVideoAnswerButton",
-                "class"   => "myButtonStyle",
+```php
+{{KandyLaravel::init($userId);}}
+```
+
+### Use Kandy Widget anywhere on the page:
+
+**Kandy Video**
+```php
+{{
+    KandyButton::videoCall(array(
+        "id"      => "kandyVideoAnswerButton",
+        "class"   => "myButtonStyle",
+        "options" => array(
+            "callOut"      => array(
+                "id"       => "callOut",
+                "label"    => "User to call",
+                "btnLabel" => "Call"
+            ),
+            "calling"      => array(
+                "id"       => "calling",
+                "label"    => "Calling...",
+                "btnLabel" => "End Call"
+            ),
+            "incomingCall" => array(
+                "id"       => "incomingCall",
+                "label"    => "Incoming Call",
+                "btnLabel" => "Answer"
+            ),
+            "onCall"       => array(
+                "id"       => "onCall",
+                "label"    => "You're connected!",
+                "btnLabel" => "End Call"
+            ),
+        )
+    ))
+}}
+
+{{
+    KandyVideo::show(
+        array(
+            "title"       => "Them",
+            "id"          => "theirVideo",
+            "class"       => "myVideoStyle",
+            "htmlOptions" => array( // Example how to use inline stylesheet
+                "style" => "width: 340px;
+                height: 250px;
+                background-color: darkslategray"
+            )
+        )
+    )
+}}
+
+{{
+    KandyVideo::show(
+        array(
+            "title"       => "Me",
+            "id"          => "myVideo",
+            "class"       => "myStyle",
+            "htmlOptions" => array( // Example how to use inline stylesheet
+                "style" => "width: 340px;
+                height: 250px;
+                background-color: darkslategray"
+            )
+        )
+    )
+}}
+```
+
+**Kandy Voice**
+```php
+{{
+    KandyButton::voiceCall(
+	    array(
+	        "id" => "kandyVideoAnswerButton",
+	        "class" => "myButtonStyle",
+	        "htmlOptions" => array("style" => "border: 1px solid #ccc;"),
                 "options" => array(
                     "callOut"      => array(
-                        "id"       => "callOut",
-                        "label"    => "User to call",
-                        "btnLabel" => "Call"
-                    ),
-                    "calling"      => array(
-                        "id"       => "calling",
-                        "label"    => "Calling...",
-                        "btnLabel" => "End Call"
-                    ),
-                    "incomingCall" => array(
-                        "id"       => "incomingCall",
-                        "label"    => "Incoming Call",
-                        "btnLabel" => "Answer"
-                    ),
-                    "onCall"       => array(
-                        "id"       => "onCall",
-                        "label"    => "You're connected!",
-                        "btnLabel" => "End Call"
-                    ),
-                )
-            ))
-        }}
+	                "id"       => "callOut",
+	                "label"    => "User to call",
+	                "btnLabel" => "Call"
+	            ),
+	            "calling"      => array(
+                    "id"       => "calling",
+	                "label"    => "Calling...",
+	                "btnLabel" => "End Call"
+	            ),
+	            "incomingCall" => array(
+	                "id"       => "incomingCall",
+	                "label"    => "Incoming Call",
+	                "btnLabel" => "Answer"
+	            ),
+	            "onCall"       => array(
+	                "id"       => "onCall",
+	                "label"    => "You're connected!",
+	                "btnLabel" => "End Call"
+	            ),
+	        )
+	    )
+	)
+}}
+```
 	
-        {{
-            KandyVideo::show(
-                array(
-                    "title"       => "Them",
-                    "id"          => "theirVideo",
-                    "class"       => "myVideoStyle",
-                    "htmlOptions" => array( // Example how to use inline stylesheet
-                            "style" => "width: 340px;
-                                        height: 250px;
-                                        background-color: darkslategray"
-                    )
+**Kandy Status**
+```php
+{{
+    KandyStatus::show(
+        array(
+            "title" => "My Status",
+	        "id"    => "presence",
+	        "class" => "myStatusStyle",
+	    )
+	)
+}}
+```
+	
+**Kandy Addressbook**
+```php
+{{
+    KandyAddressBook::show(
+        array(
+            "title" => "My Contact",
+	        "id"    => "contactsAndDirSearch",
+	        "class" => "myAddressBookStyle",
+	    )
+	)
+}}
+```
+	
+**Kandy Chat**
+```php
+{{
+    KandyChat::show(
+        array(
+            "id" => "myChat",
+            "class" => "myChatStyle",
+            "options" => array(
+                "contact" => array(
+                    "id" => "myContact",
+                    "label" => "Contacts",
+                ),
+                "message" => array(
+                    "id" => "myMessage",
+                    "label" => "Messages",
+                ),
+                "user" => array(
+                    "name" => KandyLaravel::getUser($userId)->user_id
                 )
             )
-        }}
-	
-        {{
-            KandyVideo::show(
-                array(
-                    "title"       => "Me",
-                    "id"          => "myVideo",
-                    "class"       => "myStyle",
-                    "htmlOptions" => array( // Example how to use inline stylesheet
-                        "style" => "width: 340px;
-                                    height: 250px;
-                                    background-color: darkslategray"
-                    )
-                )
-            )
-        }}
-	```
 
-	b) Kandy Voice
-	```php
-	    {{
-	        KandyButton::voiceCall(
-	            array(
-	                "id" => "kandyVideoAnswerButton",
-	                "class" => "myButtonStyle",
-	                "htmlOptions" => array("style" => "border: 1px solid #ccc;"),
-	                "options" => array(
-	                    "callOut"      => array(
-	                        "id"       => "callOut",
-	                        "label"    => "User to call",
-	                        "btnLabel" => "Call"
-	                    ),
-	                    "calling"      => array(
-	                        "id"       => "calling",
-	                        "label"    => "Calling...",
-	                        "btnLabel" => "End Call"
-	                    ),
-	                    "incomingCall" => array(
-	                        "id"       => "incomingCall",
-	                        "label"    => "Incoming Call",
-	                        "btnLabel" => "Answer"
-	                    ),
-	                    "onCall"       => array(
-	                        "id"       => "onCall",
-	                        "label"    => "You're connected!",
-	                        "btnLabel" => "End Call"
-	                    ),
-	                )
-	            )
-	        )
-	    }}
-	```
-	
-	c) Kandy Status
-	```php
-	    {{
-	        KandyStatus::show(
-	            array(
-	                "title" => "My Status",
-	                "id"    => "presence",
-	                "class" => "myStatusStyle",
-	            )
-	        )
-	    }}
-	```
-	
-	d) Kandy Addressbook
-	```php
-	    {{
-	        KandyAddressBook::show(
-	            array(
-	                "title" => "My Contact",
-	                "id"    => "contactsAndDirSearch",
-	                "class" => "myAddressBookStyle",
-	            )
-	        )
-	    }}
-	```
-	
-	e) Kandy Chat
-	```php
-	    {{
-            KandyChat::show(
-                array(
-                    "id"      => "myChat",
-                    "class"   => "myChatStyle",
-                    "options" => array(
-                        "contact"   => array(
-                            "id"    => "myContact",
-                            "label" => "Contacts",
-                        ),
-                        "message"   => array(
-                            "id"    => "myMessage",
-                            "label" => "Messages",
-                        ),
-                        "user"      => array(
-                            "name"  => KandyLaravel::getUser($userId)->user_id
-                        )
-                    )
+        )
+    )
+}}
+```
 
-                )
-            )
-	    }}
-	```
-
-IV. HOW TO USE KANDY APIs
+## KANDY APIs
 ============
+
 Refer to:  ```kandylaravel\src\Kodeplusdev\Kandylaravel\KandyLaravel.php```
 
-1. Sync users from Kandy to local database table kandy_users
+### Sync users from Kandy to local database table kandy_users
 
-		KandyLaravel::syncUsers()
+```php
+KandyLaravel::syncUsers();
+```
 
-2. List Kandy user from local table kandy_users or from remote
+### List Kandy user from local table kandy_users or from remote
 
-		KandyLaravel::listUser(KandyLaravel::KANDY_USER_ALL, $remote = false)
+```php
+/**
+ * User Type Accepted:
+ *
+ * KandyLaravel::KANDY_USER_ALL : get all kandy users
+ * KandyLaravel::KANDY_USER_ASSIGNED : get kandy users who are tied to a Laravel user
+ * KandyLaravel::KANDY_USER_UNASSIGNED : get kandy users who are not tied to any Laravel users
+ */
+$userType = KandyLaravel::KANDY_USER_ALL;
 
-3. Create a kandy user and assign it to application user id:
+/**
+ * Loading Type:
+ *
+ * true : list users from Kandy server
+ * false: list users from local kandy_user table
+ */
+$loadKandyUsersFromServer = false;
 
-		KandyLaravel::createUser($kandy_user_id, $kandy_email, $application_user_id);
+KandyLaravel::listUser($userType , $loadKandyUsersFromServer);
+```
 
-4. Assign application user id to kandy user id:
+### Create a kandy user and assign it to application user id:
 
-		KandyLaravel::assignUser($application_user_id, $kandy_user_id)
+```php
+// Get userId using Verify package, you may get it different ways if you use a different authentication package
+// Eg: Sentry::getUser()->id; (using Sentry)
+$application_user_id = Auth::user()->id;
+
+$kandy_user_id = "demo";
+$kandy_email   = "demo@gmail.com";
+
+KandyLaravel::createUser($kandy_user_id, $kandy_email, $application_user_id);
+```
+
+### Assign application user id to kandy user id:
+
+```php
+// Get userId using Verify package, you may get it different ways if you use a different authentication package
+// Eg: Sentry::getUser()->id; (using Sentry)
+$application_user_id = Auth::user()->id;
+
+// Id of the kandy user
+$kandy_user_id = 1;
+
+KandyLaravel::assignUser($application_user_id, $kandy_user_id);
+```
