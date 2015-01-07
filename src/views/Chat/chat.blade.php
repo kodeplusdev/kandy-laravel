@@ -91,6 +91,8 @@
                 $('.cd-tabs-navigation a').removeClass('selected');
                 selectedItem.addClass('selected');
                 selectedContent.addClass('selected').siblings('li').removeClass('selected');
+                // Set focus
+                selectedContent.find(".imMessageToSend").focus();
                 //animate tabContentWrapper height when content changes
                 tabContentWrapper.animate({
                     'height': slectedContentHeight

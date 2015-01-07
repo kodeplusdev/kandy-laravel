@@ -422,12 +422,9 @@ kandy_loadContacts_chat = function () {
     KandyAPI.Phone.retrievePersonalAddressBook(
         function (results) {
             var div = null;
-            if (results.length == 0) {
-                emptyContact();
-            } else {
-                for (i = 0; i < results.length; i++) {
-                    prependContact(results[i].contact_user_name);
-                }
+            emptyContact();
+            for (i = 0; i < results.length; i++) {
+                prependContact(results[i].contact_user_name);
             }
         },
         function () {
