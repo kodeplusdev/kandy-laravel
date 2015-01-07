@@ -411,9 +411,15 @@ kandy_searchDirectoryByUserName = function () {
 /**
  * ===================KANDYCHAT WIDGET FUNCTION ==========================
  */
+
 /**
- * Enter event to send message with kandyChat
+ * Add an example chat box
  */
+var addExampleBox = function () {
+    var tabId = "example";
+    tabContentWrapper.append(getLiContent(tabId));
+    tabContentWrapper.find('li[data-content="' + tabId + '"]').addClass('selected').find(".chat-input").attr('disabled', true);
+}
 
 /**
  * Load Contact for KandyChat
@@ -426,9 +432,10 @@ kandy_loadContacts_chat = function () {
             for (i = 0; i < results.length; i++) {
                 prependContact(results[i].contact_user_name);
             }
+            addExampleBox();
         },
         function () {
-            alert("Error");
+            console.log("Error");
         }
     );
 };

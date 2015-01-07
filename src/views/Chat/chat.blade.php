@@ -1,17 +1,23 @@
 <div class="row {{$class}} cd-tabs" id="{{$id}}" {{$htmlOptionsAttributes}} >
-    <input type="hidden" class="kandy_current_username" value="{{$options['user']['name']}}"/>
-    <div>
+<input type="hidden" class="kandy_current_username" value="{{$options['user']['name']}}"/>
+<div class="chat-heading">
+    <div class="contact-heading">
         Contacts:
     </div>
-    <nav>
-        <ul class="cd-tabs-navigation">
-        </ul>
-    </nav>
-
-    <ul class="cd-tabs-content">
+    <div class="chat-with-message">
+        Chatting with <span class="chat-friend-name"></span>
+    </div>
+    <div class="clear-fix"></div>
+</div>
+<nav>
+    <ul class="cd-tabs-navigation">
     </ul>
+</nav>
 
-    <div style="clear: both;"></div>
+<ul class="cd-tabs-content">
+</ul>
+
+<div style="clear: both;"></div>
 </div>
 
 <script>
@@ -21,6 +27,7 @@
     var liContentWrapClass = "cd-tabs-content";
     var liTabWrapSelector = "#" + wrapDivId + " ." + liTabWrapClass;
     var liContentWrapSelector = "#" + wrapDivId + " ." + liContentWrapClass;
+    var tabContentWrapper = $(liContentWrapSelector);
 
     var userHoldingAttribute = "data-content";
     var activeClass = "selected";
@@ -54,20 +61,20 @@
                     Messages:\
                 </div>\
                 <div class="{{ $options['message']['class'] }}">\
-                    <form class="send-message" data-user="' + user + '">\
+                            <form class="send-message" data-user="' + user + '">\
                         <div class="input-message">\
-                            <input class="imMessageToSend" type="text" data-user="' + user + '">\
+                            <input class="imMessageToSend chat-input" type="text" data-user="' + user + '">\
                         </div>\
                         <div class="button-send">\
-                            <input class="btnSendMessage" type="submit" value="Send"  data-user="' + user + '" >\
+                            <input class="btnSendMessage chat-input" type="submit" value="Send"  data-user="' + user + '" >\
                         </div>\
                     </form>\
                 </div>\
             </li>';
         return result;
     }
-    $(document).ready(function() {
-        $("form.send-message").live("submit", function(e) {
+    $(document).ready(function () {
+        $("form.send-message").live("submit", function (e) {
             var username = $(this).attr('data-user');
             kandy_sendIm(username);
             e.preventDefault();
@@ -77,8 +84,6 @@
          * Chat Tabs
          *
          */
-
-        var tabContentWrapper = $(liContentWrapSelector);
 
         $('.cd-tabs-navigation a').live('click', function (event) {
             event.preventDefault();
@@ -91,8 +96,14 @@
                 $('.cd-tabs-navigation a').removeClass('selected');
                 selectedItem.addClass('selected');
                 selectedContent.addClass('selected').siblings('li').removeClass('selected');
+
                 // Set focus
                 selectedContent.find(".imMessageToSend").focus();
+
+                // Set chat heading
+                $(".chat-with-message").show();
+                $(".chat-friend-name").html(selectedItem.html());
+
                 //animate tabContentWrapper height when content changes
                 tabContentWrapper.animate({
                     'height': slectedContentHeight
