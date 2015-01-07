@@ -11,7 +11,7 @@ class Kandylaravel
     const KANDY_CSS = 'packages/kodeplusdev/kandylaravel/assets/css/kandylaravel.css';
     const KANDY_JS_CUSTOM = 'packages/kodeplusdev/kandylaravel/assets/js/kandylaravel.js';
 
-    // Default KANDY JS from clound
+    // Default KANDY JS from cloud
     const KANDY_JS_FCS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/fcs/3.0.0/fcs.js';
     const KANDY_JS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/1.1.4/kandy.js';
     const KANDY_JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js';
@@ -49,6 +49,8 @@ class Kandylaravel
     }
 
     /**
+     * Create a Kandy user
+     *
      * @param string $username
      * @param string $email
      * @param int|null $mainUserId

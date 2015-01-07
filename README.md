@@ -1,4 +1,4 @@
-# kandylaravel v1
+# Kandy package for Laravel
 ---
 
 A simple Kandy-api-wrapped package for Laravel
