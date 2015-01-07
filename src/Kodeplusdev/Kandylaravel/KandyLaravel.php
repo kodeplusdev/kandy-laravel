@@ -349,17 +349,31 @@ class Kandylaravel
      */
     public function assignUser($mainUserId, $user_id)
     {
-        KandyUsers::wheremain_user_id($mainUserId)->update(array('main_user_id' => null));
-        $kandyUser = is_null($user_id) ? KandyUsers::whereNull('main_user_id')->first() : KandyUsers::whereuser_id($user_id)->first();
-        if (empty($kandyUser)) {
-            $result = array('success' => false, 'message' => 'Cannot find the Kandy user.');
-        } else {
-            $kandyUser->main_user_id = $mainUserId;
-            if ($kandyUser->save()) {
-                $result = array('success' => true, 'message' => 'Assign successfully', 'user' => $kandyUser->user_id);
+        $getDomainNameResponse = $this->getDomain();
+        if ($getDomainNameResponse['success']) {
+            // Get domain name successfully
+            KandyUsers::wheremain_user_id($mainUserId)->update(array('main_user_id' => null));
+            $domainName = $getDomainNameResponse['data'];
+            $kandyUser = is_null($user_id) ? KandyUsers::whereNull('main_user_id')->wheredomain_name(
+                $domainName
+            )->first() : KandyUsers::whereuser_id($user_id)->wheredomain_name($domainName)->first();
+            if (empty($kandyUser)) {
+                $result = array('success' => false, 'message' => 'Cannot find the Kandy user.');
             } else {
-                $result = array('success' => false, 'message' => 'Cannot assign the Kandy user.');
+                $kandyUser->main_user_id = $mainUserId;
+                if ($kandyUser->save()) {
+                    $result = array(
+                        'success' => true,
+                        'message' => 'Assign successfully',
+                        'user' => $kandyUser->user_id
+                    );
+                } else {
+                    $result = array('success' => false, 'message' => 'Cannot assign the Kandy user.');
+                }
             }
+        } else {
+            // Cannot get domain name
+            $result = array('success' => false, 'message' => 'Cannot get domain name.');
         }
         return $result;
     }
