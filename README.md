@@ -283,8 +283,8 @@ KandyLaravel::createUser($kandy_user_id, $kandy_email, $application_user_id);
 // Eg: Sentry::getUser()->id; (using Sentry)
 $application_user_id = Auth::user()->id;
 
-// Id of the kandy user
-$kandy_user_id = 1;
+// kandy user
+$kandy_user_id = "demo";
 
 KandyLaravel::assignUser($application_user_id, $kandy_user_id);
 ```

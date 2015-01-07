@@ -189,7 +189,7 @@ class Kandylaravel
                     $receivedUsers = array();
                     foreach ($kandyUsers as $kandyUser) {
                         array_push($receivedUsers, $kandyUser->user_id);
-                        $model = KandyUsers::whereuser_id($kandyUser->user_id)
+                        $model = KandyUsers::whereuser_id($kandyUser->user_id)->wheredomain_name($domainName)
                             ->first();
                         $now = date("Y-m-d H:i:s");
                         if (empty($model)) {
@@ -341,14 +341,14 @@ class Kandylaravel
      * Assign an application user to a Kandy user
      *
      * @param int $mainUserId Application User Id
-     * @param int $user_id Kandy user id, null in case random assignment.
+     * @param string $user_id Kandy user, null in case random assignment.
      *
      * @return bool True if success, false if fail
      */
     public function assignUser($mainUserId, $user_id)
     {
         KandyUsers::wheremain_user_id($mainUserId)->update(array('main_user_id' => null));
-        $kandyUser = is_null($user_id) ? KandyUsers::whereNull('main_user_id')->first() : KandyUsers::find($user_id);
+        $kandyUser = is_null($user_id) ? KandyUsers::whereNull('main_user_id')->first() : KandyUsers::whereuser_id($user_id)->first();
         if (empty($kandyUser)) {
             $result = array('success' => false, 'message' => 'Cannot find the Kandy user.');
         } else {
