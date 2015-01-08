@@ -6,6 +6,23 @@ setup = function () {
         allowAutoLogin: true,
         // respond to Kandy events...
         listeners: {
+            media: function(event) {
+                switch (event.type) {
+                    case KandyAPI.Phone.MediaErrors.WRONG_VERSION:
+                        alert("Media Plugin Version Not Supported");
+                        break;
+                    case KandyAPI.Phone.MediaErrors.NEW_VERSION_WARNING:
+                        promptPluginDownload(event.urlWin32bit, event.urlWin64bit, event.urlMacUnix);
+                        break;
+                    case KandyAPI.Phone.MediaErrors.NOT_INITIALIZED:
+                        alert("Media couldn't be initialized");
+                        break;
+                    case KandyAPI.Phone.MediaErrors.NOT_FOUND:
+                        // YOUR CODE GOES HERE
+                        break;
+                }
+
+            },
             loginsuccess: kandy_loginsuccess_callback,
             loginfailed: kandy_loginfailed_callback,
             callincoming: kandy_incoming_call_callback,
