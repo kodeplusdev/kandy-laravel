@@ -149,6 +149,43 @@ test pusblish
     width: 100%;
 }
 
+.kandyChat .cd-tabs-navigation li a{
+
+    text-indent: 16px;
+}
+.kandyChat .cd-tabs-navigation li i.status{
+    font-size: 0.75rem;
+    text-indent: 16px;
+    display: block;
+    line-height: 1em;
+
+}
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-available a{
+    background: url("../img/available.png") left center no-repeat;
+}
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-offline a{
+    background: url("../img/offline.png") left center no-repeat;
+}
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-unavailable a{
+    background: url("../img/unavailable.png") left center no-repeat;
+}
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-away a{
+    background: url("../img/away.png") left center no-repeat;
+}
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-busy a{
+    background: url("../img/busy.png") left center no-repeat;
+}
+
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-out-to-lunch a{
+    background: url("../img/out-to-lunch.png") left center no-repeat;
+}
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-on-vacation a{
+    background: url("../img/on-vacation.png") left center no-repeat;
+}
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-be-right-back a{
+    background: url("../img/be-right-back.png") left center no-repeat;
+}
+
 /* CSS for tab */
 
 .row.cd-tabs {
@@ -183,13 +220,13 @@ test pusblish
     background-color: #ffffff !important;
     position: relative;
     display: block;
-    height: 60px;
+
     width: 100%;
     font-size: 0.75rem;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: #000;
-    padding: 18px 10px;
+
 }
 
 .no-touch .cd-tabs-navigation a:hover {

@@ -41,8 +41,9 @@
      */
     var getLiContact = function (user, active) {
         // Set false as default
+        var id = user.replace(/[.@]/g, '_');
         var liClass = (typeof active !== 'undefined') ? active : "";
-        var result = '<li class="' + liClass + '"><a ' + userHoldingAttribute + '="' + user + '" href="#">' + user + '</a></li>';
+        var result = '<li id="'+ id +'" class="' + liClass + '"><a ' + userHoldingAttribute + '="' + user + '" href="#">' + user + '</a><i class="status"></i></li>';
         return result
     }
 
