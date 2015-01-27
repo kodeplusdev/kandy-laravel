@@ -2,7 +2,17 @@
 <input type="hidden" class="kandy_current_username" value="{{$options['user']['name']}}"/>
 <div class="chat-heading">
     <div class="contact-heading">
-        Contacts:
+        <label>Contacts:</label>
+        <select onchange="kandy_contactFilterChanged($(this).val())">
+            <option value="all">All</option>
+            <option value="available">Available</option>
+            <option value="unavailable">Unavailable</option>
+            <option value="away">Away</option>
+            <option value="out-to-lunch">Out To Lunch</option>
+            <option value="busy">Busy</option>
+            <option value="on-vacation">On Vacation</option>
+            <option value="be-right-back">Be Right Back</option>
+        </select>
     </div>
     <div class="chat-with-message">
         Chatting with <span class="chat-friend-name"></span>
@@ -73,6 +83,20 @@
                 </div>\
             </li>';
         return result;
+    }
+    var kandy_contactFilterChanged = function(val){
+        var liUserchat = $(".kandyChat .cd-tabs-navigation li");
+        $.each(liUserchat, function(index, target){
+            var liClass = $(target).attr('class');
+            var currentClass = "kandy-chat-status-" + val;
+            if(val == "all"){
+                $(target).show();
+            } else if(liClass == currentClass){
+                $(target).show();
+            } else {
+                $(target).hide();
+            }
+        });
     }
     $(document).ready(function () {
         $("form.send-message").live("submit", function (e) {

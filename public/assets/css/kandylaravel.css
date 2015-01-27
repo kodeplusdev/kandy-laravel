@@ -144,6 +144,14 @@ test pusblish
 .their-message {
     color: #F47063;
 }
+.kandyChat .chat-heading .contact-heading label{
+    display: inline-block;
+}
+.kandyChat .chat-heading .contact-heading select{
+    display: inline-block;
+    width: 110px;
+    padding: 2px 0px;
+}
 
 .kandyChat .btnSendMessage {
     width: 100%;
