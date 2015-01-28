@@ -462,12 +462,14 @@ kandy_loadContacts_chat = function () {
             }
 
             KandyAPI.Phone.watchPresence(contactListForPresence);
+            addExampleBox();
         },
         function () {
             console.log("Error");
+            addExampleBox();
         }
     );
-    addExampleBox();
+
 };
 
 /**
@@ -555,7 +557,16 @@ var emptyContact = function () {
  * @param user
  */
 var prependContact = function (user) {
-    var liContact = getLiContact(user);
+    var liParent = $(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + user + "']").parent();
+    var liContact = "";
+    if(liParent.length){
+        liContact =  liParent[0].outerHTML;
+    } else {
+         liContact = getLiContact(user);
+    }
+    //var liContact = getLiContact(user);
+
+
     $(liTabWrapSelector).prepend(liContact);
     if (!$(liContentWrapSelector + " li[" + userHoldingAttribute + "='" + user + "']").length) {
         var liContent = getLiContent(user);
@@ -590,10 +601,12 @@ var setFocusContact = function (user) {
 var moveContactToTop = function (user) {
     var contact = $(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + user + "']").parent();
     var active = contact.hasClass(activeClass);
-    // Remove
-    contact.remove();
+
+
     // Add to top
     prependContact(user, active);
+    // Remove
+    contact.remove();
 
 }
 
