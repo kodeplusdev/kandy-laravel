@@ -460,13 +460,14 @@ kandy_loadContacts_chat = function () {
                 prependContact(results[i].contact_user_name);
                 contactListForPresence.push({full_user_id: results[i].contact_user_name});
             }
-            addExampleBox();
+
             KandyAPI.Phone.watchPresence(contactListForPresence);
         },
         function () {
             console.log("Error");
         }
     );
+    addExampleBox();
 };
 
 /**
