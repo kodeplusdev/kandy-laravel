@@ -171,6 +171,21 @@ test pusblish
 .kandyChat .cd-tabs-navigation li.kandy-chat-status-available a{
     background: url("../img/available.png") left center no-repeat;
 }
+
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-offline a{
+    background: url("../img/offline.png") left center no-repeat;
+}
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-unavailable a,
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-away a,
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-busy a,
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-out-to-lunch a,
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-on-vacation a,
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-be-right-back a{
+    background: url("../img/busy.png") left center no-repeat;
+}
+
+/*
+
 .kandyChat .cd-tabs-navigation li.kandy-chat-status-offline a{
     background: url("../img/offline.png") left center no-repeat;
 }
@@ -193,7 +208,7 @@ test pusblish
 .kandyChat .cd-tabs-navigation li.kandy-chat-status-be-right-back a{
     background: url("../img/be-right-back.png") left center no-repeat;
 }
-
+*/
 /* CSS for tab */
 
 .row.cd-tabs {

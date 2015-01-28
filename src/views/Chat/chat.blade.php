@@ -5,6 +5,7 @@
         <label>Contacts:</label>
         <select onchange="kandy_contactFilterChanged($(this).val())">
             <option value="all">All</option>
+            <option value="offline">Offline</option>
             <option value="available">Available</option>
             <option value="unavailable">Unavailable</option>
             <option value="away">Away</option>
