@@ -1,11 +1,7 @@
-# Kandy Drupal Plugin
+# Kandy Laravel Plugin
 **KANDY** is about making communications simple with the KANDY platform managing all the complexity and hard stuff, while you focus on the intent of your application. KANDY manages all the elements of your voice, video, presence and messaging requirements. Accessing the power of KANDY is simple using our provided developer tools.
 
 Home page: http://www.kandy.io/
-
----
-
-A simple Kandy-api-wrapped package for Laravel
 
 ---
 
@@ -21,7 +17,7 @@ A simple Kandy-api-wrapped package for Laravel
 ```php
 "require": {
     "laravel/framework": "4.2.*",
-    "toddish/verify": "3.*", // This is a user authentication package, you may use others
+    "toddish/verify": "3.*",
     ... // Others
     "kodeplusdev/kandylaravel": "dev-master"
 },
