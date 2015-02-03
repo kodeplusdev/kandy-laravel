@@ -3,13 +3,11 @@
         <div class="myContactsTitle"><p>{{$title}}</p></div>
     </div>
 
-    <form class="kandyDirectorySearch" onsubmit="return false;">
-        User: <input id="kandySearchUserName" type="text" value=""/>
-        <input type="submit" value="Search" onclick="kandy_searchDirectoryByUserName();return false;"/>
-        (asterisk for wildcard)
-    </form>
+    <div class="kandyDirectorySearch">
+        User: <!--<input id="kandySearchUserName" type="text" value=""/>-->
 
-    <div class="kandyDirSearchResults" id="dirSearchResults">
-        <div class="kandyDirSearchTitle">Directory Search Results</div>
+        <input id="kandySearchUserName" class="select2" />
+
+        <input type="button" value="Add Contact" onclick="addContacts();"/>
     </div>
 </div>

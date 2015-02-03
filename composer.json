@@ -16,6 +16,7 @@
         "classmap": [
             "src/migrations",
             "src/Models",
+            "src/controllers",
             "src/Kodeplusdev/Kandylaravel/Console"
         ],
         "psr-0": {

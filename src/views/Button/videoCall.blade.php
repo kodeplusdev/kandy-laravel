@@ -10,7 +10,8 @@
 <div class="kandyVideoButton kandyVideoButtonCallOut"
      id="{{$options['callOut']['id']}}">
     <label>{{$options['callOut']['label']}}</label>
-    <input id="callOutUserId" type="text" value=""/>
+    <!--<input id="callOutUserId" type="text" value="" />-->
+    <input id="callOutUserId" class="select2" />
     <input class="btnCall" id="callBtn" type="button"
            value="{{$options['callOut']['btnLabel']}}"
            onclick="kandy_makeVideoCall(this)"/>

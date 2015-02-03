@@ -43,62 +43,6 @@
     var userHoldingAttribute = "data-content";
     var activeClass = "selected";
 
-    /**
-     * Get a contact template
-     *
-     * @param user
-     * @param active
-     * @returns {string}
-     */
-    var getLiContact = function (user, active) {
-        // Set false as default
-        var id = user.replace(/[.@]/g, '_');
-        var liClass = (typeof active !== 'undefined') ? active : "";
-        var result = '<li id="'+ id +'" class="' + liClass + '"><a ' + userHoldingAttribute + '="' + user + '" href="#">' + user + '</a><i class="status"></i></li>';
-        return result
-    }
-
-    /**
-     * Get contact content template
-     *
-     * @param user
-     * @returns {string}
-     */
-    var getLiContent = function (user) {
-        var result =
-            '<li ' + userHoldingAttribute + '="' + user + '">\
-                <div class="kandyMessages" data-user="' + user + '">\
-                </div>\
-                <div >\
-                    Messages:\
-                </div>\
-                <div class="{{ $options['message']['class'] }}">\
-                            <form class="send-message" data-user="' + user + '">\
-                        <div class="input-message">\
-                            <input class="imMessageToSend chat-input" type="text" data-user="' + user + '">\
-                        </div>\
-                        <div class="button-send">\
-                            <input class="btnSendMessage chat-input" type="submit" value="Send"  data-user="' + user + '" >\
-                        </div>\
-                    </form>\
-                </div>\
-            </li>';
-        return result;
-    }
-    var kandy_contactFilterChanged = function(val){
-        var liUserchat = $(".kandyChat .cd-tabs-navigation li");
-        $.each(liUserchat, function(index, target){
-            var liClass = $(target).attr('class');
-            var currentClass = "kandy-chat-status-" + val;
-            if(val == "all"){
-                $(target).show();
-            } else if(liClass == currentClass){
-                $(target).show();
-            } else {
-                $(target).hide();
-            }
-        });
-    }
     $(document).ready(function () {
         $("form.send-message").live("submit", function (e) {
             var username = $(this).attr('data-user');

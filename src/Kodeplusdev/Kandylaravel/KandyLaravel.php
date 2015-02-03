@@ -21,6 +21,10 @@ class Kandylaravel
     const KANDY_USER_ASSIGNED = 2;
     const KANDY_USER_UNASSIGNED = 3;
 
+    // SELECT2
+    const SELECT2_CSS = "packages/kodeplusdev/kandylaravel/assets/css/select2.css";
+    const SELECT2_JS = "packages/kodeplusdev/kandylaravel/assets/js/select2.min.js";
+
     // Kandy Laravel configuration variables which could be overridden at application
     public $domainAccessToken;
     public $username;
@@ -453,6 +457,7 @@ class Kandylaravel
     public function css()
     {
         $return = $this->add('style', asset(self::KANDY_CSS));
+        $return .= $this->add('style', asset(self::SELECT2_CSS));
         return $return;
     }
 
@@ -475,6 +480,7 @@ class Kandylaravel
                     };
                     </script>";
         $return .= $this->add('script', asset(self::KANDY_JS_CUSTOM));
+        $return .= $this->add('script', asset(self::SELECT2_JS));
 
         return $return;
     }
@@ -494,11 +500,126 @@ class Kandylaravel
         $return .= $this->add('script', self::KANDY_JS_FCS);
         $return .= $this->add('script', self::KANDY_JS);
         $return .= $this->add('script', asset(self::KANDY_JS_CUSTOM));
+        $return .= $this->add('script', asset(self::SELECT2_JS));
         $return .= "<script>
                        window.kandy_logout = function() {
                                 KandyAPI.Phone.logout();
                             };
                     </script>";
         return $return;
+    }
+
+    /**
+     * Get user options
+     *
+     * @param int $type
+     * @return array
+     */
+    public function getUserOptions($type = self::KANDY_USER_ALL)
+    {
+        $result = array();
+        $users = $this->listUser($type);
+        foreach ($users as $user) {
+            $kandyUser = $this->getKandyUser($user->id);
+            $displayName = $this->getDisplayName($user->id);
+            $result[$kandyUser] = $displayName;
+        }
+        return $result;
+    }
+
+    /**
+     * Get display name for specific kandy user
+     *
+     * @param $id
+     * @return mixed|string
+     */
+    public function getDisplayName($id)
+    {
+        $result = "";
+        $displayNameColumn = $this->getColumnForDisplayName('u');
+        $mainUserTable = \Config::get('kandylaravel::user_table');
+        $mainUserTablePrimaryKey = $this->getMainUserIdColumn();
+        $kandyUserTable = \Config::get('kandylaravel::kandy_user_table');
+
+        $sql = "SELECT $displayNameColumn as displayName FROM $mainUserTable as u, $kandyUserTable as k WHERE u.$mainUserTablePrimaryKey = k.main_user_id AND k.id = $id";
+        $data = \DB::select($sql);
+        if (!empty($data)) {
+            $user = $data[0];
+            $result = $user->displayName;
+        }
+        return $result;
+    }
+
+    /**
+     * Get main user table id column
+     *
+     * @return null
+     */
+    public function getMainUserIdColumn()
+    {
+        $result = null;
+        $mainUserTable = \Config::get('kandylaravel::user_table');
+        $keys = \DB::select('SHOW KEYS FROM ' . $mainUserTable . ' WHERE Key_name = "PRIMARY"');
+        if (!empty($keys)) {
+            $key = $keys[0];
+            $result = $key->Column_name;
+        }
+        return $result;
+    }
+
+    /**
+     * Get necessary columns for name display
+     *
+     * @param $table
+     * @return mixed
+     */
+    public function getColumnForDisplayName($table)
+    {
+        $columns = array();
+        $result = \Config::get('kandylaravel::user_name_display');
+
+        preg_match_all('/{(.*?)}/', $result, $columns);
+        $count = count ($columns[0]);
+        for ($i = 0; $i < $count; $i++) {
+            $result = str_replace($columns[0][$i], "',$table.".$columns[1][$i].",'", $result);
+        }
+
+        $result = "CONCAT('$result')";
+
+        return $result;
+    }
+
+    /**
+     * Get Kandy user
+     *
+     * @param $id
+     * @param bool $email
+     * @return mixed|string
+     */
+    public function getKandyUser($id, $email = true)
+    {
+        $result = "";
+        $user = KandyUsers::find($id);
+        if (!empty($user)) {
+            $result = $email ? $user->user_id . "@" . $user->domain_name : $user->user_id;
+        }
+        return $result;
+    }
+
+    /**
+     * Get Kandy user
+     *
+     * @param $main_user_id
+     * @param bool $email
+     * @return string
+     */
+    public function getKandyUserFromMainUser($main_user_id, $email = true)
+    {
+        $result = "";
+        $user = KandyUsers::wheremain_user_id($main_user_id)->first();
+        if (!empty($user)) {
+            $result = $email ? $user->user_id . "@" . $user->domain_name : $user->user_id;
+        }
+        return $result;
     }
 }

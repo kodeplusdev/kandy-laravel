@@ -401,3 +401,7 @@ test pusblish
     padding-left: 1.4em;
     display: none;
 }
+
+.select2 {
+    width: 400px;
+}

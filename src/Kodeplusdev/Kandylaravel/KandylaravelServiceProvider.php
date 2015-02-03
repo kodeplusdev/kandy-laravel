@@ -23,6 +23,7 @@ class KandylaravelServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->package('kodeplusdev/kandylaravel');
+        include __DIR__ . '/../../routes.php';
     }
 
     /**
