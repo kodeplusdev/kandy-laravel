@@ -1,7 +1,9 @@
-# Kandy Laravel Plugin
-**KANDY** is about making communications simple with the KANDY platform managing all the complexity and hard stuff, while you focus on the intent of your application. KANDY manages all the elements of your voice, video, presence and messaging requirements. Accessing the power of KANDY is simple using our provided developer tools.
+# Kandy Laravel Package
+**Kandy** is about making communications simple with the KANDY platform managing all the complexity and hard stuff, while you focus on the intent of your application. KANDY manages all the elements of your voice, video, presence and messaging requirements. Accessing the power of KANDY is simple using our provided developer tools.
 
 Home page: http://www.kandy.io/
+
+**Kandy Laravel Package** is a Laravel package that encapsulate all Kandy JS SDK and Kandy Restful APIs. This package helps Laravel developers integrate Kandy quickly to their applications.
 
 ---
 
