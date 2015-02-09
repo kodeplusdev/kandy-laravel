@@ -344,6 +344,28 @@ class Kandylaravel
     }
 
     /**
+     * Random assign kandy accounts for users
+     *
+     */
+    public function assignAllUser()
+    {
+        $kandyUserTable = \Config::get('kandylaravel::kandy_user_table');
+        $mainUserTable = \Config::get('kandylaravel::user_table');
+        $mainUserTablePrimaryKey = $this->getMainUserIdColumn();
+
+        $sql = "SELECT m.$mainUserTablePrimaryKey as id
+        FROM $mainUserTable m LEFT JOIN $kandyUserTable k ON m.$mainUserTablePrimaryKey = k.main_user_id
+        WHERE k.main_user_id is NULL ";
+
+        $unassignedUsers = \DB::select($sql);
+        shuffle($unassignedUsers);
+
+        foreach ($unassignedUsers as $user) {
+            $this->assignUser($user->id);
+        }
+    }
+
+    /**
      * Assign an application user to a Kandy user
      *
      * @param int $mainUserId Application User Id
@@ -351,7 +373,7 @@ class Kandylaravel
      *
      * @return bool True if success, false if fail
      */
-    public function assignUser($mainUserId, $user_id)
+    public function assignUser($mainUserId, $user_id = null)
     {
         $getDomainNameResponse = $this->getDomain();
         if ($getDomainNameResponse['success']) {
