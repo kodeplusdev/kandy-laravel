@@ -1,12 +1,14 @@
 {
     "name": "kodeplusdev/kandylaravel",
     "description": "Kandy Laravel",
+    "keywords": ["kandy", "streaming", "webrtc", "video", "audio", "chat", "streaming", "video streaming", "laravel webrtc"],
+    "homepage": "https://github.com/Kandy-IO/kandy-laravel",
     "license": "MIT",
     "authors": [
         {
             "name": "Kandy Laravel",
             "email": "kodeplusdev@gmail.com",
-            "homepage": "http://kodeplus.net"
+            "homepage": "http://kandy.io"
         }
     ],
     "require": {
