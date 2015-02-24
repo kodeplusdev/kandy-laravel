@@ -1,7 +1,17 @@
 {
-    "name": "kodeplusdev/kandylaravel",
-    "description": "Kandy Laravel",
-    "keywords": ["kandy", "streaming", "webrtc", "video", "audio", "chat", "streaming", "video streaming", "laravel webrtc"],
+    "name": "kandy-io/kandy-laravel",
+    "description": "This is a Laravel package that encapsulate all Kandy JS SDK and Kandy Restful APIs. Kandy is a product by Gendband which utilizes WebRTC to enable peer to peer video, audio, chat, SMS and PSTN.",
+    "keywords": [
+        "kandy",
+        "streaming",
+        "webrtc",
+        "video",
+        "audio",
+        "chat",
+        "streaming",
+        "video streaming",
+        "laravel webrtc"
+    ],
     "homepage": "https://github.com/Kandy-IO/kandy-laravel",
     "license": "MIT",
     "authors": [
