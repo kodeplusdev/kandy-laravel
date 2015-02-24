@@ -6,7 +6,7 @@ class Kandylaravel
     /**
      * Base URL of the API
      */
-    const API_BASE_URL = 'https://api.kandy.io/v1/';
+    const API_BASE_URL = 'https://api.kandy.io/v1.1/';
 
     const KANDY_CSS = 'packages/kandy-io/kandy-laravel/assets/css/kandylaravel.css';
     const KANDY_JS_CUSTOM = 'packages/kandy-io/kandy-laravel/assets/js/kandylaravel.js';
@@ -305,15 +305,19 @@ class Kandylaravel
      */
     public function getDomain()
     {
+        $getTokenResponse = $this->getDomainAccessToken();
+        if ($getTokenResponse['success'] == true) {
+            $this->domainAccessToken = $getTokenResponse['data'];
+        } else {
+            // Catch errors
+        }
         $params = array(
-            'key'               => \Config::get('kandy-laravel::key'),
-            'domain_api_secret' => \Config::get(
-                'kandy-laravel::domain_api_secret'
-            )
+            'key'            => $this->domainAccessToken,
+            'domain_api_key' => \Config::get('kandy-laravel::key')
         );
 
         $fieldsString = http_build_query($params);
-        $url = Kandylaravel::API_BASE_URL . 'domains/details' . '?'
+        $url = Kandylaravel::API_BASE_URL . 'accounts/domains/details' . '?'
             . $fieldsString;
 
         try {
