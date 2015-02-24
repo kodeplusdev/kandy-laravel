@@ -19,7 +19,7 @@ Home page: http://www.kandy.io/
     "laravel/framework": "4.2.*",
     "toddish/verify": "3.*",
     ... // Others
-    "kodeplusdev/kandylaravel": "1.4"
+    "kandy-io/kandy-laravel": "1.4"
 },
 ```
 
@@ -34,7 +34,7 @@ composer update
 Migrate the database tables for kandylaravel. Run these on the command line from the root of your project:
 
 ```
-php artisan migrate --package="kodeplusdev/kandylaravel"
+php artisan migrate --package="kandy-io/kandy-laravel"
 ```
 
 ### Configuration
