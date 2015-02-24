@@ -37,7 +37,7 @@ class ConfigureCommand extends Command {
      */
     public function fire()
     {
-        $this->call('config:publish', array('package' => 'kodeplusdev/kandylaravel'));
+        $this->call('config:publish', array('package' => 'kandy-io/kandy-laravel'));
     }
 
 }

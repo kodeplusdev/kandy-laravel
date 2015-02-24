@@ -37,7 +37,7 @@ class MigrateCommand extends Command {
      */
     public function fire()
     {
-        $this->call('migrate', array('--package' => 'kodeplusdev/kandylaravel'));
+        $this->call('migrate', array('--package' => 'kandy-io/kandy-laravel'));
     }
 
 }

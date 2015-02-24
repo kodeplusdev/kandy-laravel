@@ -22,7 +22,7 @@ class KandylaravelServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->package('kodeplusdev/kandylaravel');
+        $this->package('kandy-io/kandy-laravel');
     }
 
     /**

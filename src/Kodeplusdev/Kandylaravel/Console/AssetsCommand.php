@@ -37,7 +37,7 @@ class AssetsCommand extends Command {
      */
     public function fire()
     {
-        $this->call('asset:publish', array('package' => 'kodeplusdev/kandylaravel'));
+        $this->call('asset:publish', array('package' => 'kandy-io/kandy-laravel'));
     }
 
 }

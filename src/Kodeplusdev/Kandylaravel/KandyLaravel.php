@@ -8,8 +8,8 @@ class Kandylaravel
      */
     const API_BASE_URL = 'https://api.kandy.io/v1/';
 
-    const KANDY_CSS = 'packages/kodeplusdev/kandylaravel/assets/css/kandylaravel.css';
-    const KANDY_JS_CUSTOM = 'packages/kodeplusdev/kandylaravel/assets/js/kandylaravel.js';
+    const KANDY_CSS = 'packages/kandy-io/kandy-laravel/assets/css/kandylaravel.css';
+    const KANDY_JS_CUSTOM = 'packages/kandy-io/kandy-laravel/assets/js/kandylaravel.js';
 
     // Default KANDY JS from cloud
     const KANDY_JS_FCS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/fcs/3.0.0/fcs.js';
