@@ -53,7 +53,7 @@ class KandylaravelServiceProvider extends ServiceProvider
      */
     public function publishAssets(){
         if(isset($this->app['artisan'])){
-            $this->app['artisan']->call("asset:publish", array("kodeplusdev/kandylaravel"));
+            $this->app['artisan']->call("asset:publish", array("kandy-io/kandy-laravel"));
         }
 
     }

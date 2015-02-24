@@ -39,17 +39,17 @@ php artisan migrate --package="kandy-io/kandy-laravel"
 
 ### Configuration
 
-Configuration file is be generated at
+Configuration file will be generated at
 
 ```
-    app\config\packages\kodeplusdev\kandylaravel\config.php
+    app\config\packages\kandy-io\kandy-laravel\config.php
 ```
 
 Login to [kandy.io](https://www.kandy.io) to retrieve the ```api key``` and ```domain_api_secret``` for the domain
 
 ### Provider and Alias
 
-Define service provider and alias for Kandy in ```kandylaravel\app\config\app.php```
+Define service provider and alias for Kandy in ```app\config\app.php```
 ```php
 "providers" => array(
     ...	// Others
