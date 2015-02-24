@@ -142,9 +142,9 @@ class Kandylaravel
     public function getDomainAccessToken()
     {
         $params = array(
-            'key'               => \Config::get('kandylaravel::key'),
+            'key'               => \Config::get('kandy-laravel::key'),
             'domain_api_secret' => \Config::get(
-                'kandylaravel::domain_api_secret'
+                'kandy-laravel::domain_api_secret'
             )
         );
 
@@ -306,9 +306,9 @@ class Kandylaravel
     public function getDomain()
     {
         $params = array(
-            'key'               => \Config::get('kandylaravel::key'),
+            'key'               => \Config::get('kandy-laravel::key'),
             'domain_api_secret' => \Config::get(
-                'kandylaravel::domain_api_secret'
+                'kandy-laravel::domain_api_secret'
             )
         );
 
@@ -411,7 +411,7 @@ class Kandylaravel
             $this->username = $kandyUser->user_id;
             $this->password = $kandyUser->password;
         }
-        $this->apiKey = \Config::get('kandylaravel::key');
+        $this->apiKey = \Config::get('kandy-laravel::key');
 
         $return = $this->css();
         $return .= $this->js();
@@ -463,7 +463,7 @@ class Kandylaravel
     public function js()
     {
         $return = "";
-        $jqueryReload = \Config::get('kandylaravel::key');
+        $jqueryReload = \Config::get('kandy-laravel::key');
         if ($jqueryReload) {
             $return .= $this->add('script', asset(self::KANDY_JQUERY));
         }
@@ -487,7 +487,7 @@ class Kandylaravel
     public function logout()
     {
         $return = "";
-        $jqueryReload = \Config::get('kandylaravel::key');
+        $jqueryReload = \Config::get('kandy-laravel::key');
         if ($jqueryReload) {
             $return .= $this->add('script', asset(self::KANDY_JQUERY));
         }

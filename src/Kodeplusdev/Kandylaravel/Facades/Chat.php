@@ -22,7 +22,7 @@ class Chat extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'kandylaravel::chat';
+        return 'kandy-laravel::chat';
     }
 
 }

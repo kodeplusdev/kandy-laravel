@@ -156,7 +156,7 @@ class Button extends RenderedObject
     {
         $this->init($data);
         $this->contents = \View::make(
-            'kandylaravel::Button.videoCall',
+            'kandy-laravel::Button.videoCall',
             $this->data
         )->render();
         return $this;
@@ -171,7 +171,7 @@ class Button extends RenderedObject
     {
         $this->init($data);
         $this->contents = \View::make(
-            'kandylaravel::Button.voiceCall',
+            'kandy-laravel::Button.voiceCall',
             $this->data
         )->render();
 

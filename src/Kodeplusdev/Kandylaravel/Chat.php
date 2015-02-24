@@ -136,7 +136,7 @@ class Chat extends RenderedObject
     {
         $this->init($data);
         $this->contents = \View::make(
-            'kandylaravel::Chat.chat',
+            'kandy-laravel::Chat.chat',
             $this->data
         )->render();
 

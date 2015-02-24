@@ -23,7 +23,7 @@ class KandyUsers extends Eloquent
         parent::__construct($attributes);
 
         // Set the prefix
-        $tableName = \Config::get('kandylaravel::kandy_user_table');
+        $tableName = \Config::get('kandy-laravel::kandy_user_table');
         $this->table = $this->prefix . $tableName;
     }
 }

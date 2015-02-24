@@ -13,7 +13,7 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        $tableName = \Config::get("kandylaravel::kandy_user_table");
+        $tableName = \Config::get("kandy-laravel::kandy_user_table");
 
         Schema::create(
             $tableName,

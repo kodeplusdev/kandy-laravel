@@ -232,7 +232,7 @@ Prepare Kandy css/javascript and log-in Kandy user who is associated with userId
 ## KANDY APIs
 ---
 
-Refer to:  ```kandylaravel\src\Kodeplusdev\Kandylaravel\KandyLaravel.php```
+Refer to:  ```kandy-laravel\src\Kodeplusdev\Kandylaravel\KandyLaravel.php```
 
 ### Sync users from Kandy to local database table kandy_users
 

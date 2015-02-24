@@ -101,7 +101,7 @@ class AddressBook extends RenderedObject
         $this->init($data);
 
         $this->contents = \View::make(
-            'kandylaravel::AddressBook.AddressBook',
+            'kandy-laravel::AddressBook.AddressBook',
             $this->data
         )->render();
 

@@ -22,7 +22,7 @@ class KandyLaravel extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'kandylaravel::KandyLaravel';
+        return 'kandy-laravel::KandyLaravel';
     }
 
 }

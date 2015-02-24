@@ -109,7 +109,7 @@ class Video extends RenderedObject
     public function show($data = array())
     {
         $this->init($data);
-        $this->contents = \View::make('kandylaravel::Video.video', $this->data)
+        $this->contents = \View::make('kandy-laravel::Video.video', $this->data)
             ->render();
 
         return $this;

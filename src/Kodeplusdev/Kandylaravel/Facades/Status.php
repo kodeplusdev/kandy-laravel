@@ -21,7 +21,7 @@ class Status extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'kandylaravel::status';
+        return 'kandy-laravel::status';
     }
 
 }

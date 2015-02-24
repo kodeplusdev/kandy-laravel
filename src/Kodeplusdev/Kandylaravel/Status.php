@@ -112,7 +112,7 @@ class Status extends RenderedObject
         $this->init($data);
 
         $this->contents = \View::make(
-            'kandylaravel::Status.status',
+            'kandy-laravel::Status.status',
             $this->data
         )->render();
 

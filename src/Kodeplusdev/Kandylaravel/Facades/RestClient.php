@@ -12,7 +12,7 @@ class RestClient extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'kandylaravel::restclient';
+        return 'kandy-laravel::restclient';
     }
 
 }

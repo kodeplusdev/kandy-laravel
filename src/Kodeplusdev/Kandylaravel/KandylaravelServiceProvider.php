@@ -64,7 +64,7 @@ class KandylaravelServiceProvider extends ServiceProvider
     private function registerKandyLaravel()
     {
         $this->app->bind(
-            'kandylaravel::KandyLaravel',
+            'kandy-laravel::KandyLaravel',
             function () {
                 $kandy = new Kandylaravel();
 
@@ -84,7 +84,7 @@ class KandylaravelServiceProvider extends ServiceProvider
     private function registerVideo()
     {
         $this->app->bind(
-            'kandylaravel::video',
+            'kandy-laravel::video',
             function () {
                 return new Video();
             }
@@ -97,7 +97,7 @@ class KandylaravelServiceProvider extends ServiceProvider
     private function registerButton()
     {
         $this->app->bind(
-            'kandylaravel::button',
+            'kandy-laravel::button',
             function () {
                 return new Button();
             }
@@ -110,7 +110,7 @@ class KandylaravelServiceProvider extends ServiceProvider
     private function registerStatus()
     {
         $this->app->bind(
-            'kandylaravel::status',
+            'kandy-laravel::status',
             function () {
                 return new Status();
             }
@@ -123,7 +123,7 @@ class KandylaravelServiceProvider extends ServiceProvider
     private function registerAddressBook()
     {
         $this->app->bind(
-            'kandylaravel::addressBook',
+            'kandy-laravel::addressBook',
             function () {
                 return new AddressBook();
             }
@@ -136,7 +136,7 @@ class KandylaravelServiceProvider extends ServiceProvider
     private function registerChat()
     {
         $this->app->bind(
-            'kandylaravel::chat',
+            'kandy-laravel::chat',
             function () {
                 return new Chat();
             }

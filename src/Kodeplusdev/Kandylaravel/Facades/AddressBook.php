@@ -21,7 +21,7 @@ class AddressBook extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'kandylaravel::addressBook';
+        return 'kandy-laravel::addressBook';
     }
 
 }

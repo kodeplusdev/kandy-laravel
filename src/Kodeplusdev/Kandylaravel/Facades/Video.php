@@ -21,7 +21,7 @@ class Video extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'kandylaravel::video';
+        return 'kandy-laravel::video';
     }
 
 }

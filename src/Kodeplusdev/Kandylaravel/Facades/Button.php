@@ -21,8 +21,8 @@ class Button extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        // (e.g kandylaravel::chat)
-        return 'kandylaravel::button';
+        // (e.g kandy-laravel::chat)
+        return 'kandy-laravel::button';
     }
 
 }
