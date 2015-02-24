@@ -19,7 +19,7 @@ Home page: http://www.kandy.io/
     "laravel/framework": "4.2.*",
     "toddish/verify": "3.*",
     ... // Others
-    "kodeplusdev/kandylaravel": "dev-master"
+    "kodeplusdev/kandylaravel": "1.4"
 },
 ```
 
