@@ -10,7 +10,6 @@ class RestClientException extends Exception
 
 class RestClient
 {
-
     protected $_submitted = false;
     protected $_headers = array();
     protected $_body = '';
@@ -125,8 +124,9 @@ class RestClient
         return $this;
     }
 
-    /*
-    *	After the request - functions to return data
+    /**
+     * After the request - functions to return data
+     * @return int|string
      */
 
     public function getStatusText()
@@ -137,6 +137,11 @@ class RestClient
         return 'UNKNOWN';
     }
 
+    /**
+     * Get Status Code.
+     *
+     * @return int|string
+     */
     public function getStatusCode()
     {
         if ($this->_submitted) {
@@ -145,6 +150,12 @@ class RestClient
         return 0;
     }
 
+    /**
+     * Get Header.
+     *
+     * @param $index
+     * @return string
+     */
     public function getHeader($index)
     {
         if (isset($this->_headers[$index])) {
@@ -153,16 +164,29 @@ class RestClient
         return 'N/A';
     }
 
+    /**
+     * Get content.
+     * @return string
+     */
     public function getContent()
     {
         return $this->_body;
     }
 
+    /**
+     * Get Headers.
+     *
+     * @return array
+     */
     public function getHeaders()
     {
         return $this->_headers;
     }
 
+    /**
+     * Get Time
+     * @return string
+     */
     public function getTime()
     {
         return $this->getHeader('total_time');

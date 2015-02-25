@@ -1,7 +1,5 @@
 <?php
-/**
- * Bootstrapper base class for objects
- */
+
 namespace Kodeplusdev\Kandylaravel;
 
 /**
@@ -11,7 +9,6 @@ namespace Kodeplusdev\Kandylaravel;
  */
 abstract class RenderedObject
 {
-
     /**
      * @var array
      */
@@ -55,5 +52,4 @@ abstract class RenderedObject
 
         return $this;
     }
-
 } 

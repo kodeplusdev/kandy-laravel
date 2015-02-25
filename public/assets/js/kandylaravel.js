@@ -23,28 +23,28 @@ setup = function () {
                 }
 
             },
-            loginsuccess: kandy_loginsuccess_callback,
-            loginfailed: kandy_loginfailed_callback,
+            loginsuccess: kandy_login_success_callback,
+            loginfailed: kandy_login_failed_callback,
             callincoming: kandy_incoming_call_callback,
             // when an outgoing call is connected
-            oncall: kandy_oncall_callback,
+            oncall: kandy_on_call_callback,
             // when an incoming call is connected
             // you indicated that you are answering the call
-            callanswered: kandy_callanswered_callback,
-            callended: kandy_callended_callback,
-            localvideoinitialized: kandy_localvideoinitialized_callback,
+            callanswered: kandy_call_answered_callback,
+            callended: kandy_call_ended_callback,
+            localvideoinitialized: kandy_local_video_initialized_callback,
             // a video tag is being provided (required for both audio and video calls)
             // you must insert it into the DOM for communication to happen (although for audio calls, it can remain hidden)
-            remotevideoinitialized: kandy_remotevideoinitialized_callack,
-            presencenotification: kandy_presencenotification_callack
+            remotevideoinitialized: kandy_remote_video_initialized_callback,
+            presencenotification: kandy_presence_notification_callback
         }
     });
-}
+};
 
 /**
- * Login Success Callback
+ * Login Success Callback.
  */
-kandy_loginsuccess_callback = function () {
+kandy_login_success_callback = function () {
     KandyAPI.Phone.updatePresence(0);
 
     //have kandyAddressBook widget
@@ -58,47 +58,47 @@ kandy_loginsuccess_callback = function () {
 
     }
     //call user callback
-    if (typeof loginsuccess_callback == 'function') {
-        loginsuccess_callback();
+    if (typeof login_success_callback == 'function') {
+        login_success_callback();
     }
 
     //call user logout if exists
     if (typeof kandy_logout == 'function') {
         kandy_logout();
     }
-}
+};
 
 /**
  * Login Fail Callback
  */
-kandy_loginfailed_callback = function () {
-    if (typeof loginfailed_callback == 'function') {
-        loginfailed_callback();
+kandy_login_failed_callback = function () {
+    if (typeof login_failed_callback == 'function') {
+        login_failed_callback();
     }
-}
+};
 
 /**
  * Local Video Initialized callback
  * @param videoTag
  */
-kandy_localvideoinitialized_callback = function (videoTag) {
+kandy_local_video_initialized_callback = function (videoTag) {
 
     //have video widget
     if($(".kandyVideo").length){
         $('#myVideo').append(videoTag);
     }
 
-    if (typeof localvideoinitialized_callback == 'function') {
-        localvideoinitialized_callback(videoTag);
+    if (typeof local_video_initialized_callback == 'function') {
+        local_video_initialized_callback(videoTag);
     }
 
-}
+};
 
 /**
  * Remote Video Initialized Callback
  * @param videoTag
  */
-kandy_remotevideoinitialized_callack = function (videoTag) {
+kandy_remote_video_initialized_callback = function (videoTag) {
 
     //have video widget
     if($(".kandyVideo").length){
@@ -108,24 +108,25 @@ kandy_remotevideoinitialized_callack = function (videoTag) {
     if($(".kandyButton .videoVoiceCallHolder").length){
         $('.kandyButton .videoVoiceCallHolder .video').append(videoTag);
     }
-    if (typeof remotevideoinitialized_callack == 'function') {
-        remotevideoinitialized_callack(videoTag);
+    if (typeof remote_video_initialized_callback == 'function') {
+        remote_video_initialized_callback(videoTag);
     }
-}
+};
 
 /**
- * Status Notification Callback
+ * Status Notification Callback.
+ *
  * @param userId
  * @param state
  * @param description
  * @param activity
  */
-kandy_presencenotification_callack = function (userId, state, description, activity) {
+kandy_presence_notification_callback = function (userId, state, description, activity) {
     // HTML id can't contain @ and jquery doesn't like periods (in id)
-    var id_attrib = '.kandyAddressBook .kandyAddressContactList #presence_' + userId.replace(/[.@]/g, '_');
-    $(id_attrib).text(description);
-    if (typeof presencenotification_callack == 'function') {
-        presencenotification_callack(userId, state, description, activity);
+    var id_attr = '.kandyAddressBook .kandyAddressContactList #presence_' + userId.replace(/[.@]/g, '_');
+    $(id_attr).text(description);
+    if (typeof presence_notification_callback == 'function') {
+        presence_notification_callback(userId, state, description, activity);
     }
     //update chat status
     if($('.kandyChat').length >0){
@@ -136,60 +137,64 @@ kandy_presencenotification_callack = function (userId, state, description, activ
         liUser.removeClass().addClass('kandy-chat-status-' + description.replace(/ /g,'-').toLowerCase());
         liUser.attr('title', description);
     }
-}
+};
 
 /**
  * OnCall Callback
  * @param call
  */
-kandy_oncall_callback = function (call) {
-    if (typeof oncall_callback == 'function') {
-        oncall_callback(call);
+kandy_on_call_callback = function (call) {
+    if (typeof on_call_callback == 'function') {
+        on_call_callback(call);
     }
     changeAnswerButtonState("ON_CALL");
-}
+};
 
 /**
- * Incomming Callback
+ * Incoming Callback.
+ *
  * @param call
  * @param isAnonymous
  */
 kandy_incoming_call_callback = function (call, isAnonymous) {
-    if (typeof callincoming_callback == 'function') {
-        callincoming_callback(call, isAnonymous);
+    if (typeof incoming_call_callback == 'function') {
+        incoming_call_callback(call, isAnonymous);
     }
     changeAnswerButtonState('BEING_CALLED');
-}
+};
 
 /**
- * kandy call answered callback
+ * kandy call answered callback.
+ *
  * @param call
  * @param isAnonymous
  */
-kandy_callanswered_callback = function (call, isAnonymous) {
-    if (typeof callanswered_callback == 'function') {
-        callanswered_callback(call, isAnonymous);
+kandy_call_answered_callback = function (call, isAnonymous) {
+    if (typeof call_answered_callback == 'function') {
+        call_answered_callback(call, isAnonymous);
     }
     changeAnswerButtonState("ON_CALL");
-}
+};
 
 /**
- * kandy callended callback
+ * kandy call ended callback.
+ *
  */
-kandy_callended_callback = function () {
+kandy_call_ended_callback = function () {
     //have video widget
     if($(".kandyVideo").length){
         $('#theirVideo').empty();
         $('#myVideo').empty();
     }
-    if (typeof callended_callback == 'function') {
-        callended_callback();
+    if (typeof call_ended_callback == 'function') {
+        call_ended_callback();
     }
     changeAnswerButtonState("READY_FOR_CALLING");
-}
+};
 
 /**
- * Change AnswerButtonState with KandyButton Widget
+ * Change AnswerButtonState with KandyButton Widget.
+ *
  * @param state
  */
 changeAnswerButtonState = function (state) {
@@ -220,61 +225,70 @@ changeAnswerButtonState = function (state) {
             $('.kandyButton .kandyVideoButtonOnCall').show();
             break;
     }
-}
+};
 
-/*
- Event when answer a call
+/**
+ * Event when answer a call.
+ *
+ * @param target
  */
-kandy_answerVideoCall = function (target) {
+kandy_answer_video_call = function (target) {
     KandyAPI.Phone.answerVideoCall();
     changeAnswerButtonState("ANSWERING_CALL");
-    if (typeof answerVideoCall_callback == 'function') {
-        answerVideoCall_callback("ANSWERING_CALL");
+    if (typeof answer_video_call_callback == 'function') {
+        answer_video_call_callback("ANSWERING_CALL");
     }
-}
+};
 
 /*
  Event when click call button
  */
-kandy_makeVideoCall = function (target) {
+kandy_make_video_call = function (target) {
 
     KandyAPI.Phone.makeVideoCall($('.kandyButton .kandyVideoButtonCallOut #callOutUserId').val());
     changeAnswerButtonState("CALLING");
-}
+    if (typeof make_video_call_callback == 'function') {
+        make_video_call_callback(target);
+    }
+};
 
 /*
  Event when answer a voice call
  */
-kandy_answerVoiceCall = function (target) {
+kandy_answer_voice_call = function (target) {
     KandyAPI.Phone.answerVoiceCall();
     changeAnswerButtonState("ANSWERING_CALL");
-    answerVoiceCall_callback("ANSWERING_CALL");
-    if (typeof answerVoiceCall_callback == 'function') {
-        answerVoiceCall_callback("ANSWERING_CALL");
+    if (typeof answer_voice_call_callback == 'function') {
+        answer_voice_call_callback(target);
     }
 
-}
+};
 
 /*
  Event when click call button
  */
-kandy_makeVoiceCall = function (target) {
+kandy_make_voice_call = function (target) {
 
     KandyAPI.Phone.makeVoiceCall($('.kandyButton .kandyVideoButtonCallOut #callOutUserId').val());
     changeAnswerButtonState("CALLING");
-}
+
+    if (typeof make_voice_call_callback == 'function') {
+        make_voice_call_callback(target);
+    }
+};
 
 /*
  Event when click end call button
  */
-kandy_endCall = function (target) {
+kandy_end_call = function (target) {
     KandyAPI.Phone.endCall();
-    if (typeof endCall_callback == 'function') {
-        endCall_callback('READY_FOR_CALLING');
+
+    if (typeof end_call_callback == 'function') {
+        end_call_callback(target);
     }
 
     changeAnswerButtonState("READY_FOR_CALLING");
-}
+};
 
 /**
  * ADDRESS BOOK WIDGET
@@ -297,12 +311,12 @@ kandy_loadContacts_addressBook = function () {
                 for (i = 0; i < results.length; i++) {
                     contactListForPresence.push({full_user_id: results[i].contact_user_name});
 
-                    var id_attrib = results[i].contact_user_name.replace(/[.@]/g, '_');
+                    var id_attr = results[i].contact_user_name.replace(/[.@]/g, '_');
                     $('.kandyAddressBook .kandyAddressContactList').append(
                         // HTML id can't contain @ and jquery doesn't like periods (in id)
                         "<div class='kandyContactItem' id='uid_" + results[i].contact_user_name.replace(/[.@]/g, '_') + "'>" +
-                            "<span class='userid'>" + results[i].contact_user_name + "</span>" +
-                            "<span id='presence_" + id_attrib + "' class='presence'></span>" +
+                            "<span class='userId'>" + results[i].contact_user_name + "</span>" +
+                            "<span id='presence_" + id_attr + "' class='presence'></span>" +
                             "<input class='removeBtn' type='button' value='Remove' " +
                             " onclick='kandy_removeFromContacts(\"" + results[i].contact_id + "\")'>" +
                             "</div>"
@@ -315,16 +329,15 @@ kandy_loadContacts_addressBook = function () {
             console.log("Error kandy_loadContacts_addressBook");
         }
     );
-
-}
+};
 
 /**
  * Change current user status with kandyAddressBook
  * @param status
  */
-kandy_myStatusChanged = function (status) {
+kandy_my_status_changed = function (status) {
     KandyAPI.Phone.updatePresence(status);
-}
+};
 
 /**
  * Add a user to contact list with kandyAddressBook
@@ -435,7 +448,7 @@ kandy_searchDirectoryByUserName = function () {
 };
 
 /**
- * ===================KANDYCHAT WIDGET FUNCTION ==========================
+ * ===================KANDY CHAT WIDGET FUNCTION ==========================
  */
 
 /**
@@ -445,7 +458,7 @@ var addExampleBox = function () {
     var tabId = "example";
     tabContentWrapper.append(getLiContent(tabId));
     tabContentWrapper.find('li[data-content="' + tabId + '"]').addClass('selected').find(".chat-input").attr('disabled', true);
-}
+};
 
 /**
  * Load Contact for KandyChat
@@ -454,7 +467,6 @@ kandy_loadContacts_chat = function () {
     var contactListForPresence = [];
     KandyAPI.Phone.retrievePersonalAddressBook(
         function (results) {
-            var div = null;
             emptyContact();
             for (i = 0; i < results.length; i++) {
                 prependContact(results[i].contact_user_name);
@@ -480,7 +492,7 @@ kandy_sendIm = function (username) {
     var inputMessage = $('.kandyChat .imMessageToSend[data-user="' + username + '"]');
     var message = inputMessage.val();
     inputMessage.val('');
-    var uuid = KandyAPI.Phone.sendIm(username, message, function () {
+    KandyAPI.Phone.sendIm(username, message, function () {
             var newMessage = '<div class="my-message">\
                     <b><span class="imUsername">' + displayName + ':</span></b>\
                     <span class="imMessage">' + message + '</span>\
@@ -501,7 +513,7 @@ kandy_sendIm = function (username) {
 kandy_getIms = function () {
     KandyAPI.Phone.getIm(
         function (data) {
-            var i = 0;
+            var i;
             for (i = 0; i < data.messages.length; ++i) {
                 var msg = data.messages[i];
                 if (msg.messageType == 'chat') {
@@ -520,7 +532,7 @@ kandy_getIms = function () {
                     }
 
                     // Process message
-                    var msg = data.messages[i].message.text
+                    var msg = data.messages[i].message.text;
                     var newMessage = '<div class="their-message">\
                             <b><span class="imUsername">' + shortName + ':</span></b>\
                             <span class="imMessage">' + msg + '</span>\
@@ -549,7 +561,7 @@ kandy_getIms = function () {
 var emptyContact = function () {
     $(liTabWrapSelector).html("");
     $(liContentWrapSelector).html("");
-}
+};
 
 /**
  * Prepend a contact
@@ -572,17 +584,16 @@ var prependContact = function (user) {
         var liContent = getLiContent(user);
         $(liContentWrapSelector).prepend(liContent);
     }
-}
+};
 
 /**
  * Get current active user name
  *
- * @returns {*|jQuery}
+ * @returns {*}
  */
 var getActiveContact = function () {
-    var user = $(liTabWrapSelector + " li." + activeClass).attr(userHoldingAttribute);
-    return user;
-}
+    return $(liTabWrapSelector + " li." + activeClass).attr(userHoldingAttribute);
+};
 
 /**
  * Set focus to a user
@@ -591,7 +602,7 @@ var getActiveContact = function () {
  */
 var setFocusContact = function (user) {
     $(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + user + "']").trigger("click");
-}
+};
 
 /**
  * Move a contact user to top of the list
@@ -608,7 +619,7 @@ var moveContactToTop = function (user) {
     // Remove
     contact.remove();
 
-}
+};
 
 /**
  * Move a contact user to top of the list set set focus to it
@@ -619,7 +630,7 @@ var moveContactToTopAndSetActive = function (user) {
     moveContactToTop(user);
     setFocusContact(user);
     $(liTabWrapSelector).scrollTop(0);
-}
+};
 
 // ======================JQUERY READY =======================
 $(document).ready(function () {

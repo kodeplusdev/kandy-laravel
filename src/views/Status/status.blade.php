@@ -1,6 +1,6 @@
 <div class="{{$class}}">
     <span class="title">{{$title}} </span>
-    <select id="{{$id}}" class="dropDown" {{$htmlOptionsAttributes}} onchange="kandy_myStatusChanged($(this).val())">
+    <select id="{{$id}}" class="dropDown" {{$htmlOptionsAttributes}} onchange="kandy_my_status_changed($(this).val())">
         <option value="0" selected>Available</option>
         <option value="1">Unavailable</option>
         <option value="2">Away</option>

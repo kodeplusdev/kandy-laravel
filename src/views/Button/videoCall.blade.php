@@ -4,7 +4,7 @@
     <label>{{$options['incomingCall']['label']}}</label>
     <input class="btmAnswerVideoCall" type="button"
            value="{{$options['incomingCall']['btnLabel']}}"
-           onclick="kandy_answerVideoCall(this)"/>
+           onclick="kandy_answer_video_call(this)"/>
 </div><!--end someonesCalling -->
 
 <div class="kandyVideoButton kandyVideoButtonCallOut"
@@ -13,7 +13,7 @@
     <input id="callOutUserId" type="text" value=""/>
     <input class="btnCall" id="callBtn" type="button"
            value="{{$options['callOut']['btnLabel']}}"
-           onclick="kandy_makeVideoCall(this)"/>
+           onclick="kandy_make_video_call(this)"/>
 </div>
 <!--end callOut -->
 
@@ -22,7 +22,7 @@
     <label>{{$options['calling']['label']}}</label>
     <input type="button" class="btnEndCall"
            value="{{$options['calling']['btnLabel']}}"
-           onclick="kandy_endCall(this)"/>
+           onclick="kandy_end_call(this)"/>
 </div>
 <!--end calling -->
 
@@ -31,7 +31,7 @@
     <label>{{$options['onCall']['label']}}</label>
     <input class="btnEndCall" type="button"
            value="{{$options['onCall']['btnLabel']}}"
-           onclick="kandy_endCall(this)"/>
+           onclick="kandy_end_call(this)"/>
 </div>
 <!-- end oncall -->
 </div>

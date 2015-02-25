@@ -1,6 +1,3 @@
-/*
-test pusblish
-*/
 .kandyVideo {
     margin-right: 10px;
     float: left;
@@ -11,20 +8,17 @@ test pusblish
 }
 
 .kandyVideo .title {
-    margin: 5px 0px;
+    margin: 5px 0;
 }
 
-/*
-
-=====KANDY VIDEO CALL STYLE=====
-*/
+/* Kandy Button */
 .kandyButton {
     overflow: auto;
     padding: 8px;
 }
 
 .kandyButton .kandyButtonComponent {
-    margin: 15px 0px;
+    margin: 15px 0;
 }
 
 .kandyButton .kandyButtonComponent input {
@@ -60,6 +54,7 @@ test pusblish
 .kandyButton .kandyVideoButtonSomeonesCalling {
     display: none;
 }
+
 .kandyButton .videoVoiceCallHolder{
     display: none;
 }
@@ -94,7 +89,7 @@ test pusblish
     border: 1px solid black
 }
 
-.kandyAddressBook .userid {
+.kandyAddressBook .userId {
     width: 190px;
     display: inline-block
 }
@@ -137,20 +132,22 @@ test pusblish
     overflow: auto;
 }
 
-.my-message {
+.kandyChat .my-message {
     color: #0995FF;
 }
 
-.their-message {
+.kandyChat .their-message {
     color: #F47063;
 }
+
 .kandyChat .chat-heading .contact-heading label{
     display: inline-block;
 }
+
 .kandyChat .chat-heading .contact-heading select{
     display: inline-block;
     width: 110px;
-    padding: 2px 0px;
+    padding: 2px 0;
 }
 
 .kandyChat .btnSendMessage {
@@ -161,13 +158,14 @@ test pusblish
 
     text-indent: 16px;
 }
+
 .kandyChat .cd-tabs-navigation li i.status{
     font-size: 0.75rem;
     text-indent: 16px;
     display: block;
     line-height: 1em;
-
 }
+
 .kandyChat .cd-tabs-navigation li.kandy-chat-status-available a{
     background: url("../img/available.png") left center no-repeat;
 }
@@ -175,6 +173,7 @@ test pusblish
 .kandyChat .cd-tabs-navigation li.kandy-chat-status-offline a{
     background: url("../img/offline.png") left center no-repeat;
 }
+
 .kandyChat .cd-tabs-navigation li.kandy-chat-status-unavailable a,
 .kandyChat .cd-tabs-navigation li.kandy-chat-status-away a,
 .kandyChat .cd-tabs-navigation li.kandy-chat-status-busy a,
@@ -184,34 +183,9 @@ test pusblish
     background: url("../img/busy.png") left center no-repeat;
 }
 
-/*
-
-.kandyChat .cd-tabs-navigation li.kandy-chat-status-offline a{
-    background: url("../img/offline.png") left center no-repeat;
-}
-.kandyChat .cd-tabs-navigation li.kandy-chat-status-unavailable a{
-    background: url("../img/unavailable.png") left center no-repeat;
-}
-.kandyChat .cd-tabs-navigation li.kandy-chat-status-away a{
-    background: url("../img/away.png") left center no-repeat;
-}
-.kandyChat .cd-tabs-navigation li.kandy-chat-status-busy a{
-    background: url("../img/busy.png") left center no-repeat;
-}
-
-.kandyChat .cd-tabs-navigation li.kandy-chat-status-out-to-lunch a{
-    background: url("../img/out-to-lunch.png") left center no-repeat;
-}
-.kandyChat .cd-tabs-navigation li.kandy-chat-status-on-vacation a{
-    background: url("../img/on-vacation.png") left center no-repeat;
-}
-.kandyChat .cd-tabs-navigation li.kandy-chat-status-be-right-back a{
-    background: url("../img/be-right-back.png") left center no-repeat;
-}
-*/
 /* CSS for tab */
 
-.row.cd-tabs {
+.kandyChat.row.cd-tabs {
     position: relative;
     width: 90%;
     max-width: 960px;
@@ -219,51 +193,43 @@ test pusblish
     height: 500px!important;
 }
 
-.cd-tabs nav {
+.kandyChat.cd-tabs nav {
     width: 20%;
     height: 100%;
     float: left;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     padding: 5px;
-    box-shadow: inset 0px 0px 2px #aaa;
+    box-shadow: inset 0 0 2px #aaa;
 }
 
-.cd-tabs-navigation {
+.kandyChat .cd-tabs-navigation {
     width: 100%;
     margin: 0;
 }
 
-.cd-tabs-navigation li {
+.kandyChat .cd-tabs-navigation li {
     float: left;
     width: 98%;
 }
 
-.cd-tabs-navigation a {
+.kandyChat .cd-tabs-navigation a {
     background-color: #ffffff !important;
     position: relative;
     display: block;
-
     width: 100%;
     font-size: 0.75rem;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: #000;
-
 }
 
-.no-touch .cd-tabs-navigation a:hover {
-    font-weight: 700;
-    background-color: rgba(233, 230, 202, 0.3);
-}
-
-.cd-tabs-navigation a.selected {
+.kandyChat .cd-tabs-navigation a.selected {
     background-color: #ffffff !important;
     font-weight: 700;
 }
 
-.cd-tabs-navigation a::before {
-    /* icons */
+.kandyChat .cd-tabs-navigation a::before {
     position: absolute;
     top: 12px;
     left: 50%;
@@ -274,55 +240,55 @@ test pusblish
     background-repeat: no-repeat;
 }
 
-.cd-tabs-navigation a[data-content='inbox']::before {
+.kandyChat .cd-tabs-navigation a[data-content='inbox']::before {
     background-position: 0 0;
 }
 
-.cd-tabs-navigation a[data-content='new']::before {
+.kandyChat .cd-tabs-navigation a[data-content='new']::before {
     background-position: -20px 0;
 }
 
-.cd-tabs-navigation a[data-content='gallery']::before {
+.kandyChat .cd-tabs-navigation a[data-content='gallery']::before {
     background-position: -40px 0;
 }
 
-.cd-tabs-navigation a[data-content='store']::before {
+.kandyChat .cd-tabs-navigation a[data-content='store']::before {
     background-position: -60px 0;
 }
 
-.cd-tabs-navigation a[data-content='settings']::before {
+.kandyChat .cd-tabs-navigation a[data-content='settings']::before {
     background-position: -80px 0;
 }
 
-.cd-tabs-navigation a[data-content='trash']::before {
+.kandyChat .cd-tabs-navigation a[data-content='trash']::before {
     background-position: -100px 0;
 }
 
-.cd-tabs-navigation a[data-content='inbox'].selected::before {
+.kandyChat .cd-tabs-navigation a[data-content='inbox'].selected::before {
     background-position: 0 -20px;
 }
 
-.cd-tabs-navigation a[data-content='new'].selected::before {
+.kandyChat .cd-tabs-navigation a[data-content='new'].selected::before {
     background-position: -20px -20px;
 }
 
-.cd-tabs-navigation a[data-content='gallery'].selected::before {
+.kandyChat .cd-tabs-navigation a[data-content='gallery'].selected::before {
     background-position: -40px -20px;
 }
 
-.cd-tabs-navigation a[data-content='store'].selected::before {
+.kandyChat .cd-tabs-navigation a[data-content='store'].selected::before {
     background-position: -60px -20px;
 }
 
-.cd-tabs-navigation a[data-content='settings'].selected::before {
+.kandyChat .cd-tabs-navigation a[data-content='settings'].selected::before {
     background-position: -80px -20px;
 }
 
-.cd-tabs-navigation a[data-content='trash'].selected::before {
+.kandyChat .cd-tabs-navigation a[data-content='trash'].selected::before {
     background-position: -100px -20px;
 }
 
-.cd-tabs-content {
+.kandyChat .cd-tabs-content {
     background: #ffffff;
     height: 100%;
     width: 80%;
@@ -330,21 +296,20 @@ test pusblish
     margin: 0;
 }
 
-.cd-tabs-content li {
+.kandyChat .cd-tabs-content li {
     display: none;
     padding: 0 1.4em;
 }
 
-.cd-tabs-content li.selected {
+.kandyChat .cd-tabs-content li.selected {
     display: block;
     -webkit-animation: cd-fade-in 0.5s;
     -moz-animation: cd-fade-in 0.5s;
     animation: cd-fade-in 0.5s;
 }
 
-.cd-tabs-content li p {
+.kandyChat .cd-tabs-content li p {
     font-size: 14px;
-    font-size: 0.875rem;
     line-height: 1.6;
     color: #8493bf;
     margin-bottom: 2em;
@@ -377,26 +342,26 @@ test pusblish
     }
 }
 
-.input-message {
+.kandyChat .input-message {
     float: left;
     width: 87%;
 }
 
-.button-send {
+.kandyChat .button-send {
     width: 12%;
     float: right;
 }
 
-.clear-fix {
+.kandyChat .clear-fix {
     clear: both;
 }
 
-.contact-heading {
+.kandyChat .contact-heading {
     float: left;
     width: 20%;
 }
 
-.chat-with-message {
+.kandyChat .chat-with-message {
     float: left;
     padding-left: 1.4em;
     display: none;

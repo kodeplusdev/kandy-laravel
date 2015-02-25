@@ -1,34 +1,34 @@
 <div class="row {{$class}} cd-tabs" id="{{$id}}" {{$htmlOptionsAttributes}} >
-<input type="hidden" class="kandy_current_username" value="{{$options['user']['name']}}"/>
-<div class="chat-heading">
-    <div class="contact-heading">
-        <label>Contacts:</label>
-        <select onchange="kandy_contactFilterChanged($(this).val())">
-            <option value="all">All</option>
-            <option value="offline">Offline</option>
-            <option value="available">Available</option>
-            <option value="unavailable">Unavailable</option>
-            <option value="away">Away</option>
-            <option value="out-to-lunch">Out To Lunch</option>
-            <option value="busy">Busy</option>
-            <option value="on-vacation">On Vacation</option>
-            <option value="be-right-back">Be Right Back</option>
-        </select>
+    <input type="hidden" class="kandy_current_username" value="{{$options['user']['name']}}"/>
+    <div class="chat-heading">
+        <div class="contact-heading">
+            <label>Contacts:</label>
+            <select onchange="kandy_contactFilterChanged($(this).val())">
+                <option value="all">All</option>
+                <option value="offline">Offline</option>
+                <option value="available">Available</option>
+                <option value="unavailable">Unavailable</option>
+                <option value="away">Away</option>
+                <option value="out-to-lunch">Out To Lunch</option>
+                <option value="busy">Busy</option>
+                <option value="on-vacation">On Vacation</option>
+                <option value="be-right-back">Be Right Back</option>
+            </select>
+        </div>
+        <div class="chat-with-message">
+            Chatting with <span class="chat-friend-name"></span>
+        </div>
+        <div class="clear-fix"></div>
     </div>
-    <div class="chat-with-message">
-        Chatting with <span class="chat-friend-name"></span>
-    </div>
-    <div class="clear-fix"></div>
-</div>
-<nav>
-    <ul class="cd-tabs-navigation">
+    <nav>
+        <ul class="cd-tabs-navigation">
+        </ul>
+    </nav>
+
+    <ul class="cd-tabs-content">
     </ul>
-</nav>
 
-<ul class="cd-tabs-content">
-</ul>
-
-<div style="clear: both;"></div>
+    <div style="clear: both;"></div>
 </div>
 
 <script>
@@ -51,12 +51,11 @@
      * @returns {string}
      */
     var getLiContact = function (user, active) {
-        // Set false as default
+        // Set false as default.
         var id = user.replace(/[.@]/g, '_');
         var liClass = (typeof active !== 'undefined') ? active : "";
-        var result = '<li id="'+ id +'" class="' + liClass + '"><a ' + userHoldingAttribute + '="' + user + '" href="#">' + user + '</a><i class="status"></i></li>';
-        return result
-    }
+        return '<li id="'+ id +'" class="' + liClass + '"><a ' + userHoldingAttribute + '="' + user + '" href="#">' + user + '</a><i class="status"></i></li>';
+    };
 
     /**
      * Get contact content template
@@ -84,10 +83,16 @@
                 </div>\
             </li>';
         return result;
-    }
+    };
+
+    /**
+     * Kandy Chat Filter Change.
+     *
+     * @param val
+     */
     var kandy_contactFilterChanged = function(val){
-        var liUserchat = $(".kandyChat .cd-tabs-navigation li");
-        $.each(liUserchat, function(index, target){
+        var liUserChat = $(".kandyChat .cd-tabs-navigation li");
+        $.each(liUserChat, function(index, target){
             var liClass = $(target).attr('class');
             var currentClass = "kandy-chat-status-" + val;
             if(val == "all"){
@@ -98,18 +103,17 @@
                 $(target).hide();
             }
         });
-    }
+    };
+
+    /**
+     *  Ready
+     */
     $(document).ready(function () {
         $("form.send-message").live("submit", function (e) {
             var username = $(this).attr('data-user');
             kandy_sendIm(username);
             e.preventDefault();
-        })
-
-        /**
-         * Chat Tabs
-         *
-         */
+        });
 
         $('.cd-tabs-navigation a').live('click', function (event) {
             event.preventDefault();
@@ -117,7 +121,7 @@
             if (!selectedItem.hasClass('selected')) {
                 var selectedTab = selectedItem.data('content'),
                     selectedContent = tabContentWrapper.find('li[data-content="' + selectedTab + '"]'),
-                    slectedContentHeight = selectedContent.innerHeight();
+                    selectedContentHeight = selectedContent.innerHeight();
 
                 $('.cd-tabs-navigation a').removeClass('selected');
                 selectedItem.addClass('selected');
@@ -132,7 +136,7 @@
 
                 //animate tabContentWrapper height when content changes
                 tabContentWrapper.animate({
-                    'height': slectedContentHeight
+                    'height': selectedContentHeight
                 }, 200);
             }
         });
@@ -150,12 +154,12 @@
 
         function checkScrolling(tabs) {
             var totalTabWidth = parseInt(tabs.children('.cd-tabs-navigation').width()),
-                tabsViewport = parseInt(tabs.width());
-            if (tabs.scrollLeft() >= totalTabWidth - tabsViewport) {
+                tabsViewPort = parseInt(tabs.width());
+            if (tabs.scrollLeft() >= totalTabWidth - tabsViewPort) {
                 tabs.parent('.cd-tabs').addClass('is-ended');
             } else {
                 tabs.parent('.cd-tabs').removeClass('is-ended');
             }
         }
-    })
+    });// End document ready.
 </script>
