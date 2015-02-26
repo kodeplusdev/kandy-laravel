@@ -291,9 +291,8 @@ class Kandylaravel
                 if ($type == self::KANDY_USER_ASSIGNED) {
                     $models = KandyUsers::whereNotNull('main_user_id')->get();
                 } else {
-                    if ($type == self::KANDY_USER_UNASSIGNED) {
-                        $models = KandyUsers::whereNull('main_user_id')->get();
-                    }
+                    // type = self::KANDY_USER_UNASSIGNED
+                    $models = KandyUsers::whereNull('main_user_id')->get();
                 }
             }
             $result = $models;

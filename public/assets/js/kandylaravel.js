@@ -310,7 +310,7 @@ kandy_loadContacts_addressBook = function () {
             } else {
                 $('.kandyAddressBook .kandyAddressContactList').append("<div class='kandy-contact-heading'><span class='displayname'><b>Username</b></span><span class='userid'><b>Contact</b></span><span class='presence_'><b>Status</b></span></div>");
 
-                for (i = 0; i < results.length; i++) {
+                for (var i = 0; i < results.length; i++) {
                     contactListForPresence.push({full_user_id: results[i].contact_user_name});
 
                     var id_attr = results[i].contact_user_name.replace(/[.@]/g, '_');
@@ -362,7 +362,7 @@ kandy_addToContacts = function (userId) {
                 for (var i = 0; i < results.length; ++i) {
                     if (results[i].primaryContact === userIdToAddToContacts) {
                         // user name and nickname are required
-                        contact = {
+                        var contact = {
                             contact_user_name: results[i].primaryContact,
                             contact_nickname: results[i].primaryContact
                         };
@@ -444,7 +444,7 @@ kandy_searchDirectoryByUserName = function () {
                     );
                 }
             }
-        }).fail(function(e) {
+        }).fail(function() {
             $(".kandyAddressBook .kandyDirSearchResults div:not(:first)").remove();
             var div = "<div class='kandyAddressBookNoResult'>There was an error with your request.</div>";
             $('.kandyAddressBook .kandyDirSearchResults').append(div);
@@ -479,11 +479,9 @@ var getDisplayNameForChatContent = function (data) {
         }).done(function(response) {
                 data.messages = response;
             }).fail(function(e) {
-                //result = data;
             });
     }
-    var result = data;
-    return result;
+    return data;
 };
 
 /**
@@ -503,9 +501,8 @@ var getDisplayNameForContact = function (data) {
             }).fail(function (e) {
             });
     }
-    var result = data;
-    return result;
-}
+    return data;
+};
 
 /**
  * Load Contact for KandyChat
@@ -516,7 +513,7 @@ kandy_loadContacts_chat = function () {
         function (results) {
             results = getDisplayNameForContact(results);
             emptyContact();
-            for (i = 0; i < results.length; i++) {
+            for (var i = 0; i < results.length; i++) {
                 prependContact(results[i]);
                 contactListForPresence.push({full_user_id: results[i].contact_user_name});
             }
@@ -623,7 +620,6 @@ var emptyContact = function () {
 var prependContact = function (user) {
 
     var username = user.contact_user_name;
-    var displayname = user.display_name;
 
     var liParent = $(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + username + "']").parent();
     var liContact = "";
@@ -697,11 +693,10 @@ var moveContactToTopAndSetActive = function (user) {
 var getLiContact = function (user, active) {
     // Set false as default
     var username = user.contact_user_name;
-    var displayname = user.display_name;
+    var displayName = user.display_name;
     var id = username.replace(/[.@]/g, '_');
     var liClass = (typeof active !== 'undefined') ? active : "";
-    var result = '<li id="'+ id +'" class="' + liClass + '"><a ' + userHoldingAttribute + '="' + username + '" href="#">' + displayname + '</a><i class="status"></i></li>';
-    return result
+    return '<li id="'+ id +'" class="' + liClass + '"><a ' + userHoldingAttribute + '="' + username + '" href="#">' + displayName + '</a><i class="status"></i></li>';
 };
 
 /**
@@ -738,8 +733,8 @@ var getLiContent = function (user) {
  * @param val
  */
 var kandy_contactFilterChanged = function(val){
-    var liUserchat = $(".kandyChat .cd-tabs-navigation li");
-    $.each(liUserchat, function(index, target){
+    var liUserChat = $(".kandyChat .cd-tabs-navigation li");
+    $.each(liUserChat, function(index, target){
         var liClass = $(target).attr('class');
         var currentClass = "kandy-chat-status-" + val;
         if(val == "all"){
