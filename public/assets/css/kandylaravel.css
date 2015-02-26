@@ -224,6 +224,11 @@
     color: #000;
 }
 
+.no-touch .cd-tabs-navigation a:hover {
+    font-weight: 700;
+    background-color: rgba(233, 230, 202, 0.3);
+}
+
 .kandyChat .cd-tabs-navigation a.selected {
     background-color: #ffffff !important;
     font-weight: 700;

@@ -27,7 +27,8 @@
     "autoload": {
         "classmap": [
             "src/migrations",
-            "src/Models"
+            "src/Models",
+            "src/controllers"
         ],
         "psr-0": {
             "Kodeplusdev\\Kandylaravel\\": "src/"

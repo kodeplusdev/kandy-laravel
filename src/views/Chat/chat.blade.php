@@ -44,68 +44,6 @@
     var activeClass = "selected";
 
     /**
-     * Get a contact template
-     *
-     * @param user
-     * @param active
-     * @returns {string}
-     */
-    var getLiContact = function (user, active) {
-        // Set false as default.
-        var id = user.replace(/[.@]/g, '_');
-        var liClass = (typeof active !== 'undefined') ? active : "";
-        return '<li id="'+ id +'" class="' + liClass + '"><a ' + userHoldingAttribute + '="' + user + '" href="#">' + user + '</a><i class="status"></i></li>';
-    };
-
-    /**
-     * Get contact content template
-     *
-     * @param user
-     * @returns {string}
-     */
-    var getLiContent = function (user) {
-        var result =
-            '<li ' + userHoldingAttribute + '="' + user + '">\
-                <div class="kandyMessages" data-user="' + user + '">\
-                </div>\
-                <div >\
-                    Messages:\
-                </div>\
-                <div class="{{ $options['message']['class'] }}">\
-                            <form class="send-message" data-user="' + user + '">\
-                        <div class="input-message">\
-                            <input class="imMessageToSend chat-input" type="text" data-user="' + user + '">\
-                        </div>\
-                        <div class="button-send">\
-                            <input class="btnSendMessage chat-input" type="submit" value="Send"  data-user="' + user + '" >\
-                        </div>\
-                    </form>\
-                </div>\
-            </li>';
-        return result;
-    };
-
-    /**
-     * Kandy Chat Filter Change.
-     *
-     * @param val
-     */
-    var kandy_contactFilterChanged = function(val){
-        var liUserChat = $(".kandyChat .cd-tabs-navigation li");
-        $.each(liUserChat, function(index, target){
-            var liClass = $(target).attr('class');
-            var currentClass = "kandy-chat-status-" + val;
-            if(val == "all"){
-                $(target).show();
-            } else if(liClass == currentClass){
-                $(target).show();
-            } else {
-                $(target).hide();
-            }
-        });
-    };
-
-    /**
      *  Ready
      */
     $(document).ready(function () {

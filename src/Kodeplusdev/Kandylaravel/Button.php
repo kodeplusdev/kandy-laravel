@@ -144,6 +144,9 @@ class Button extends RenderedObject
 
         $data["htmlOptionAttributes"] = $htmlOptionAttributes;
 
+        $kandylaravel = new Kandylaravel();
+        $data['userOptions'] = $kandylaravel->getUserOptions(Kandylaravel::KANDY_USER_ASSIGNED);
+
         $this->data = $data;
     }
 
