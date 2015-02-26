@@ -39,6 +39,12 @@ php artisan migrate --package="kandy-io/kandy-laravel"
 
 ### Configuration
 
+Use an artisan command to publish configuration:
+
+```
+php artisan config:publish kandy-io/kandy-laravel
+```
+
 Configuration file will be generated at
 
 ```
