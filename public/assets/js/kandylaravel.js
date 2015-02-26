@@ -575,7 +575,6 @@ kandy_getIms = function () {
 
                     // Process tabs
                     if (!$(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + username + "']").length) {
-                        // todo: contact_user_name AND display_name
                         prependContact(data.messages[i].sender);
                     }
                     if (!$('input.imMessageToSend').is(':focus')) {
@@ -733,6 +732,11 @@ var getLiContent = function (user) {
     return result;
 };
 
+/**
+ * Filter contact
+ *
+ * @param val
+ */
 var kandy_contactFilterChanged = function(val){
     var liUserchat = $(".kandyChat .cd-tabs-navigation li");
     $.each(liUserchat, function(index, target){
@@ -748,6 +752,16 @@ var kandy_contactFilterChanged = function(val){
     });
 };
 
+/**
+ * Add contact
+ *
+ */
+var addContacts = function() {
+    var contactId = $("#kandySearchUserName").val();
+    kandy_addToContacts(contactId);
+    $("#kandySearchUserName").select2('val', '');
+};
+
 // ======================JQUERY READY =======================
 $(document).ready(function () {
     setup();
@@ -755,22 +769,17 @@ $(document).ready(function () {
 
     $(".select2").select2({
         ajax: {
+            quietMillis: 100,
             url: "/kandy/getUsersForSearch",
             dataType: 'json',
             delay: 250,
             data: function (params) {
                 return {
-                    q: params.term, // search term
-                    page: params.page
+                    q: params
                 };
             },
-            processResults: function (data, page) {
-                // parse the results into the format expected by Select2.
-                // since we are using custom formatting functions we do not need to
-                // alter the remote JSON data
-                return {
-                    results: data.items
-                };
+            results: function (data) {
+                return {results: data.results};
             }
         },
         minimumInputLength: 1

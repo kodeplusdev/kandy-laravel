@@ -22,8 +22,8 @@ class Kandylaravel
     const KANDY_USER_UNASSIGNED = 3;
 
     // SELECT2
-    const SELECT2_CSS = "packages/kodeplusdev/kandylaravel/assets/css/select2.css";
-    const SELECT2_JS = "packages/kodeplusdev/kandylaravel/assets/js/select2.min.js";
+    const SELECT2_CSS = "packages/kandy-io/kandy-laravel/assets/css/select2.css";
+    const SELECT2_JS = "packages/kandy-io/kandy-laravel/assets/js/select2.min.js";
 
     // Kandy Laravel configuration variables which could be overridden at application
     public $domainAccessToken;
@@ -353,8 +353,8 @@ class Kandylaravel
      */
     public function assignAllUser()
     {
-        $kandyUserTable = \Config::get('kandylaravel::kandy_user_table');
-        $mainUserTable = \Config::get('kandylaravel::user_table');
+        $kandyUserTable = \Config::get('kandy-laravel::kandy_user_table');
+        $mainUserTable = \Config::get('kandy-laravel::user_table');
         $mainUserTablePrimaryKey = $this->getMainUserIdColumn();
 
         $sql = "SELECT m.$mainUserTablePrimaryKey as id
@@ -563,9 +563,9 @@ class Kandylaravel
     {
         $result = "";
         $displayNameColumn = $this->getColumnForDisplayName('u');
-        $mainUserTable = \Config::get('kandylaravel::user_table');
+        $mainUserTable = \Config::get('kandy-laravel::user_table');
         $mainUserTablePrimaryKey = $this->getMainUserIdColumn();
-        $kandyUserTable = \Config::get('kandylaravel::kandy_user_table');
+        $kandyUserTable = \Config::get('kandy-laravel::kandy_user_table');
 
         $sql = "SELECT $displayNameColumn as displayName FROM $mainUserTable as u, $kandyUserTable as k WHERE u.$mainUserTablePrimaryKey = k.main_user_id AND k.id = $id";
         $data = \DB::select($sql);
@@ -584,7 +584,7 @@ class Kandylaravel
     public function getMainUserIdColumn()
     {
         $result = null;
-        $mainUserTable = \Config::get('kandylaravel::user_table');
+        $mainUserTable = \Config::get('kandy-laravel::user_table');
         $keys = \DB::select('SHOW KEYS FROM ' . $mainUserTable . ' WHERE Key_name = "PRIMARY"');
         if (!empty($keys)) {
             $key = $keys[0];
@@ -602,7 +602,7 @@ class Kandylaravel
     public function getColumnForDisplayName($table)
     {
         $columns = array();
-        $result = \Config::get('kandylaravel::user_name_display');
+        $result = \Config::get('kandy-laravel::user_name_display');
 
         preg_match_all('/{(.*?)}/', $result, $columns);
         $count = count ($columns[0]);

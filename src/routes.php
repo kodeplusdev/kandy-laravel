@@ -1,6 +1,6 @@
 <?php
-Route::get('/kandy/getNameForContact', 'kodeplusdev\kandylaravel\KandyController@getNameForContact');
+Route::get('/kandy/getNameForContact', 'Kodeplusdev\Kandylaravel\KandyController@getNameForContact');
 
-Route::get('/kandy/getNameForChatContent', 'kodeplusdev\kandylaravel\KandyController@getNameForChatContent');
+Route::get('/kandy/getNameForChatContent', 'Kodeplusdev\Kandylaravel\KandyController@getNameForChatContent');
 
-Route::get('/kandy/getUsersForSearch', 'kodeplusdev\kandylaravel\KandyController@getUsersForSearch');
+Route::get('/kandy/getUsersForSearch', 'Kodeplusdev\Kandylaravel\KandyController@getUsersForSearch');

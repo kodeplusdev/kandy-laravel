@@ -21,6 +21,7 @@ class KandylaravelServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->package('kandy-io/kandy-laravel');
+        include __DIR__.'/../../routes.php';
     }
 
     /**

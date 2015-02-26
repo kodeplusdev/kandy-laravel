@@ -4,7 +4,7 @@
     </div>
 
     <div class="kandyDirectorySearch">
-        User: <!--<input id="kandySearchUserName" type="text" value=""/>-->
+        User:
 
         <input id="kandySearchUserName" class="select2" />
 
