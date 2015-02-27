@@ -10,7 +10,9 @@
         "chat",
         "streaming",
         "video streaming",
-        "laravel webrtc"
+        "laravel webrtc",
+        "peer-to-peer video",
+        "collaboration"
     ],
     "homepage": "https://github.com/Kandy-IO/kandy-laravel",
     "license": "MIT",
