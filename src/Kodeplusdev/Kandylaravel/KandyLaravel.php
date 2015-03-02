@@ -576,6 +576,36 @@ class Kandylaravel
     }
 
     /**
+     * Get display name for specific kandy user from his kandy user_id
+     *
+     * @param $name
+     * @return string
+     */
+    public function getDisplayNameFromKandyUser($name) {
+        $result = "";
+        $displayNameColumn = $this->getColumnForDisplayName('u');
+        $mainUserTable = \Config::get('kandy-laravel::user_table');
+        $mainUserTablePrimaryKey = $this->getMainUserIdColumn();
+        $kandyUserTable = \Config::get('kandy-laravel::kandy_user_table');
+
+        $sql = "SELECT $displayNameColumn as displayName FROM $mainUserTable as u, $kandyUserTable as k WHERE u.$mainUserTablePrimaryKey = k.main_user_id AND k.user_id = '" . $name . "'";
+
+        $getDomainNameResponse = $this->getDomain();
+        if ($getDomainNameResponse['success']) {
+            // Get domain name successfully
+            $domainName = $getDomainNameResponse['data'];
+            $sql .= " AND domain_name = '" . $domainName . "'";
+        }
+
+        $data = \DB::select($sql);
+        if (!empty($data)) {
+            $user = $data[0];
+            $result = $user->displayName;
+        }
+        return $result;
+    }
+
+    /**
      * Get main user table id column
      *
      * @return null

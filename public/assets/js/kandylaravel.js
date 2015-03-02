@@ -583,7 +583,7 @@ kandy_getIms = function () {
                     // Process message
                     var msg = data.messages[i].message.text;
                     var newMessage = '<div class="their-message">\
-                            <b><span class="imUsername">' + shortName + ':</span></b>\
+                            <b><span class="imUsername">' + data.messages[i].sender.display_name + ':</span></b>\
                             <span class="imMessage">' + msg + '</span>\
                         </div>';
 
