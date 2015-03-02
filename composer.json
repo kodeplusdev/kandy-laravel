@@ -1,6 +1,6 @@
 {
     "name": "kandy-io/kandy-laravel",
-    "description": "This is a Laravel package that encapsulate all Kandy JS SDK and Kandy Restful APIs. Kandy is a product by Gendband which utilizes WebRTC to enable peer to peer video, audio, chat, SMS and PSTN.",
+    "description": "This Laravel package encapsulates all of Kandy’s JS SDK and Restful APIs. Kandy is a product by GENBAND (www.genband.com) that utilizes WebRTC to enable peer to peer audio and video calls and chat. SMS and PSTN calling support will be added to this package in the near future.",
     "keywords": [
         "kandy",
         "streaming",
