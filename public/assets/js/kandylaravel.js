@@ -568,7 +568,7 @@ kandy_getIms = function () {
                 if (msg.messageType == 'chat') {
                     // Get user info
                     var username = data.messages[i].sender.full_user_id;
-                    var shortName = data.messages[i].sender.user_id;
+                    var displayName = data.messages[i].sender.display_name;
 
                     // Process tabs
                     if (!$(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + username + "']").length) {
@@ -583,7 +583,7 @@ kandy_getIms = function () {
                     // Process message
                     var msg = data.messages[i].message.text;
                     var newMessage = '<div class="their-message">\
-                            <b><span class="imUsername">' + data.messages[i].sender.display_name + ':</span></b>\
+                            <b><span class="imUsername">' + displayName + ':</span></b>\
                             <span class="imMessage">' + msg + '</span>\
                         </div>';
 
