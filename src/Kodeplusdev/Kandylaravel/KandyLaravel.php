@@ -21,6 +21,9 @@ class Kandylaravel
     const KANDY_USER_ASSIGNED = 2;
     const KANDY_USER_UNASSIGNED = 3;
 
+    // DISPLAY NAME FOR KANDY UNASSIGNED USER
+    const KANDY_UNASSIGNED_USER = "KANDY UNASSIGNED USER";
+
     // SELECT2
     const SELECT2_CSS = "packages/kandy-io/kandy-laravel/assets/css/select2.css";
     const SELECT2_JS = "packages/kandy-io/kandy-laravel/assets/js/select2.min.js";
@@ -571,6 +574,8 @@ class Kandylaravel
         if (!empty($data)) {
             $user = $data[0];
             $result = $user->displayName;
+        } else {
+            $result = self::KANDY_UNASSIGNED_USER;
         }
         return $result;
     }
@@ -601,6 +606,8 @@ class Kandylaravel
         if (!empty($data)) {
             $user = $data[0];
             $result = $user->displayName;
+        } else {
+            $result = self::KANDY_UNASSIGNED_USER;
         }
         return $result;
     }
