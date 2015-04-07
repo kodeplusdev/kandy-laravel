@@ -23,7 +23,7 @@ class CreateUsersTable extends Migration
                 $table->string('first_name')->nullable();
                 $table->string('last_name')->nullable();
                 $table->string('password');
-                $table->string('email');
+                $table->string('email')->nullable()->default(null);
                 $table->string('domain_name');
                 $table->string('api_key');
                 $table->string('api_secret');
