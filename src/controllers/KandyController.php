@@ -17,7 +17,17 @@ class KandyController extends \BaseController
         }
         $contacts = $_GET['data'];
         foreach ($contacts as &$contact) {
-            $user = KandyUsers::whereemail($contact['contact_email'])->first();
+            $userId = "";
+            $domain = "";
+            $contactUsername = $contact['contact_user_name'];
+            $parseResult = explode('@', $contactUsername);
+            if (!empty($parseResult[0])) {
+                $userId = $parseResult[0];
+            }
+            if (!empty($parseResult[1])) {
+                $domain = $parseResult[1];
+            }
+            $user = KandyUsers::whereuser_id($userId)->wheredomain_name($domain)->first();
             if (empty($user)) {
                 $displayName = "";
             } else {
