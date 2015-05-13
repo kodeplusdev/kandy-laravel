@@ -12,10 +12,10 @@ class KandyController extends \BaseController
      */
     public function getNameForContact()
     {
-        if (!isset($_GET['data'])) {
+        if (!isset($_POST['data'])) {
             return Response::make('Your request is invalid.', 403);
         }
-        $contacts = $_GET['data'];
+        $contacts = $_POST['data'];
         foreach ($contacts as &$contact) {
             $userId = "";
             $domain = "";
@@ -33,6 +33,9 @@ class KandyController extends \BaseController
             } else {
                 $kandylaravel = new Kandylaravel();
                 $displayName = $kandylaravel->getDisplayName($user->id);
+                if (empty($displayName)) {
+                    $displayName = $contact['contact_user_name'];
+                }
             }
             $contact['display_name'] = $displayName;
         }
@@ -47,10 +50,10 @@ class KandyController extends \BaseController
      */
     public function getNameForChatContent()
     {
-        if (!isset($_GET['data'])) {
+        if (!isset($_POST['data'])) {
             return Response::make('Your request is invalid.', 403);
         }
-        $messages = $_GET['data'];
+        $messages = $_POST['data'];
         foreach ($messages as &$message) {
             if (!isset($message['sender'])) {
                 continue;
@@ -62,6 +65,9 @@ class KandyController extends \BaseController
             } else {
                 $kandylaravel = new Kandylaravel();
                 $displayName = $kandylaravel->getDisplayName($user->id);
+                if (empty($displayName)) {
+                    $displayName = $sender['full_user_id'];
+                }
             }
             $sender['display_name'] = $displayName;
             $sender['contact_user_name'] = $sender['full_user_id'];

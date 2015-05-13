@@ -6,7 +6,7 @@ class Kandylaravel
     /**
      * Base URL of the API
      */
-    const API_BASE_URL = 'https://api.kandy.io/v1.1/';
+    const API_BASE_URL = 'https://api.kandy.io/v1.2/';
 
     const KANDY_CSS = 'packages/kodeplusdev/kandylaravel/assets/css/kandylaravel.css';
     const KANDY_JS_CUSTOM = 'packages/kodeplusdev/kandylaravel/assets/js/kandylaravel.js';
@@ -574,8 +574,6 @@ class Kandylaravel
         if (!empty($data)) {
             $user = $data[0];
             $result = $user->displayName;
-        } else {
-            $result = self::KANDY_UNASSIGNED_USER;
         }
         return $result;
     }

@@ -17,6 +17,7 @@ setup = function () {
             loginfailed: kandy_login_failed_callback,
             callinitiated: kandy_on_call_initiate_callback,
             callincoming: kandy_incoming_call_callback,
+            // when an outgoing call is connected
             oncall: kandy_on_call_callback,
             // when an incoming call is connected
             // you indicated that you are answering the call
@@ -24,7 +25,6 @@ setup = function () {
             callended: kandy_call_ended_callback,
             //callback when change presence status
             presencenotification: kandy_presence_notification_callback
-            //callinitiated: kandy_local_video_initialized_callback
         }
     });
 };
@@ -136,7 +136,6 @@ kandy_on_call_initiate_callback = function(call){
  * OnCall Callback
  * @param call
  */
-
 kandy_on_call_callback = function (call) {
     if (typeof on_call_callback == 'function') {
         on_call_callback(call);
@@ -295,54 +294,54 @@ kandy_loadContacts_addressBook = function () {
     var contactListForPresence = [];
     var contactToRemove = [];
     KandyAPI.Phone.retrievePersonalAddressBook(
-        function (results) {
-            results = getDisplayNameForContact(results);
-            // clear out the current address book list
-            $(".kandyAddressBook .kandyAddressContactList div:not(:first)").remove();
-            var div = null;
-            if (results.length == 0) {
-                div = "<div class='kandyAddressBookNoResult'>-- No Contacts --</div>";
-                $('.kandyAddressBook .kandyAddressContactList').append(div);
-            } else {
-                $('.kandyAddressBook .kandyAddressContactList').append("<div class='kandy-contact-heading'><span class='displayname'><b>Username</b></span><span class='userid'><b>Contact</b></span><span class='presence_'><b>Status</b></span></div>");
+            function (results) {
+                results = getDisplayNameForContact(results);
+                // clear out the current address book list
+                $(".kandyAddressBook .kandyAddressContactList div:not(:first)").remove();
+                var div = null;
+                if (results.length == 0) {
+                    div = "<div class='kandyAddressBookNoResult'>-- No Contacts --</div>";
+                    $('.kandyAddressBook .kandyAddressContactList').append(div);
+                } else {
+                    $('.kandyAddressBook .kandyAddressContactList').append("<div class='kandy-contact-heading'><span class='displayname'><b>Username</b></span><span class='userid'><b>Contact</b></span><span class='presence_'><b>Status</b></span></div>");
 
-                for (var i = 0; i < results.length; i++) {
-                    var displayName = results[i].display_name;
-                    var contactId = results[i].contact_id;
+                    for (var i = 0; i < results.length; i++) {
+                        var displayName = results[i].display_name;
+                        var contactId = results[i].contact_id;
 
-                    if (displayName == unassignedUser) {
-                        contactToRemove.push(contactId);
-                        continue;
+                        if (displayName == unassignedUser) {
+                            contactToRemove.push(contactId);
+                            continue;
+                        }
+                        contactListForPresence.push({full_user_id: results[i].contact_user_name});
+
+                        var id_attr = results[i].contact_user_name.replace(/[.@]/g, '_');
+                        $('.kandyAddressBook .kandyAddressContactList').append(
+                                // HTML id can't contain @ and jquery doesn't like periods (in id)
+                                "<div class='kandyContactItem' id='uid_" + results[i].contact_user_name.replace(/[.@]/g, '_') + "'>" +
+                                "<span class='displayname'>" + displayName + "</span>" +
+                                "<span class='userId'>" + results[i].contact_user_name + "</span>" +
+                                "<span id='presence_" + id_attr + "' class='presence'></span>" +
+                                "<input class='removeBtn' type='button' value='Remove' " +
+                                " onclick='kandy_removeFromContacts(\"" + contactId + "\")'>" +
+                                "</div>"
+                        );
                     }
-                    contactListForPresence.push({full_user_id: results[i].contact_user_name});
-
-                    var id_attr = results[i].contact_user_name.replace(/[.@]/g, '_');
-                    $('.kandyAddressBook .kandyAddressContactList').append(
-                        // HTML id can't contain @ and jquery doesn't like periods (in id)
-                        "<div class='kandyContactItem' id='uid_" + results[i].contact_user_name.replace(/[.@]/g, '_') + "'>" +
-                            "<span class='displayname'>" + displayName + "</span>" +
-                            "<span class='userId'>" + results[i].contact_user_name + "</span>" +
-                            "<span id='presence_" + id_attr + "' class='presence'></span>" +
-                            "<input class='removeBtn' type='button' value='Remove' " +
-                            " onclick='kandy_removeFromContacts(\"" + contactId + "\")'>" +
-                            "</div>"
-                    );
+                    KandyAPI.Phone.watchPresence(contactListForPresence);
+                    for (var i = 0; i < contactToRemove.length; i++) {
+                        kandy_removeFromContacts(contactToRemove[i]);
+                    }
                 }
-                KandyAPI.Phone.watchPresence(contactListForPresence);
-                for (var i = 0; i < contactToRemove.length; i++) {
-                    kandy_removeFromContacts(contactToRemove[i]);
-                }
+            },
+            function () {
+                console.log("Error kandy_loadContacts_addressBook");
             }
-        },
-        function () {
-            console.log("Error kandy_loadContacts_addressBook");
-        }
     );
 };
 
 /**
  * Change current user status with kandyAddressBook
- * 
+ *
  * @param status
  */
 kandy_my_status_changed = function (status) {
@@ -363,42 +362,42 @@ kandy_addToContacts = function (userId) {
     } else {
         // get and AddressBook.Entry object for this contact
         KandyAPI.Phone.searchDirectoryByUserName(
-            userId,
-            function (results) {
-                for (var i = 0; i < results.length; ++i) {
-                    if (results[i].full_user_id === userIdToAddToContacts) {
-                        // user name and nickname are required
-                        var contact = {
-                            contact_user_name: results[i].full_user_id,
-                            contact_nickname: results[i].full_user_id
-                        };
-                        if (results[i].user_first_name) {
-                            contact['contact_first_name'] = results[i].user_first_name;
-                        }
-                        if (results[i].user_last_name) {
-                            contact['contact_last_name'] = results[i].user_last_name;
-                        }
-                        if (results[i].user_phone_number) {
-                            contact['contact_home_phone'] = results[i].user_phone_number;
-                        }
-                        if (results[i].user_email) {
-                            contact['contact_email'] = results[i].user_email;
-                        }
-
-                        KandyAPI.Phone.addToPersonalAddressBook(
-                            contact,
-                            kandy_loadContacts_addressBook, // function to call on success
-                            function (message) {
-                                alert("Error: " + message);
+                userId,
+                function (results) {
+                    for (var i = 0; i < results.length; ++i) {
+                        if (results[i].full_user_id === userIdToAddToContacts) {
+                            // user name and nickname are required
+                            var contact = {
+                                contact_user_name: results[i].full_user_id,
+                                contact_nickname: results[i].full_user_id
+                            };
+                            if (results[i].user_first_name) {
+                                contact['contact_first_name'] = results[i].user_first_name;
                             }
-                        );
-                        break;
+                            if (results[i].user_last_name) {
+                                contact['contact_last_name'] = results[i].user_last_name;
+                            }
+                            if (results[i].user_phone_number) {
+                                contact['contact_home_phone'] = results[i].user_phone_number;
+                            }
+                            if (results[i].user_email) {
+                                contact['contact_email'] = results[i].user_email;
+                            }
+
+                            KandyAPI.Phone.addToPersonalAddressBook(
+                                    contact,
+                                    kandy_loadContacts_addressBook, // function to call on success
+                                    function (message) {
+                                        alert("Error: " + message);
+                                    }
+                            );
+                            break;
+                        }
                     }
+                },
+                function (statusCode) {
+                    console.log("Error getting contact details: " + statusCode)
                 }
-            },
-            function (statusCode) {
-                console.log("Error getting contact details: " + statusCode)
-            }
         );
     }
 };
@@ -409,10 +408,10 @@ kandy_addToContacts = function (userId) {
  */
 kandy_removeFromContacts = function (nickname) {
     KandyAPI.Phone.removeFromPersonalAddressBook(nickname,
-        kandy_loadContacts_addressBook,  // function to call on success
-        function () {
-            console.log('Error kandy_removeFromContacts ');
-        }
+            kandy_loadContacts_addressBook,  // function to call on success
+            function () {
+                console.log('Error kandy_removeFromContacts ');
+            }
     );
 };
 
@@ -425,27 +424,27 @@ kandy_searchDirectoryByUserName = function () {
         url: "/kandy/getUsersForSearch",
         data: {q:userName}
     }).done(function (results) {
-            $(".kandyAddressBook .kandyDirSearchResults div:not(:first)").remove();
-            var div = null;
-            if (results.length == 0) {
-                div = "<div class='kandyAddressBookNoResult'>-- No Matches Found --</div>";
-                $('.kandyAddressBook .kandyDirSearchResults').append(div);
-            } else {
-                for (var i = 0; i < results.length; i++) {
-                    $('.kandyDirSearchResults').append(
-                        "<div class='kandySearchItem'>" +
-                            "<span class='userId'>" + results[i].main_username + "</span>" +
-                            "<input type='button' value='Add Contact' onclick='kandy_addToContacts(\"" +
-                            results[i].kandy_full_username + "\")' />" +
-                            "</div>"
-                    );
-                }
-            }
-        }).fail(function() {
-            $(".kandyAddressBook .kandyDirSearchResults div:not(:first)").remove();
-            var div = "<div class='kandyAddressBookNoResult'>There was an error with your request.</div>";
+        $(".kandyAddressBook .kandyDirSearchResults div:not(:first)").remove();
+        var div = null;
+        if (results.length == 0) {
+            div = "<div class='kandyAddressBookNoResult'>-- No Matches Found --</div>";
             $('.kandyAddressBook .kandyDirSearchResults').append(div);
-        });
+        } else {
+            for (var i = 0; i < results.length; i++) {
+                $('.kandyDirSearchResults').append(
+                        "<div class='kandySearchItem'>" +
+                        "<span class='userId'>" + results[i].main_username + "</span>" +
+                        "<input type='button' value='Add Contact' onclick='kandy_addToContacts(\"" +
+                        results[i].kandy_full_username + "\")' />" +
+                        "</div>"
+                );
+            }
+        }
+    }).fail(function() {
+        $(".kandyAddressBook .kandyDirSearchResults div:not(:first)").remove();
+        var div = "<div class='kandyAddressBookNoResult'>There was an error with your request.</div>";
+        $('.kandyAddressBook .kandyDirSearchResults').append(div);
+    });
 };
 
 /**
@@ -471,12 +470,13 @@ var getDisplayNameForChatContent = function (data) {
     if (data.messages.length) {
         $.ajax({
             url: "/kandy/getNameForChatContent",
+            type: "POST",
             data: {data:data.messages},
             async: false
         }).done(function(response) {
-                data.messages = response;
-            }).fail(function(e) {
-            });
+            data.messages = response;
+        }).fail(function(e) {
+        });
     }
     return data;
 };
@@ -492,11 +492,12 @@ var getDisplayNameForContact = function (data) {
         $.ajax({
             url: "/kandy/getNameForContact",
             data: {data: data},
-            async: false
+            async: false,
+            type: "POST"
         }).done(function (response) {
-                data = response;
-            }).fail(function (e) {
-            });
+            data = response;
+        }).fail(function (e) {
+        });
     }
     return data;
 };
@@ -507,21 +508,21 @@ var getDisplayNameForContact = function (data) {
 kandy_loadContacts_chat = function () {
     var contactListForPresence = [];
     KandyAPI.Phone.retrievePersonalAddressBook(
-        function (results) {
-            results = getDisplayNameForContact(results);
-            emptyContact();
-            for (var i = 0; i < results.length; i++) {
-                prependContact(results[i]);
-                contactListForPresence.push({full_user_id: results[i].contact_user_name});
-            }
+            function (results) {
+                results = getDisplayNameForContact(results);
+                emptyContact();
+                for (var i = 0; i < results.length; i++) {
+                    prependContact(results[i]);
+                    contactListForPresence.push({full_user_id: results[i].contact_user_name});
+                }
 
-            KandyAPI.Phone.watchPresence(contactListForPresence);
-            addExampleBox();
-        },
-        function () {
-            console.log("Error");
-            addExampleBox();
-        }
+                KandyAPI.Phone.watchPresence(contactListForPresence);
+                addExampleBox();
+            },
+            function () {
+                console.log("Error");
+                addExampleBox();
+            }
     );
 
 };
@@ -535,17 +536,17 @@ kandy_sendIm = function (username) {
     var message = inputMessage.val();
     inputMessage.val('');
     KandyAPI.Phone.sendIm(username, message, function () {
-            var newMessage = '<div class="my-message">\
+                var newMessage = '<div class="my-message">\
                     <b><span class="imUsername">' + displayName + ':</span></b>\
                     <span class="imMessage">' + message + '</span>\
                 </div>';
-            var messageDiv = $('.kandyChat .kandyMessages[data-user="' + username + '"]');
-            messageDiv.append(newMessage);
-            messageDiv.scrollTop(messageDiv[0].scrollHeight);
-        },
-        function () {
-            alert("IM send failed");
-        }
+                var messageDiv = $('.kandyChat .kandyMessages[data-user="' + username + '"]');
+                messageDiv.append(newMessage);
+                messageDiv.scrollTop(messageDiv[0].scrollHeight);
+            },
+            function () {
+                alert("IM send failed");
+            }
     );
 };
 
@@ -554,47 +555,50 @@ kandy_sendIm = function (username) {
  */
 kandy_getIms = function () {
     KandyAPI.Phone.getIm(
-        function (data) {
-            if (data.messages.length) {
-                data = getDisplayNameForChatContent(data);
-            }
+            function (data) {
+                if (data.messages.length) {
 
-            var i;
-            for (i = 0; i < data.messages.length; ++i) {
-                var msg = data.messages[i];
-                if (msg.messageType == 'chat') {
-                    // Get user info
-                    var username = data.messages[i].sender.full_user_id;
-                    var displayName = data.messages[i].sender.display_name;
+                    data = getDisplayNameForChatContent(data);
+                }
 
-                    // Process tabs
-                    if (!$(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + username + "']").length) {
-                        prependContact(data.messages[i].sender);
-                    }
-                    if (!$('input.imMessageToSend').is(':focus')) {
-                        moveContactToTopAndSetActive(data.messages[i].sender);
-                    } else {
-                        moveContactToTop(data.messages[i].sender);
-                    }
+                var i;
+                for (i = 0; i < data.messages.length; ++i) {
+                    var msg = data.messages[i];
+                    if (msg.messageType == 'chat') {
+                        // Get user info
+                        var username = data.messages[i].sender.full_user_id;
+                        var displayName = data.messages[i].sender.display_name;
 
-                    // Process message
-                    var msg = data.messages[i].message.text;
-                    var newMessage = '<div class="their-message">\
+                        // Process tabs
+                        if (!$(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + username + "']").length) {
+                            prependContact(data.messages[i].sender);
+                        }
+                        if (!$('input.imMessageToSend').is(':focus')) {
+                            moveContactToTopAndSetActive(data.messages[i].sender);
+                        } else {
+                            moveContactToTop(data.messages[i].sender);
+                        }
+
+                        // Process message
+                        if ((data.messages[i].hasOwnProperty('message'))) {
+                            var msg = data.messages[i].message.text;
+                            var newMessage = '<div class="their-message">\
                             <b><span class="imUsername">' + displayName + ':</span></b>\
                             <span class="imMessage">' + msg + '</span>\
                         </div>';
 
-                    var messageDiv = $('.kandyChat .kandyMessages[data-user="' + username + '"]');
-                    messageDiv.append(newMessage);
-                    messageDiv.scrollTop(messageDiv[0].scrollHeight);
-                } else {
-                    //alert("received " + msg.messageType + ": ");
+                            var messageDiv = $('.kandyChat .kandyMessages[data-user="' + username + '"]');
+                            messageDiv.append(newMessage);
+                            messageDiv.scrollTop(messageDiv[0].scrollHeight);
+                        }
+                    } else {
+                        //alert("received " + msg.messageType + ": ");
+                    }
                 }
+            },
+            function () {
+                console.log("error receiving IMs");
             }
-        },
-        function () {
-            console.log("error receiving IMs");
-        }
     )
 };
 
@@ -704,7 +708,7 @@ var getLiContact = function (user, active) {
  */
 var getLiContent = function (user) {
     var result =
-        '<li ' + userHoldingAttribute + '="' + user + '">\
+            '<li ' + userHoldingAttribute + '="' + user + '">\
                 <div class="kandyMessages" data-user="' + user + '">\
                 </div>\
                 <div >\
