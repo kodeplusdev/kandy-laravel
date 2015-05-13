@@ -1,6 +1,7 @@
 //========================KANDY SETUP AND LISTENER CALLBACK ==============
 
 var unassignedUser = "KANDY UNASSIGNED USER";
+var callId = null;
 
 /**
  * Kandy Set up
@@ -8,40 +9,22 @@ var unassignedUser = "KANDY UNASSIGNED USER";
 setup = function () {
     // initialize KandyAPI.Phone, passing a config JSON object that contains listeners (event callbacks)
     KandyAPI.Phone.setup({
-        allowAutoLogin: true,
         // respond to Kandy events...
+        remoteVideoContainer: $('#theirVideo')[0],
+        localVideoContainer: $('#myVideo')[0],
         listeners: {
-            media: function(event) {
-                switch (event.type) {
-                    case KandyAPI.Phone.MediaErrors.WRONG_VERSION:
-                        alert("Media Plugin Version Not Supported");
-                        break;
-                    case KandyAPI.Phone.MediaErrors.NEW_VERSION_WARNING:
-                        promptPluginDownload(event.urlWin32bit, event.urlWin64bit, event.urlMacUnix);
-                        break;
-                    case KandyAPI.Phone.MediaErrors.NOT_INITIALIZED:
-                        alert("Media couldn't be initialized");
-                        break;
-                    case KandyAPI.Phone.MediaErrors.NOT_FOUND:
-                        // YOUR CODE GOES HERE
-                        break;
-                }
-
-            },
             loginsuccess: kandy_login_success_callback,
             loginfailed: kandy_login_failed_callback,
+            callinitiated: kandy_on_call_initiate_callback,
             callincoming: kandy_incoming_call_callback,
-            // when an outgoing call is connected
             oncall: kandy_on_call_callback,
             // when an incoming call is connected
             // you indicated that you are answering the call
             callanswered: kandy_call_answered_callback,
             callended: kandy_call_ended_callback,
-            localvideoinitialized: kandy_local_video_initialized_callback,
-            // a video tag is being provided (required for both audio and video calls)
-            // you must insert it into the DOM for communication to happen (although for audio calls, it can remain hidden)
-            remotevideoinitialized: kandy_remote_video_initialized_callback,
+            //callback when change presence status
             presencenotification: kandy_presence_notification_callback
+            //callinitiated: kandy_local_video_initialized_callback
         }
     });
 };
@@ -87,7 +70,6 @@ kandy_login_failed_callback = function () {
  * @param videoTag
  */
 kandy_local_video_initialized_callback = function (videoTag) {
-
     //have video widget
     if($(".kandyVideo").length){
         $('#myVideo').append(videoTag);
@@ -104,7 +86,6 @@ kandy_local_video_initialized_callback = function (videoTag) {
  * @param videoTag
  */
 kandy_remote_video_initialized_callback = function (videoTag) {
-
     //have video widget
     if($(".kandyVideo").length){
         $('#theirVideo').append(videoTag);
@@ -143,11 +124,19 @@ kandy_presence_notification_callback = function (userId, state, description, act
         liUser.attr('title', description);
     }
 };
+/**
+ * on call initiate callback
+ * @param call
+ */
+kandy_on_call_initiate_callback = function(call){
+    callId = call.getId();
+}
 
 /**
  * OnCall Callback
  * @param call
  */
+
 kandy_on_call_callback = function (call) {
     if (typeof on_call_callback == 'function') {
         on_call_callback(call);
@@ -162,6 +151,7 @@ kandy_on_call_callback = function (call) {
  * @param isAnonymous
  */
 kandy_incoming_call_callback = function (call, isAnonymous) {
+    callId = call.getId();
     if (typeof incoming_call_callback == 'function') {
         incoming_call_callback(call, isAnonymous);
     }
@@ -187,6 +177,7 @@ kandy_call_answered_callback = function (call, isAnonymous) {
  */
 kandy_call_ended_callback = function () {
     //have video widget
+    callId = null;
     if($(".kandyVideo").length){
         $('#theirVideo').empty();
         $('#myVideo').empty();
@@ -238,7 +229,7 @@ changeAnswerButtonState = function (state) {
  * @param target
  */
 kandy_answer_video_call = function (target) {
-    KandyAPI.Phone.answerVideoCall();
+    KandyAPI.Phone.answerCall(callId, true);
     changeAnswerButtonState("ANSWERING_CALL");
     if (typeof answer_video_call_callback == 'function') {
         answer_video_call_callback("ANSWERING_CALL");
@@ -249,8 +240,7 @@ kandy_answer_video_call = function (target) {
  Event when click call button
  */
 kandy_make_video_call = function (target) {
-
-    KandyAPI.Phone.makeVideoCall($('.kandyButton .kandyVideoButtonCallOut #callOutUserId').val());
+    KandyAPI.Phone.makeCall($('.kandyButton .kandyVideoButtonCallOut #callOutUserId').val(),true);
     changeAnswerButtonState("CALLING");
     if (typeof make_video_call_callback == 'function') {
         make_video_call_callback(target);
@@ -261,7 +251,7 @@ kandy_make_video_call = function (target) {
  Event when answer a voice call
  */
 kandy_answer_voice_call = function (target) {
-    KandyAPI.Phone.answerVoiceCall();
+    KandyAPI.Phone.answerCall(callId, false);
     changeAnswerButtonState("ANSWERING_CALL");
     if (typeof answer_voice_call_callback == 'function') {
         answer_voice_call_callback(target);
@@ -274,7 +264,7 @@ kandy_answer_voice_call = function (target) {
  */
 kandy_make_voice_call = function (target) {
 
-    KandyAPI.Phone.makeVoiceCall($('.kandyButton .kandyVideoButtonCallOut #callOutUserId').val());
+    KandyAPI.Phone.makeCall($('.kandyButton .kandyVideoButtonCallOut #callOutUserId').val(),false);
     changeAnswerButtonState("CALLING");
 
     if (typeof make_voice_call_callback == 'function') {
@@ -286,7 +276,7 @@ kandy_make_voice_call = function (target) {
  Event when click end call button
  */
 kandy_end_call = function (target) {
-    KandyAPI.Phone.endCall();
+    KandyAPI.Phone.endCall(callId);
 
     if (typeof end_call_callback == 'function') {
         end_call_callback(target);
@@ -376,32 +366,23 @@ kandy_addToContacts = function (userId) {
             userId,
             function (results) {
                 for (var i = 0; i < results.length; ++i) {
-                    if (results[i].primaryContact === userIdToAddToContacts) {
+                    if (results[i].full_user_id === userIdToAddToContacts) {
                         // user name and nickname are required
                         var contact = {
-                            contact_user_name: results[i].primaryContact,
-                            contact_nickname: results[i].primaryContact
+                            contact_user_name: results[i].full_user_id,
+                            contact_nickname: results[i].full_user_id
                         };
-                        if (results[i].firstName) {
-                            contact['contact_first_name'] = results[i].firstName;
+                        if (results[i].user_first_name) {
+                            contact['contact_first_name'] = results[i].user_first_name;
                         }
-                        if (results[i].lastName) {
-                            contact['contact_last_name'] = results[i].lastName;
+                        if (results[i].user_last_name) {
+                            contact['contact_last_name'] = results[i].user_last_name;
                         }
-                        if (results[i].homePhone) {
-                            contact['contact_home_phone'] = results[i].homePhone;
+                        if (results[i].user_phone_number) {
+                            contact['contact_home_phone'] = results[i].user_phone_number;
                         }
-                        if (results[i].mobilePhone) {
-                            contact['contact_mobile_number'] = results[i].mobilePhone;
-                        }
-                        if (results[i].workPhone) {
-                            contact['contact_business_number'] = results[i].workPhone;
-                        }
-                        if (results[i].fax) {
-                            contact['contact_fax'] = results[i].fax;
-                        }
-                        if (results[i].email) {
-                            contact['contact_email'] = results[i].email;
+                        if (results[i].user_email) {
+                            contact['contact_email'] = results[i].user_email;
                         }
 
                         KandyAPI.Phone.addToPersonalAddressBook(

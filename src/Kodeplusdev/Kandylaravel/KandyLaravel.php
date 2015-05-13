@@ -8,12 +8,12 @@ class Kandylaravel
      */
     const API_BASE_URL = 'https://api.kandy.io/v1.1/';
 
-    const KANDY_CSS = 'packages/kandy-io/kandy-laravel/assets/css/kandylaravel.css';
-    const KANDY_JS_CUSTOM = 'packages/kandy-io/kandy-laravel/assets/js/kandylaravel.js';
+    const KANDY_CSS = 'packages/kodeplusdev/kandylaravel/assets/css/kandylaravel.css';
+    const KANDY_JS_CUSTOM = 'packages/kodeplusdev/kandylaravel/assets/js/kandylaravel.js';
 
     // Default KANDY JS from cloud
-    const KANDY_JS_FCS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/fcs/3.0.0/fcs.js';
-    const KANDY_JS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/1.1.4/kandy.js';
+    const KANDY_JS_FCS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/fcs/3.0.1/fcs.js';
+    const KANDY_JS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/2.1.1/kandy.js';
     const KANDY_JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js';
 
     // KANDY USER FILTERING STATUS
@@ -25,8 +25,8 @@ class Kandylaravel
     const KANDY_UNASSIGNED_USER = "KANDY UNASSIGNED USER";
 
     // SELECT2
-    const SELECT2_CSS = "packages/kandy-io/kandy-laravel/assets/css/select2.css";
-    const SELECT2_JS = "packages/kandy-io/kandy-laravel/assets/js/select2.min.js";
+    const SELECT2_CSS = "packages/kodeplusdev/kandylaravel/assets/css/select2.css";
+    const SELECT2_JS = "packages/kodeplusdev/kandylaravel/assets/js/select2.min.js";
 
     // Kandy Laravel configuration variables which could be overridden at application
     public $domainAccessToken;
