@@ -23,7 +23,7 @@ Home page: http://www.kandy.io/
     "laravel/framework": "4.2.*",
     "toddish/verify": "3.*",
     ... // Others
-    "kandy-io/kandy-laravel": "1.1.4"
+    "kandy-io/kandy-laravel": "2.1.1"
 },
 ```
 
