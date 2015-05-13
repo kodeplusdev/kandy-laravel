@@ -490,6 +490,7 @@ var getDisplayNameForChatContent = function (data) {
     if (data.messages.length) {
         $.ajax({
             url: "/kandy/getNameForChatContent",
+            type: "POST",
             data: {data:data.messages},
             async: false
         }).done(function(response) {
@@ -511,7 +512,8 @@ var getDisplayNameForContact = function (data) {
         $.ajax({
             url: "/kandy/getNameForContact",
             data: {data: data},
-            async: false
+            async: false,
+            type: "POST"
         }).done(function (response) {
                 data = response;
             }).fail(function (e) {

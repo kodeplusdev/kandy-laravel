@@ -574,8 +574,6 @@ class Kandylaravel
         if (!empty($data)) {
             $user = $data[0];
             $result = $user->displayName;
-        } else {
-            $result = self::KANDY_UNASSIGNED_USER;
         }
         return $result;
     }
