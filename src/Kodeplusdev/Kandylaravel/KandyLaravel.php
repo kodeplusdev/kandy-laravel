@@ -12,8 +12,8 @@ class Kandylaravel
     const KANDY_JS_CUSTOM = 'packages/kodeplusdev/kandylaravel/assets/js/kandylaravel.js';
 
     // Default KANDY JS from cloud
-    const KANDY_JS_FCS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/fcs/3.0.1/fcs.js';
-    const KANDY_JS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/2.1.1/kandy.js';
+    const KANDY_JS_FCS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/fcs/3.0.4/fcs.js';
+    const KANDY_JS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/2.2.1/kandy.js';
     const KANDY_JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js';
 
     // KANDY USER FILTERING STATUS
