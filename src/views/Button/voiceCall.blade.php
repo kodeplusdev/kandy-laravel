@@ -35,7 +35,7 @@
     </div>
 
     <div class="videoVoiceCallHolder">
-        <span class="video"></span>
+        <span id="theirVideo" class="video"></span>
     </div>
 <!-- end oncall -->
 </div>
