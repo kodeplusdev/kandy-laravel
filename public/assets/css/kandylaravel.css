@@ -166,11 +166,11 @@
     line-height: 1em;
 }
 
-.kandyChat .cd-tabs-navigation li.kandy-chat-status-available a{
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-available > a{
     background: url("../img/available.png") left center no-repeat;
 }
 
-.kandyChat .cd-tabs-navigation li.kandy-chat-status-offline a{
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-offline > a{
     background: url("../img/offline.png") left center no-repeat;
 }
 
@@ -206,11 +206,13 @@
 .kandyChat .cd-tabs-navigation {
     width: 100%;
     margin: 0;
+    padding-bottom: 20px;
 }
 
 .kandyChat .cd-tabs-navigation li {
     float: left;
     width: 98%;
+    position: relative;
 }
 
 .kandyChat .cd-tabs-navigation a {
@@ -376,3 +378,109 @@
     min-width: 150px;
     width: 30%;
 }
+
+.kandyChat .cd-tabs-navigation li .list-users {
+    list-style: none;
+    font-size: 12px;
+    display: none;
+}
+
+.kandyChat .cd-tabs-navigation li .list-users.expanding {
+    list-style: none;
+    display: block;
+    margin-left: 5px;
+}
+
+.kandyChat .cd-tabs-navigation li i.toggle{
+    font-size:10px;
+    margin-right:5px;
+}
+
+.kandyChat .cd-tabs-navigation li i.toggle.expand{
+    content: '&#8722;';
+}
+
+.kandyChat .cd-tabs-navigation li.group{
+    padding: 5px;
+}
+
+.kandyChat .cd-tabs-navigation li.group a{
+    display: inline;
+}
+
+.kandyChat .cd-tabs-navigation li.group li a{
+    padding-left: 15px;
+}
+
+.kandyChat .cd-tabs-navigation li.group a.join:hover{
+    color: green;
+}
+.kandyChat .cd-tabs-navigation li.group a.leave:hover{
+    color: red;
+}
+
+.kandyChat .cd-tabs-navigation li.group .groupAction:hover, .kandyChat .cd-tabs-navigation li.group .remove:hover{
+    cursor: pointer;
+    color:red;
+}
+
+.kandyChat .cd-tabs-navigation li.group .groupAction, .kandyChat .cd-tabs-navigation li.group .remove{
+    float: right;
+    top: 0;
+    right: 0;
+    position: absolute;
+}
+
+.kandyChat .cd-tabs-navigation li.group .groupAction a{
+    line-height: 40px;
+}
+
+.kandyChat .cd-tabs-navigation.contacts li:last-of-type {
+    margin-bottom: 20px;
+}
+
+.separator {
+    font-size: 12px;
+    line-height: 0.5;
+    text-align: center;
+    width: 100%;
+}
+.separator span {
+    display: inline-block;
+    position: relative;
+    height: 12px;
+    overflow: visible;
+}
+.separator span:before,
+.separator span:after {
+    content: "";
+    position: absolute;
+    height: 3px;
+    background: #e4e4e4;
+    top: 0;
+    width: 600px;
+}
+.separator span:before {
+    right: 100%;
+    margin-right: 15px;
+}
+.separator span:after {
+    left: 100%;
+    margin-left: 15px;
+}
+
+#myChat nav {
+    overflow-x: hidden;
+}
+
+.modalToggle {
+    margin-right: 23px;
+}
+
+.fa {
+    font-size: 15px;
+}
+
+
+
+
