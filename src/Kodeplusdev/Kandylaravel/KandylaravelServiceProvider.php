@@ -44,7 +44,10 @@ class KandylaravelServiceProvider extends ServiceProvider
 
         $this->registerChat();
 
+        $this->registerGroupChat();
+
         $this->publishAssets();
+
     }
 
     /**
@@ -150,6 +153,16 @@ class KandylaravelServiceProvider extends ServiceProvider
     public function provides()
     {
         return array();
+    }
+
+    private function registerGroupChat()
+    {
+        $this->app->bind(
+            'kandy-laravel::groupChat',
+            function () {
+                return new GroupChat();
+            }
+        );
     }
 
 }

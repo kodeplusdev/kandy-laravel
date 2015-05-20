@@ -121,6 +121,7 @@ class Chat extends RenderedObject
         $kandylaravel = new Kandylaravel();
         $kandy_user_id = $data["options"]['user']['name'];
         $data["displayName"] = $kandylaravel->getDisplayNameFromKandyUser($kandy_user_id);
+        $data["kandyUser"] = $data["options"]['user']['kandyUser'];
 
         $this->data = $data;
     }
