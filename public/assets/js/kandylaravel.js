@@ -1003,6 +1003,14 @@ var kandy_onJoinRequest = function(notification){
     }
 };
 
+var kandy_onJoinReject = function(notification){
+    kandy_loadGroupDetails(notification.session_id);
+};
+
+var kandy_onJoinApprove = function(notification){
+    kandy_loadGroupDetails(notification.session_id);
+};
+
 var kandy_ApproveJoinGroup = function(sessionId, userId){
     KandyAPI.Session.acceptJoinRequest(sessionId, userId,
         function () {
