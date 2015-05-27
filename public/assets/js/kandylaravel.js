@@ -1,6 +1,7 @@
 //========================KANDY SETUP AND LISTENER CALLBACK ==============
 
 var unassignedUser = "KANDY UNASSIGNED USER";
+var chatMessageTimeStamp = 0;
 var activeContainerId;
 
 // Create audio objects to play incoming calls and outgoing calls sound
@@ -597,6 +598,11 @@ kandy_getIms = function () {
                 for (i = 0; i < data.messages.length; ++i) {
                     var msg = data.messages[i];
                     if (msg.messageType == 'chat') {
+                        if(chatMessageTimeStamp == msg.timestamp) {
+                            continue;
+                        } else {
+                            chatMessageTimeStamp = msg.timestamp;
+                        }
                         // Get user info
                         var username = data.messages[i].sender.full_user_id;
                         var displayName = data.messages[i].sender.display_name;
@@ -851,15 +857,10 @@ var kandy_loadGroupDetails = function(sessionId){
 var buildListParticipants = function(sessionId, participants){
     var listUsersGroup = $(liTabWrapSelector + ' li[data-group="'+sessionId+'"] ' + ' .'+ listUserClass);
     listUsersGroup.empty();
+    participants = getDisplayNameForContact(participants);
     if(participants.length){
         for(var i in participants) {
-            var name = '';
-            if(participants[i].user_first_name == participants[i].user_last_name){
-                name = participants[i].user_first_name;
-            }else{
-                name = participants[i].user_first_name + ' ' + participants[i].user_last_name ;
-            }
-            displayNames[participants[i].full_user_id] = name;
+            displayNames[participants[i].full_user_id] = participants[i].display_name;
             $(listUsersGroup).append(
                 '<li data-user="'+participants[i].full_user_id+'">' +
                     '<a>'+displayNames[participants[i].full_user_id]+'</a>'+
