@@ -1,5 +1,7 @@
 <div class="row {{$class}} cd-tabs" id="{{$id}}" {{$htmlOptionsAttributes}} >
     <input type="hidden" class="kandy_current_username" value="{{ $displayName }}"/>
+    <input type="hidden" class="kandy_user" value="{{ $kandyUser }}"/>
+
     <div class="chat-heading">
         <div class="contact-heading">
             <label>Contacts:</label>
@@ -18,11 +20,15 @@
         <div class="chat-with-message">
             Chatting with <span class="chat-friend-name"></span>
         </div>
+        <a href="#" class="button tiny right modalToggle" data-reveal-id="myModal">Create group</a>
+
         <div class="clear-fix"></div>
     </div>
     <nav>
-        <ul class="cd-tabs-navigation">
+        <ul class="cd-tabs-navigation contacts">
         </ul>
+        <div class="separator hide"><span>Groups</span></div>
+        <ul class="cd-tabs-navigation groups"></ul>
     </nav>
 
     <ul class="cd-tabs-content">
@@ -39,9 +45,32 @@
     var liTabWrapSelector = "#" + wrapDivId + " ." + liTabWrapClass;
     var liContentWrapSelector = "#" + wrapDivId + " ." + liContentWrapClass;
     var tabContentWrapper = $(liContentWrapSelector);
-
+    var listUserClass = 'list-users';
     var userHoldingAttribute = "data-content";
     var activeClass = "selected";
+    var liTabGroupsWrap = liTabWrapSelector + '.groups';
+    var liTabContactWrap = liTabWrapSelector + '.contacts';
+    var groupSeparator = '#' + wrapDivId + ' .separator';
+    // group chat vars
+    var displayNames = [];
+    var groupNames = [];
+    var usersStatus = {};
+    //session listeners
+    var listeners = {
+              'onData': kandy_onSessionData,
+              'onUserJoinRequest': kandy_onJoinRequest,
+              'onUserJoin': kandy_onJoin,
+              'onJoin': kandy_onJoin,
+              'onUserLeave': kandy_onLeaveGroup,
+              'onLeave': kandy_onLeaveGroup,
+              'onUserBoot': kandy_onUserBoot,
+              'onBoot': kandy_onUserBoot,
+//              'onActive': kandy_onActiveGroup,
+//              'onInactive': onInactive,
+              'onTermination': kandy_onTerminateGroup
+//              'onJoinApprove': kandy_onJoinApprove
+            };
+    var sessionListeners = [];
 
     /**
      *  Ready
@@ -49,11 +78,22 @@
     $(document).ready(function () {
         $("form.send-message").live("submit", function (e) {
             var username = $(this).attr('data-user');
-            kandy_sendIm(username);
+            if($(this).is('[data-user]')){
+                kandy_sendIm(username);
+            }else{
+                kandy_sendGroupIm($(this).data('group'),$(this).find('.imMessageToSend').val());
+                $(this).find('.imMessageToSend').val('');
+            }
             e.preventDefault();
         });
 
-        $('.cd-tabs-navigation a').live('click', function (event) {
+         $('.list-users li .remove').live('click', function(e){
+                var userId = $(this).parent().data('user');
+                var groupId = $(this).closest('[data-group]').data('group');
+                kandy_removeFromGroup(groupId,userId);
+           });
+
+        $('.cd-tabs-navigation > li > a').live('click', function (event) {
             event.preventDefault();
             var selectedItem = $(this);
             if (!selectedItem.hasClass('selected')) {
@@ -99,5 +139,11 @@
                 tabs.parent('.cd-tabs').removeClass('is-ended');
             }
         }
+
+        $(".toggle").live('click',function(){
+            $(this).toggleClass('fa-plus-square-o').toggleClass('fa-minus-square-o');
+            $(this).siblings('.list-users').toggleClass('expanding');
+        })
+
     });// End document ready.
 </script>

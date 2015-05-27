@@ -1,7 +1,34 @@
 //========================KANDY SETUP AND LISTENER CALLBACK ==============
 
 var unassignedUser = "KANDY UNASSIGNED USER";
-var callId = null;
+var activeContainerId;
+
+// Create audio objects to play incoming calls and outgoing calls sound
+var $audioRingIn = jQuery('<audio>', { loop: 'loop', id: 'ring-in' });
+var $audioRingOut = jQuery('<audio>', { loop: 'loop', id: 'ring-out' });
+
+// Load audio source to DOM to indicate call events
+var audioSource = {
+    ringIn: [
+        { src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/ringin.mp3', type: 'audio/mp3' },
+        { src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/ringin.ogg', type: 'audio/ogg' }
+    ],
+    ringOut: [
+        { src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/ringout.mp3', type: 'audio/mp3' },
+        { src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/ringout.ogg', type: 'audio/ogg' }
+    ]
+};
+
+audioSource.ringIn.forEach(function (entry) {
+    var $source = jQuery('<source>').attr('src', entry.src);
+    $audioRingIn.append($source);
+});
+
+audioSource.ringOut.forEach(function (entry) {
+    var $source = jQuery('<source>').attr('src', entry.src);
+    $audioRingOut.append($source);
+});
+
 
 /**
  * Kandy Set up
@@ -42,9 +69,12 @@ kandy_login_success_callback = function () {
     //have kandyChat widget
     if ($(".kandyChat").length) {
         kandy_loadContacts_chat();
+        kandy_loadGroups();
         setInterval(kandy_getIms, 3000);
+        setTimeout(updateUserGroupStatus,3000);
 
     }
+
     //call user callback
     if (typeof login_success_callback == 'function') {
         login_success_callback();
@@ -62,40 +92,6 @@ kandy_login_success_callback = function () {
 kandy_login_failed_callback = function () {
     if (typeof login_failed_callback == 'function') {
         login_failed_callback();
-    }
-};
-
-/**
- * Local Video Initialized callback
- * @param videoTag
- */
-kandy_local_video_initialized_callback = function (videoTag) {
-    //have video widget
-    if($(".kandyVideo").length){
-        $('#myVideo').append(videoTag);
-    }
-
-    if (typeof local_video_initialized_callback == 'function') {
-        local_video_initialized_callback(videoTag);
-    }
-
-};
-
-/**
- * Remote Video Initialized Callback
- * @param videoTag
- */
-kandy_remote_video_initialized_callback = function (videoTag) {
-    //have video widget
-    if($(".kandyVideo").length){
-        $('#theirVideo').append(videoTag);
-    }
-    //have voice call widget
-    if($(".kandyButton .videoVoiceCallHolder").length){
-        $('.kandyButton .videoVoiceCallHolder .video').append(videoTag);
-    }
-    if (typeof remote_video_initialized_callback == 'function') {
-        remote_video_initialized_callback(videoTag);
     }
 };
 
@@ -123,14 +119,18 @@ kandy_presence_notification_callback = function (userId, state, description, act
         liUser.removeClass().addClass('kandy-chat-status-' + description.replace(/ /g,'-').toLowerCase());
         liUser.attr('title', description);
     }
+    usersStatus[userId] = description;
+    updateUserGroupStatus();
 };
 /**
  * on call initiate callback
  * @param call
  */
 kandy_on_call_initiate_callback = function(call){
-    callId = call.getId();
-}
+    $('#'+activeContainerId).attr('data-call-id', call.getId());
+    $audioRingIn[0].pause();
+    $audioRingOut[0].play();
+};
 
 /**
  * OnCall Callback
@@ -140,7 +140,11 @@ kandy_on_call_callback = function (call) {
     if (typeof on_call_callback == 'function') {
         on_call_callback(call);
     }
-    changeAnswerButtonState("ON_CALL");
+
+    $audioRingOut[0].pause();
+
+    var target = $('.kandyButton[data-call-id="'+call.getId()+'"]');
+    changeAnswerButtonState("ON_CALL",target);
 };
 
 /**
@@ -150,11 +154,15 @@ kandy_on_call_callback = function (call) {
  * @param isAnonymous
  */
 kandy_incoming_call_callback = function (call, isAnonymous) {
-    callId = call.getId();
     if (typeof incoming_call_callback == 'function') {
         incoming_call_callback(call, isAnonymous);
     }
-    changeAnswerButtonState('BEING_CALLED');
+
+    $audioRingIn[0].play();
+
+    var target = $('.kandyVideoButtonCallOut:visible').get(0).closest('.kandyButton');
+    $(target).attr('data-call-id', call.getId());
+    changeAnswerButtonState('BEING_CALLED', target);
 };
 
 /**
@@ -167,57 +175,69 @@ kandy_call_answered_callback = function (call, isAnonymous) {
     if (typeof call_answered_callback == 'function') {
         call_answered_callback(call, isAnonymous);
     }
-    changeAnswerButtonState("ON_CALL");
+
+    $audioRingOut[0].pause();
+    $audioRingIn[0].pause();
+
+    var target = $('.kandyButton[data-call-id="'+call.getId()+'"]');
+    changeAnswerButtonState("ON_CALL", target);
 };
+
+kandy_call_answer_failed_callback = function (call){
+    console.log('call answer failed', call);
+}
 
 /**
  * Kandy call ended callback.
  *
  */
-kandy_call_ended_callback = function () {
-    //have video widget
-    callId = null;
-    if($(".kandyVideo").length){
-        $('#theirVideo').empty();
-        $('#myVideo').empty();
-    }
+kandy_call_ended_callback = function (call) {
+    $audioRingOut[0].play();
+    $audioRingIn[0].pause();
+
     if (typeof call_ended_callback == 'function') {
         call_ended_callback();
     }
-    changeAnswerButtonState("READY_FOR_CALLING");
+    var target = $('.kandyButton[data-call-id="'+ call.getId() +'"]');
+    changeAnswerButtonState("READY_FOR_CALLING",target);
 };
 
 /**
  * Change AnswerButtonState with KandyButton Widget.
- *
+ * @param target
  * @param state
  */
-changeAnswerButtonState = function (state) {
+changeAnswerButtonState = function (state, target) {
+    var kandyButton = (typeof target !== 'undefined')?$(target):$(".kandyButton");
+
     switch (state) {
         case 'READY_FOR_CALLING':
+            $audioRingIn[0].pause();
+            $audioRingOut[0].pause();
+            kandyButton.find('.kandyVideoButtonSomeonesCalling').hide();
+            kandyButton.find('.kandyVideoButtonCallOut').show();
+            kandyButton.find('.kandyVideoButtonCalling').hide();
+            kandyButton.find('.kandyVideoButtonOnCall').hide();
+            break;
 
-            $('.kandyButton .kandyVideoButtonSomeonesCalling').hide();
-            $('.kandyButton .kandyVideoButtonCallOut').show();
-            $('.kandyButton .kandyVideoButtonCalling').hide();
-            $('.kandyButton .kandyVideoButtonOnCall').hide();
-            break;
         case 'BEING_CALLED':
-            $('.kandyButton .kandyVideoButtonSomeonesCalling').show();
-            $('.kandyButton .kandyVideoButtonCallOut').hide();
-            $('.kandyButton .kandyVideoButtonCalling').hide();
-            $('.kandyButton .kandyVideoButtonOnCall').hide();
+            kandyButton.find('.kandyVideoButtonSomeonesCalling').show();
+            kandyButton.find('.kandyVideoButtonCallOut').hide();
+            kandyButton.find('.kandyVideoButtonCalling').hide();
+            kandyButton.find('.kandyVideoButtonOnCall').hide();
             break;
+
         case 'CALLING':
-            $('.kandyButton .kandyVideoButtonSomeonesCalling').hide();
-            $('.kandyButton .kandyVideoButtonCallOut').hide();
-            $('.kandyButton .kandyVideoButtonCalling').show();
-            $('.kandyButton .kandyVideoButtonOnCall').hide();
+            kandyButton.find('.kandyVideoButtonSomeonesCalling').hide();
+            kandyButton.find('.kandyVideoButtonCallOut').hide();
+            kandyButton.find('.kandyVideoButtonCalling').show();
+            kandyButton.find('.kandyVideoButtonOnCall').hide();
             break;
         case 'ON_CALL':
-            $('.kandyButton .kandyVideoButtonSomeonesCalling').hide();
-            $('.kandyButton .kandyVideoButtonCallOut').hide();
-            $('.kandyButton .kandyVideoButtonCalling').hide();
-            $('.kandyButton .kandyVideoButtonOnCall').show();
+            kandyButton.find('.kandyVideoButtonSomeonesCalling').hide();
+            kandyButton.find('.kandyVideoButtonCallOut').hide();
+            kandyButton.find('.kandyVideoButtonCalling').hide();
+            kandyButton.find('.kandyVideoButtonOnCall').show();
             break;
     }
 };
@@ -228,8 +248,10 @@ changeAnswerButtonState = function (state) {
  * @param target
  */
 kandy_answer_video_call = function (target) {
-    KandyAPI.Phone.answerCall(callId, true);
-    changeAnswerButtonState("ANSWERING_CALL");
+    var kandyButtonId = $(target).data('container');
+    var currentCallId = $('div#'+kandyButtonId).attr('data-call-id');
+    activeContainerId = kandyButtonId;
+    KandyAPI.Phone.answerCall(currentCallId, true);
     if (typeof answer_video_call_callback == 'function') {
         answer_video_call_callback("ANSWERING_CALL");
     }
@@ -239,8 +261,11 @@ kandy_answer_video_call = function (target) {
  Event when click call button
  */
 kandy_make_video_call = function (target) {
-    KandyAPI.Phone.makeCall($('.kandyButton .kandyVideoButtonCallOut #callOutUserId').val(),true);
-    changeAnswerButtonState("CALLING");
+    var kandyButtonId = $(target).data('container');
+    activeContainerId = kandyButtonId;
+
+    KandyAPI.Phone.makeCall($('#'+kandyButtonId+' .kandyVideoButtonCallOut #callOutUserId').val(),true);
+    changeAnswerButtonState("CALLING", '#'+ kandyButtonId);
     if (typeof make_video_call_callback == 'function') {
         make_video_call_callback(target);
     }
@@ -250,8 +275,10 @@ kandy_make_video_call = function (target) {
  Event when answer a voice call
  */
 kandy_answer_voice_call = function (target) {
-    KandyAPI.Phone.answerCall(callId, false);
-    changeAnswerButtonState("ANSWERING_CALL");
+    var kandyButtonId = $(target).data('container');
+    var currentCallId = $('div#'+kandyButtonId).attr('data-call-id');
+    activeContainerId = kandyButtonId;
+    KandyAPI.Phone.answerCall(currentCallId, false);
     if (typeof answer_voice_call_callback == 'function') {
         answer_voice_call_callback(target);
     }
@@ -262,9 +289,10 @@ kandy_answer_voice_call = function (target) {
  Event when click call button
  */
 kandy_make_voice_call = function (target) {
-
-    KandyAPI.Phone.makeCall($('.kandyButton .kandyVideoButtonCallOut #callOutUserId').val(),false);
-    changeAnswerButtonState("CALLING");
+    var kandyButtonId = $(target).data('container');
+    activeContainerId = kandyButtonId;
+    KandyAPI.Phone.makeCall($('#'+kandyButtonId+' .kandyVideoButtonCallOut #callOutUserId').val(),false);
+    changeAnswerButtonState("CALLING", '#'+kandyButtonId);
 
     if (typeof make_voice_call_callback == 'function') {
         make_voice_call_callback(target);
@@ -275,13 +303,17 @@ kandy_make_voice_call = function (target) {
  Event when click end call button
  */
 kandy_end_call = function (target) {
-    KandyAPI.Phone.endCall(callId);
+
+    var kandyButtonId = $(target).data('container');
+    var currentCallId = $('div#'+kandyButtonId).attr('data-call-id');
+
+    KandyAPI.Phone.endCall(currentCallId);
 
     if (typeof end_call_callback == 'function') {
         end_call_callback(target);
     }
 
-    changeAnswerButtonState("READY_FOR_CALLING");
+    changeAnswerButtonState("READY_FOR_CALLING", "#"+kandyButtonId);
 };
 
 /**
@@ -609,8 +641,8 @@ kandy_getIms = function () {
  *
  */
 var emptyContact = function () {
-    $(liTabWrapSelector).html("");
-    $(liContentWrapSelector).html("");
+    $(liTabContactWrap).html("");
+    //$(liContentWrapSelector).html("");
 };
 
 /**
@@ -622,7 +654,7 @@ var prependContact = function (user) {
 
     var username = user.contact_user_name;
 
-    var liParent = $(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + username + "']").parent();
+    var liParent = $(liTabContactWrap + " li a[" + userHoldingAttribute + "='" + username + "']").parent();
     var liContact = "";
     if(liParent.length){
         liContact =  liParent[0].outerHTML;
@@ -630,7 +662,7 @@ var prependContact = function (user) {
         liContact = getLiContact(user);
     }
 
-    $(liTabWrapSelector).prepend(liContact);
+    $(liTabContactWrap).prepend(liContact);
     if (!$(liContentWrapSelector + " li[" + userHoldingAttribute + "='" + username + "']").length) {
         var liContent = getLiContent(username);
         $(liContentWrapSelector).prepend(liContent);
@@ -758,11 +790,385 @@ var addContacts = function() {
     $("#kandySearchUserName").select2('val', '');
 };
 
+
+
+/**
+ * Load group details
+ * @param sessionId
+ */
+
+var kandy_loadGroupDetails = function(sessionId){
+    KandyAPI.Session.getInfoById(sessionId,
+        function (result) {
+            var isOwner = false, notInGroup = true, groupActivity = '';
+            var groupAction = $(liTabWrapSelector +' li a[data-content="'+sessionId+'"]').parent().find('.groupAction');
+            var messageInput = $(liContentWrapSelector + ' li[data-content="'+sessionId+'"] form .imMessageToSend');
+            buildListParticipants(sessionId, result.session.participants);
+            //if current user is owner of this group
+            if($(".kandy_user").val() === result.session.admin_full_user_id ){
+                //add admin functionality
+                isOwner = true;
+                groupActivity = '<a class="" href="javascipt:;"><i title="remove group" onclick="kandy_terminateGroup(\''+result.session.session_id+'\')" class="fa fa-remove"></i></a>';
+                $(liTabWrapSelector + ' li[data-group="'+sessionId+'"] ' + ' .'+ listUserClass+' li[data-user!="'+result.session.admin_full_user_id+'"]').append(
+                    '<i title="remove" class="remove fa fa-remove"></i>'
+                );
+            }
+            //check if user is not in group
+            for(var j in result.session.participants){
+                if(result.session.participants[j].full_user_id == $(".kandy_user").val()){
+                    notInGroup = false;
+                }
+            }
+            if(notInGroup){
+                groupActivity = '<a class="join" title="join" onclick="kandy_JoinGroup(\''+result.session.session_id+'\')" href="javascript:;"><i class="fa fa-sign-in"></i></a>';
+                //disable message input if user not belongs to a specific group
+                messageInput.prop('disabled',true);
+            }else if(!isOwner){
+                groupActivity = '<a class="leave" title="leave" onclick="kandy_LeaveGroup(\''+result.session.session_id+'\')" href="javascript:;"><i class="fa fa-sign-out"></i></a>';
+                if(messageInput.is(':disabled')){
+                    messageInput.prop('disabled',false);
+                }
+            }
+            groupAction.html(groupActivity);
+            if(sessionListeners.indexOf(sessionId) < 0) {
+                KandyAPI.Session.setListeners(sessionId, listeners);
+                sessionListeners.push(sessionId);
+            }
+            updateUserGroupStatus();
+        },
+        function (msg, code) {
+            console.log('Error: '+ code + ' - ' + msg);
+        }
+    );
+
+};
+
+/**
+ * Build list of participants
+ * @param sessionDetails
+ */
+
+var buildListParticipants = function(sessionId, participants){
+    var listUsersGroup = $(liTabWrapSelector + ' li[data-group="'+sessionId+'"] ' + ' .'+ listUserClass);
+    listUsersGroup.empty();
+    if(participants.length){
+        for(var i in participants) {
+            var name = '';
+            if(participants[i].user_first_name == participants[i].user_last_name){
+                name = participants[i].user_first_name;
+            }else{
+                name = participants[i].user_first_name + ' ' + participants[i].user_last_name ;
+            }
+            displayNames[participants[i].full_user_id] = name;
+            $(listUsersGroup).append(
+                '<li data-user="'+participants[i].full_user_id+'">' +
+                    '<a>'+displayNames[participants[i].full_user_id]+'</a>'+
+                    '<i class="status"></i>'+
+                '</li>'
+            );
+        }
+    }
+
+};
+/**
+ * Load open group chat
+ */
+var kandy_loadGroups = function(){
+    KandyAPI.Session.getOpenSessions(
+        function (result) {
+            $(liTabGroupsWrap).empty();
+            if(result.hasOwnProperty('sessions')){
+                if(result.sessions.length){
+                    $(groupSeparator).removeClass('hide');
+                    for(var i in result.sessions){
+                        //build sessions list here
+                        groupNames[result.sessions[i].session_id] = result.sessions[i].session_name;
+                        if (!$(liTabGroupsWrap + " li[data-group='" + result.sessions[i].session_id + "']").length){
+                            $(liTabGroupsWrap).append(
+                                '<li data-group="'+result.sessions[i].session_id+'" class="group">'+
+                                '<i class="toggle fa fa-plus-square-o"></i>'+
+                                '<a title="'+ result.sessions[i].session_status +'" onclick="kandy_loadGroupDetails(\''+ result.sessions[i].session_id +'\')" data-content="'+ result.sessions[i].session_id+'" href="#">'+
+                                result.sessions[i].session_name+
+                                '</a>'+
+                                '<div class="groupAction"></div>'+
+                                '<ul class="list-users"></ul>'+
+                                '</li>'
+                            );
+                        }
+                        if (!$(liContentWrapSelector + " li[" + userHoldingAttribute + "='" + result.sessions[i].session_id + "']").length) {
+                            var liContent = getGroupContent(result.sessions[i].session_id);
+                            $(liContentWrapSelector).prepend(liContent);
+
+                        }
+                        kandy_loadGroupDetails(result.sessions[i].session_id);
+                    }
+                }else{
+                    $(groupSeparator).addClass('hide');
+                }
+            }
+        },
+        function (msg, code) {
+            console.debug('load sessions fail. Code:'+ code +'. Message:'+msg);
+        }
+    );
+};
+
+/**
+ *  Event handler for onData event
+ */
+var kandy_onSessionData = function(msg){
+    var newMessage = '<div class="their-message">\
+                            <b><span class="imUsername">' + displayNames[msg.source] + ':</span></b>\
+                            <span class="imMessage">' + msg.payload + '</span>\
+                        </div>';
+
+    var messageDiv = $('.kandyChat .kandyMessages[data-group="'+msg.session_id+'"]');
+    messageDiv.append(newMessage);
+    messageDiv.scrollTop(messageDiv[0].scrollHeight);
+};
+
+var getGroupContent = function (groupId) {
+    var result =
+        '<li ' + userHoldingAttribute + '="' + groupId + '">\
+                <div class="kandyMessages" data-group="' + groupId + '">\
+                </div>\
+                <div >\
+                    Messages:\
+                </div>\
+                <div class="">\
+                            <form class="send-message" data-group="' + groupId + '">\
+                        <div class="input-message">\
+                            <input class="imMessageToSend chat-input" type="text" data-group="' + groupId + '">\
+                        </div>\
+                        <div class="button-send">\
+                            <input class="btnSendMessage chat-input" type="submit" value="Send"  data-group="' + groupId + '" >\
+                        </div>\
+                    </form>\
+                </div>\
+            </li>';
+    return result;
+};
+
+
+var kandy_createGroup = function(config){
+    /** create(sessionConfig, success, failure)
+     Creates a new session. The creating user is the administrator.
+     @params <object> sessionConfig, <function> success/failure
+     */
+    KandyAPI.Session.create(
+        config,
+        function (result) {  // success
+            // trying activate group
+            activateGroup(result.session_id);
+            //reload groups list
+            kandy_loadGroups();
+        },
+        function (msg, code) {  // failure
+            console.log('Error:'+code +' - '+msg);
+        }
+    );
+};
+/**
+ * Send group IM
+ * @param groupId
+ * @param msg
+ */
+var kandy_sendGroupIm = function(groupId,msg){
+    var username = $("input.kandy_current_username").val();
+    KandyAPI.Session.sendData(
+        groupId,
+        msg,
+        function() {
+            var newMessage = '<div class="my-message">\
+                    <b><span class="imUsername">' + username + ':</span></b>\
+                    <span class="imMessage">' + msg + '</span>\
+                </div>';
+            var messageDiv = $('.kandyChat .kandyMessages[data-group="' + groupId + '"]');
+            messageDiv.append(newMessage);
+            messageDiv.scrollTop(messageDiv[0].scrollHeight);
+        },
+        function(msg, code) {
+            console.log('Error sending Data (' + code + '): ' + msg);
+        }
+    );
+};
+var kandy_onJoinRequest = function(notification){
+    var message = 'User '+notification.full_user_id+' request to join group '+ groupNames[notification.session_id];
+    var confirm = window.confirm(message);
+    if(confirm){
+        kandy_ApproveJoinGroup(notification.session_id, notification.full_user_id);
+    }else{
+        kandy_RejectJoinGroup(notification.session_id, notification.full_user_id);
+    }
+};
+
+var kandy_ApproveJoinGroup = function(sessionId, userId){
+    KandyAPI.Session.acceptJoinRequest(sessionId, userId,
+        function () {
+            kandy_loadGroupDetails(sessionId);
+        },
+        function (msg, code) {
+            console.log('Error:'+code+': '+msg);
+        });
+};
+
+var kandy_RejectJoinGroup = function(sessionId, userId){
+    KandyAPI.Session.rejectJoinRequest(sessionId, userId,'Group admin do not approve your request',
+        function () {
+            kandy_loadGroupDetails(sessionId);
+        },
+        function (msg, code) {
+            console.log(code+': ' + msg);
+        });
+};
+
+var kandy_onLeaveGroup = function(notification){
+    var newMessage = '<div class="their-message">\
+                    <span class="imMessage"><i>' + displayNames[notification.full_user_id] + ' has left</i></span>\
+                </div>';
+    var messageDiv = $('.kandyChat .kandyMessages[data-group="' + notification.session_id + '"]');
+    messageDiv.append(newMessage);
+    kandy_loadGroupDetails(notification.session_id);
+};
+/**
+ * Remove user from group
+ * @param sessionId
+ * @param userId
+ */
+var kandy_removeFromGroup = function(sessionId, userId) {
+    KandyAPI.Session.bootUser(sessionId, userId, 'boot reason',
+        function () {
+            kandy_loadGroupDetails(sessionId);
+        },
+        function (msg, code) {
+            console.log(code + ': ' + msg);
+        }
+    );
+};
+
+var activateGroup = function(groupId){
+    KandyAPI.Session.activate(
+        groupId,
+        function(){
+            //success callback
+            console.log('activate group successful');
+        },function(){
+            //fail callback
+            console.log('Error activating group');
+        }
+    );
+
+};
+
+var kandy_JoinGroup = function (sessionId){
+    KandyAPI.Session.join(
+        sessionId,
+        {},
+        function () {
+            kandy_loadGroupDetails(sessionId);
+        },
+        function (msg, code) {
+            console.log(code + ": " + msg);
+        }
+    );
+};
+
+var kandy_LeaveGroup= function(sessionId){
+    KandyAPI.Session.leave(sessionId,
+        '',
+        function(){
+            //success callback
+            //kandy_loadGroups();
+            kandy_loadGroupDetails(sessionId);
+        },
+        function(){
+            console.log('Leave group fail');
+        }
+    )
+}
+
+var kandy_onJoin = function(notification){
+    kandy_loadGroupDetails(notification.session_id);
+};
+
+var kandy_onUserBoot = function(notification){
+    kandy_loadGroupDetails(notification.session_id);
+};
+/**
+ * Terminate a session
+ * @param sessionId
+ */
+var kandy_terminateGroup = function(sessionId){
+    KandyAPI.Session.terminate(
+        sessionId,
+        null,
+        function (msg, code) {
+            console.log('Terminate session fail : '+code+': '+msg);
+        }
+    );
+};
+/**
+ * session terminate event callback
+ * @param notification
+ */
+var kandy_onTerminateGroup = function(notification){
+    removeGroupContent(notification.session_id);
+    kandy_loadGroups();
+};
+/**
+ * session active event callback
+ * @param notification
+ */
+var kandy_onActiveGroup = function(notification){
+    kandy_loadGroups();
+};
+/**
+ * Clean things up after remove group
+ * @param sessionId
+ */
+var removeGroupContent = function(sessionId){
+    var toBeRemove = $(liContentWrapSelector + ' li[data-content="'+sessionId+'"]');
+    if(toBeRemove.hasClass('selected')){
+        toBeRemove.siblings('[data-content="example"]').addClass('selected');
+    }
+    toBeRemove.remove();
+    //remove from list of session
+    var sessionIndex = sessionListeners.indexOf(sessionId);
+    if(sessionIndex > -1){
+        sessionListeners.splice(sessionIndex,1);
+    }
+};
+
+var updateUserGroupStatus = function (){
+    if(usersStatus){
+        if($(liTabGroupsWrap).length){
+            for(var u in usersStatus){
+                var liUserGroup = $(liTabGroupsWrap + ' li[data-user="'+u+'"]');
+                liUserGroup.find('i.status').html(usersStatus[u]);
+                liUserGroup.removeClass();
+                liUserGroup.addClass('kandy-chat-status-' + usersStatus[u].replace(/ /g,'-').toLowerCase());
+                liUserGroup.attr('title', usersStatus[u]);
+            }
+        }
+    }
+};
+
+var kandy_make_pstn_call = function (target){
+    var kandyButtonId = $(target).data('container');
+    activeContainerId = kandyButtonId;
+    KandyAPI.Phone.makePSTNCall($('#'+kandyButtonId+' #psntCallOutNumber').val(), 'demo');
+    if(typeof kandy_pstn_callback == "function"){
+        kandy_pstn_callback();
+    }
+
+    changeAnswerButtonState("CALLING", '#'+ kandyButtonId);
+};
+
+
 // ======================JQUERY READY =======================
 $(document).ready(function () {
     setup();
     login();
-
     $(".select2").select2({
         ajax: {
             quietMillis: 100,

@@ -180,4 +180,19 @@ class Button extends RenderedObject
 
         return $this;
     }
+
+    /**
+     * Show a pstnCall Widget
+     * @param array $data
+     * @return $this
+     */
+    public function pstnCall($data = array())
+    {
+        $this->init($data);
+        $this->contents = \View::make(
+            'kandy-laravel::Button.pstnCall',
+            $this->data
+        )->render();
+        return $this;
+    }
 }
