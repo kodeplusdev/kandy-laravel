@@ -1,7 +1,35 @@
 //========================KANDY SETUP AND LISTENER CALLBACK ==============
 
 var unassignedUser = "KANDY UNASSIGNED USER";
+var chatMessageTimeStamp = 0;
 var activeContainerId;
+
+// Create audio objects to play incoming calls and outgoing calls sound
+var $audioRingIn = jQuery('<audio>', { loop: 'loop', id: 'ring-in' });
+var $audioRingOut = jQuery('<audio>', { loop: 'loop', id: 'ring-out' });
+
+// Load audio source to DOM to indicate call events
+var audioSource = {
+    ringIn: [
+        { src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/ringin.mp3', type: 'audio/mp3' },
+        { src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/ringin.ogg', type: 'audio/ogg' }
+    ],
+    ringOut: [
+        { src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/ringout.mp3', type: 'audio/mp3' },
+        { src: 'https://kandy-portal.s3.amazonaws.com/public/sounds/ringout.ogg', type: 'audio/ogg' }
+    ]
+};
+
+audioSource.ringIn.forEach(function (entry) {
+    var $source = jQuery('<source>').attr('src', entry.src);
+    $audioRingIn.append($source);
+});
+
+audioSource.ringOut.forEach(function (entry) {
+    var $source = jQuery('<source>').attr('src', entry.src);
+    $audioRingOut.append($source);
+});
+
 
 /**
  * Kandy Set up
@@ -69,40 +97,6 @@ kandy_login_failed_callback = function () {
 };
 
 /**
- * Local Video Initialized callback
- * @param videoTag
- */
-kandy_local_video_initialized_callback = function (videoTag) {
-    //have video widget
-    if($(".kandyVideo").length){
-        $('#myVideo').append(videoTag);
-    }
-
-    if (typeof local_video_initialized_callback == 'function') {
-        local_video_initialized_callback(videoTag);
-    }
-
-};
-
-/**
- * Remote Video Initialized Callback
- * @param videoTag
- */
-kandy_remote_video_initialized_callback = function (videoTag) {
-    //have video widget
-    if($(".kandyVideo").length){
-        $('#theirVideo').append(videoTag);
-    }
-    //have voice call widget
-    if($(".kandyButton .videoVoiceCallHolder").length){
-        $('.kandyButton .videoVoiceCallHolder .video').append(videoTag);
-    }
-    if (typeof remote_video_initialized_callback == 'function') {
-        remote_video_initialized_callback(videoTag);
-    }
-};
-
-/**
  * Status Notification Callback.
  *
  * @param userId
@@ -135,6 +129,8 @@ kandy_presence_notification_callback = function (userId, state, description, act
  */
 kandy_on_call_initiate_callback = function(call){
     $('#'+activeContainerId).attr('data-call-id', call.getId());
+    $audioRingIn[0].pause();
+    $audioRingOut[0].play();
 };
 
 /**
@@ -145,6 +141,9 @@ kandy_on_call_callback = function (call) {
     if (typeof on_call_callback == 'function') {
         on_call_callback(call);
     }
+
+    $audioRingOut[0].pause();
+
     var target = $('.kandyButton[data-call-id="'+call.getId()+'"]');
     changeAnswerButtonState("ON_CALL",target);
 };
@@ -159,6 +158,9 @@ kandy_incoming_call_callback = function (call, isAnonymous) {
     if (typeof incoming_call_callback == 'function') {
         incoming_call_callback(call, isAnonymous);
     }
+
+    $audioRingIn[0].play();
+
     var target = $('.kandyVideoButtonCallOut:visible').get(0).closest('.kandyButton');
     $(target).attr('data-call-id', call.getId());
     changeAnswerButtonState('BEING_CALLED', target);
@@ -174,6 +176,10 @@ kandy_call_answered_callback = function (call, isAnonymous) {
     if (typeof call_answered_callback == 'function') {
         call_answered_callback(call, isAnonymous);
     }
+
+    $audioRingOut[0].pause();
+    $audioRingIn[0].pause();
+
     var target = $('.kandyButton[data-call-id="'+call.getId()+'"]');
     changeAnswerButtonState("ON_CALL", target);
 };
@@ -187,11 +193,9 @@ kandy_call_answer_failed_callback = function (call){
  *
  */
 kandy_call_ended_callback = function (call) {
-    //have video widget
-    if($(".kandyVideo").length){
-        $('#theirVideo').empty();
-        $('#myVideo').empty();
-    }
+    $audioRingOut[0].play();
+    $audioRingIn[0].pause();
+
     if (typeof call_ended_callback == 'function') {
         call_ended_callback();
     }
@@ -201,7 +205,7 @@ kandy_call_ended_callback = function (call) {
 
 /**
  * Change AnswerButtonState with KandyButton Widget.
- *
+ * @param target
  * @param state
  */
 changeAnswerButtonState = function (state, target) {
@@ -209,17 +213,21 @@ changeAnswerButtonState = function (state, target) {
 
     switch (state) {
         case 'READY_FOR_CALLING':
+            $audioRingIn[0].pause();
+            $audioRingOut[0].pause();
             kandyButton.find('.kandyVideoButtonSomeonesCalling').hide();
             kandyButton.find('.kandyVideoButtonCallOut').show();
             kandyButton.find('.kandyVideoButtonCalling').hide();
             kandyButton.find('.kandyVideoButtonOnCall').hide();
             break;
+
         case 'BEING_CALLED':
             kandyButton.find('.kandyVideoButtonSomeonesCalling').show();
             kandyButton.find('.kandyVideoButtonCallOut').hide();
             kandyButton.find('.kandyVideoButtonCalling').hide();
             kandyButton.find('.kandyVideoButtonOnCall').hide();
             break;
+
         case 'CALLING':
             kandyButton.find('.kandyVideoButtonSomeonesCalling').hide();
             kandyButton.find('.kandyVideoButtonCallOut').hide();
@@ -590,6 +598,11 @@ kandy_getIms = function () {
                 for (i = 0; i < data.messages.length; ++i) {
                     var msg = data.messages[i];
                     if (msg.messageType == 'chat') {
+                        if(chatMessageTimeStamp == msg.timestamp) {
+                            continue;
+                        } else {
+                            chatMessageTimeStamp = msg.timestamp;
+                        }
                         // Get user info
                         var username = data.messages[i].sender.full_user_id;
                         var displayName = data.messages[i].sender.display_name;
@@ -844,15 +857,10 @@ var kandy_loadGroupDetails = function(sessionId){
 var buildListParticipants = function(sessionId, participants){
     var listUsersGroup = $(liTabWrapSelector + ' li[data-group="'+sessionId+'"] ' + ' .'+ listUserClass);
     listUsersGroup.empty();
+    participants = getDisplayNameForContact(participants);
     if(participants.length){
         for(var i in participants) {
-            var name = '';
-            if(participants[i].user_first_name == participants[i].user_last_name){
-                name = participants[i].user_first_name;
-            }else{
-                name = participants[i].user_first_name + ' ' + participants[i].user_last_name ;
-            }
-            displayNames[participants[i].full_user_id] = name;
+            displayNames[participants[i].full_user_id] = participants[i].display_name;
             $(listUsersGroup).append(
                 '<li data-user="'+participants[i].full_user_id+'">' +
                     '<a>'+displayNames[participants[i].full_user_id]+'</a>'+
@@ -993,6 +1001,14 @@ var kandy_onJoinRequest = function(notification){
     }else{
         kandy_RejectJoinGroup(notification.session_id, notification.full_user_id);
     }
+};
+
+var kandy_onJoinReject = function(notification){
+    kandy_loadGroupDetails(notification.session_id);
+};
+
+var kandy_onJoinApprove = function(notification){
+    kandy_loadGroupDetails(notification.session_id);
 };
 
 var kandy_ApproveJoinGroup = function(sessionId, userId){
