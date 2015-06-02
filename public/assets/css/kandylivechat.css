@@ -127,3 +127,12 @@
 
 #liveChat .liveChatBody {
 }
+
+#liveChat #ratingForm {
+    padding: 20px;
+    display: none;
+}
+
+#liveChat #ratingForm .message {
+    display: none;
+}

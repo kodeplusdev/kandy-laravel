@@ -1,4 +1,5 @@
 {{HTML::style(asset(\Kodeplusdev\Kandylaravel\Kandylaravel::KANDY_CSS_LIVE_CHAT))}}
+{{HTML::style(asset(\Kodeplusdev\Kandylaravel\Kandylaravel::RATE_CSS))}}
 <div id="liveChat" class="@if(!\Session::has('kandyLiveChatUserInfo')) hidden @endif">
     <div class="header">
         Kandy live chat
@@ -11,24 +12,43 @@
             <img id="loading" width="30px" height="30px" src="{{asset('packages/kodeplusdev/kandylaravel/assets/img/loading.gif')}}" title="loading">
             <p>Please wait a moment...</p>
         </div>
-            <div id="registerForm">
-                <form id="customerInfo" method="POST" action="/kandy/registerGuest" >
-                    <label for="customerName">{{$registerForm['name']['label']}}</label>
-                    <input type="text" name="customerName" id="customerName" class="{{$registerForm['name']['class']}}" />
-                    <span data-input="customerName" style="display: none" class="error"></span>
-                    <label for="customerEmail">{{$registerForm['email']['label']}}</label>
-                    <input type="text" name="customerEmail" id="customerEmail" class="{{$registerForm['email']['class']}}" />
-                    <span data-input="customerEmail" style="display: none" class="error"></span>
-                    <button type="submit">Start chat</button>
-                </form>
+        <div id="registerForm">
+            <form id="customerInfo" method="POST" action="/kandy/registerGuest" >
+                <label for="customerName">{{$registerForm['name']['label']}}</label>
+                <input type="text" name="customerName" id="customerName" class="{{$registerForm['name']['class']}}" />
+                <span data-input="customerName" style="display: none" class="error"></span>
+                <label for="customerEmail">{{$registerForm['email']['label']}}</label>
+                <input type="text" name="customerEmail" id="customerEmail" class="{{$registerForm['email']['class']}}" />
+                <span data-input="customerEmail" style="display: none" class="error"></span>
+                <button type="submit">Start chat</button>
+            </form>
+        </div>
+        <div id="ratingForm">
+            <h3 class="formTitle">Rate for <span class="agentName"></span> </h3>
+            <form>
+                <select id="backing2b">
+                    <option title="" value="1" selected="selected">1</option>
+                    <option title="" value="2">2</option>
+                    <option title="" value="3">3</option>
+                    <option title="" value="4">4</option>
+                    <option title="" value="5">5</option>
+                </select>
+                <div class="rateit" data-rateit-backingfld="#backing2b"></div>
+                <textarea id="rateComment" rows="3" placeholder="Say something about your supporter"></textarea>
+                <a id="btnEndSession" class="button" href="{{route('kandy.endChatSession')}}">No, thanks</a>
+                <button id="btnSendRate" type="submit">Send</button>
+            </form>
+            <div class="message">
+                <h3>Thanks you! Good bye!</h3>
             </div>
+        </div>
 
             <div class="customerService">
                 <div class="avatar">
                     <img src="{{$agentInfo['avatar']}}">
                 </div>
                 <div class="helpdeskInfo">
-                    <span id="agentName"></span>
+                    <span class="agentName"></span>
                     <p class="title">{{$agentInfo['title']}}</p>
                 </div>
             </div>
@@ -47,10 +67,12 @@
 {{HTML::script(\Kodeplusdev\Kandylaravel\Kandylaravel::KANDY_JS_FCS)}}
 {{HTML::script(\Kodeplusdev\Kandylaravel\Kandylaravel::KANDY_JS)}}
 {{HTML::script(\Kodeplusdev\Kandylaravel\Kandylaravel::KANDY_JS_LIVE_CHAT)}}
+{{HTML::script(\Kodeplusdev\Kandylaravel\Kandylaravel::RATE_JS)}}
 
 <script>
     //agent user id
-    var agent = '';
+    var agent;
+    var rateData;
     $(function(){
         @if(\Session::has('kandyLiveChatUserInfo'))
             getKandyUsers();
@@ -58,5 +80,6 @@
             //default ui state
             LiveChatUI.changeState();
         @endif
+
     });
 </script>

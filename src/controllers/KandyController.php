@@ -148,17 +148,20 @@ class KandyController extends \BaseController
         $kandyUserTable = \Config::get('kandy-laravel::kandy_user_table');
         $kandyLiveChatUser = \Config::get('kandy-laravel::excluded_kandy_users.liveChat');
         $kandyLiveChatTable = \Config::get('kandy-laravel::kandy_live_chat_table');
-        \DB::setFetchMode(\PDO::FETCH_KEY_PAIR);
+        $userTable = \Config::get('kandy-laravel::user_table');
+        \DB::setFetchMode(\PDO::FETCH_ASSOC | \PDO::FETCH_GROUP);
         $users = \DB::table($kandyUserTable)
             ->select(\DB::raw("CONCAT(user_id,'@',domain_name) as full_user_id, password"))
             ->whereIn('user_id', $kandyLiveChatUser)->get();
         $agents = \DB::table($kandyUserTable)
             ->leftJoin($kandyLiveChatTable, "$kandyUserTable.user_id", '=', "$kandyLiveChatTable.agent_user_id")
-            ->select(\DB::raw("CONCAT(user_id, '@', domain_name) as full_user_id, password"))
+            ->leftJoin($userTable, "$kandyUserTable.main_user_id", '=', "$userTable.id")
+            ->select(\DB::raw("CONCAT(user_id, '@', domain_name) as full_user_id, $kandyUserTable.password as password, $userTable.username as username, main_user_id"))
             ->where('type', '=', $kandyLaravel::USER_TYPE_CHAT_AGENT)
             ->orderBy("$kandyLiveChatTable.last_chat", "ASC")->get();
         \DB::setFetchMode(\PDO::FETCH_CLASS);
-        $lastSeen = $kandyLaravel->getLastSeen(array_merge(array_keys($users), array_keys($agents)));
+        $arrayUsers = array_merge(array_keys($users), array_keys($agents));
+        $lastSeen = $kandyLaravel->getLastSeen($arrayUsers);
         if($lastSeen){
             if($lastSeen->message == 'success'){
                 //current time of kandy server
@@ -166,18 +169,20 @@ class KandyController extends \BaseController
                 foreach($lastSeen->result->users as $user){
                     //get user
                     if(isset($users[$user->full_user_id]) && !$freeUser){
-                        //get users not online in x minute
-                        if(($serverTimestamp - $user->last_seen) > 6000){
+                        //get users not online in last 10 secs
+                        if(($serverTimestamp - $user->last_seen) > 10000){
                             $freeUser = $user;
-                            $freeUser->password = $users[$user->full_user_id];
+                            $freeUser->password = $users[$user->full_user_id][0]['password'];
                         }
                     }
                     //get agent
                     if(isset($agents[$user->full_user_id]) && !$availableAgent){
-                        // get agents online in last 1 minute
-                        if(($serverTimestamp - $user->last_seen) < 6000) {
+                        // get agents online in last 3 secs
+                        if(($serverTimestamp - $user->last_seen) < 3000) {
                             $availableAgent = $user;
                             $availableAgent->user_id = current(explode('@',$availableAgent->full_user_id));
+                            $availableAgent->username = $agents[$user->full_user_id][0]['username'];
+                            $availableAgent->main_user_id = $agents[$user->full_user_id][0]['main_user_id'];
                         }
                     }
                     if($freeUser && $availableAgent) break;
@@ -236,9 +241,12 @@ class KandyController extends \BaseController
         if(\Session::has('kandyLiveChatUserInfo')){
             \Session::forget('kandyLiveChatUserInfo');
         }
-        return \Response::json(array(
-            'status'    => 'success'
-        ));
+        if(\Request::ajax()){
+            return \Response::json(array(
+                'status'    => 'success'
+            ));
+        }
+        return \Redirect::back();
     }
 
     /**
@@ -281,6 +289,52 @@ class KandyController extends \BaseController
         }
         return \Response::json(array('results' => $result));
 
+    }
+
+    /**
+     * Rate for agent action
+     * @return mixed
+     */
+    public function rateAgent()
+    {
+        $rate = \Request::get('rate', []);
+        $userId = $rate['id'];
+        $point = $rate['point'];
+        $comment = \Request::get('comment', '');
+        if(!\Session::has('kandyLiveChatUserInfo')){
+            return \Response::json(array(
+                'success' => false,
+                'message' => 'not allowed'
+            ));
+        }
+        if(!$userId){
+            $result = array(
+                'success'   => false,
+                'message'   => 'agent is not specified'
+            );
+        }else{
+            if(\Session::has('kandyLiveChatUserInfo.rated')){
+                $result = array(
+                    'success'   => true,
+                    'message'   => 'Already rated'
+                );
+            }else{
+                $now = time();
+                KandyLiveChatRate::create(array(
+                    'main_user_id'  => $userId,
+                    'rated_time'    => $now,
+                    'point'         => intval($point),
+                    'rated_by'      => \Session::get('kandyLiveChatUserInfo.email'),
+                    'comment'       => htmlspecialchars($comment)
+                ));
+                \Session::set('kandyLiveChatUserInfo.rated', true);
+                $result = array(
+                    'success'   => true,
+                );
+            }
+        }
+
+        return \Response::json($result);
     }
 
 

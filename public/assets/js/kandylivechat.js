@@ -7,22 +7,19 @@ var checkAvailable;
 LiveChatUI.changeState = function(state){
     switch (state){
         case 'WAITING':
-            console.log('waiting');
             $('#liveChat #waiting').show();
             $("#liveChat #registerForm").hide();
             $("#liveChat .customerService ,#liveChat #messageBox, #liveChat .formChat").hide();
             break;
         case 'READY':
-            console.log('ready');
             $("#liveChat #registerForm").hide();
             $('#liveChat #waiting').hide();
             $("#liveChat .customerService, #liveChat #messageBox, #liveChat .formChat").show();
-            $('#liveChat #agentName').html(agent.split('@')[0]);
-            $("#liveChat #messageBox li.their-message span.username").html(agent.split('@')[0]);
+            $('#liveChat .agentName').html(agent.username);
+            $("#liveChat #messageBox li.their-message span.username").html(agent.username);
             $("#liveChat .handle.closeChat").show();
             break;
         case "UNAVAILABLE":
-            console.log('unavailable');
             $("#liveChat #waiting p").html('There is something wrong, please try again later.');
             $("#liveChat #loading").hide();
             break;
@@ -30,7 +27,15 @@ LiveChatUI.changeState = function(state){
             $("#liveChat #waiting p").html('Chat agents not available, please wait...');
             $("#liveChat #loading").show();
             break;
-
+        case "RATING":
+            $("#liveChat #ratingForm").show();
+            $("#liveChat .customerService, #liveChat #messageBox, #liveChat .formChat").hide();
+            break;
+        case "ENDING_CHAT":
+            $("#liveChat #ratingForm form").hide();
+            $("#liveChat #ratingForm .formTitle").hide();
+            $("#liveChat #ratingForm .message").show();
+            break;
         default :
             $('#liveChat #registerForm').show();
             $("#liveChat .customerService, #liveChat #messageBox, #liveChat .formChat").hide();
@@ -70,10 +75,10 @@ var getKandyUsers = function(){
                     clearInterval(checkAvailable);
                 }
                 var username = res.user.full_user_id.split('@')[0];
-                console.log('username:'+username);
-                console.log('agent:'+res.agent.full_user_id);
                 login(res.apiKey, username, res.user.password, login_success_callback, login_fail_callback);
-                agent = res.agent.full_user_id;
+                agent = res.agent;
+                console.log('agent:'+agent, 'user:'+username);
+
                 setInterval(getIm, 3000);
             }else{
                 if(!checkAvailable){
@@ -86,6 +91,7 @@ var getKandyUsers = function(){
         }
     })
 };
+
 
 var endChatSession = function(){
     logout();
@@ -100,7 +106,6 @@ var endChatSession = function(){
 };
 
 var sendIM = function(username, message){
-    if(username == '') username = 'khanhhuynh@khanhht.gmail.com';
     KandyAPI.Phone.sendIm(username, message, function () {
             var messageBox = $("#messageBox");
             messageBox.find("ul").append("<li class='my-message'><span class='username'>Me: </span>"+$("#messageToSend").val()+"</li>");
@@ -117,9 +122,7 @@ var chatting = function(){
     $.ajax({
         url: '/kandy/chatting',
         type: 'GET',
-        success: function(data){
-            console.log(data);
-        }
+        success: function(data){}
     })
 };
 
@@ -131,7 +134,7 @@ var getIm = function(){
                 for(var i = 0; i< data.messages.length; i++){
                     var msg = data.messages[i];
                     if(msg.messageType == 'chat'){
-                        var sender = msg.sender.user_id;
+                        var sender = agent.username;
                         var message = msg.message.text;
                         var messageBox = $("#messageBox");
                         messageBox.find("ul").append("<li class='their-message'><span class='username'>"+sender+": </span>"+message+"</li>");
@@ -156,7 +159,7 @@ $(function(){
     });
 
     $(".handle.closeChat").click(function(){
-        endChatSession();
+        LiveChatUI.changeState('RATING');
     });
 
     $("#customerInfo").on('submit', function(e){
@@ -183,6 +186,49 @@ $(function(){
     //form chat submit handle
     $("#formChat").on('submit', function(e){
         e.preventDefault();
-        sendIM(agent, $("#messageToSend").val());
+        sendIM(agent.full_user_id, $("#messageToSend").val());
     })
+
+    /** Rating for agents JS code **/
+    $("#liveChat #ratingForm .rateit").bind('rated', function(){
+        var ri = $(this);
+        rateData = rateData || {};
+        rateData.rate = {id: agent.main_user_id, point: ri.rateit('value')}
+    });
+
+    $("#liveChat #ratingForm .rateit").bind('reset', function(){
+        rateData = rateData || {};
+        if(rateData.hasOwnProperty('rate')){
+            delete rateData.rate;
+        }
+    });
+
+    $("#liveChat #ratingForm #btnEndSession").click(function(e){
+        e.preventDefault();
+        LiveChatUI.changeState('ENDING_CHAT');
+        setTimeout(endChatSession, 3000);
+    });
+
+    $('#liveChat #ratingForm #btnSendRate').click(function(e){
+        e.preventDefault();
+        rateData = rateData || {};
+        var rateComment = $("#liveChat #rateComment").val();
+        if(rateComment){
+            rateData.comment = rateComment
+        }
+        $.ajax({
+            url: '/kandy/rateagent',
+            data: rateData,
+            type: 'POST',
+            success: function (res){
+                if(res.success){
+                    LiveChatUI.changeState("ENDING_CHAT");
+                    setTimeout(endChatSession, 3000);
+                }
+            }
+        })
+    })
+
+
+
 });

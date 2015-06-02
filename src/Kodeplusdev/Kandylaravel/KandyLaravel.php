@@ -14,6 +14,9 @@ class Kandylaravel
     const KANDY_CSS_LIVE_CHAT = 'packages/kodeplusdev/kandylaravel/assets/css/kandylivechat.css';
     const KANDY_JS_LIVE_CHAT = 'packages/kodeplusdev/kandylaravel/assets/js/kandylivechat.js';
 
+    const RATE_JS = 'packages/kodeplusdev/kandylaravel/assets/js/jquery.rateit.min.js';
+    const RATE_CSS = 'packages/kodeplusdev/kandylaravel/assets/css/rateit.css';
+
     // Default KANDY JS from cloud
     const KANDY_JS_FCS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/fcs/3.0.4/fcs.js';
     const KANDY_JS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/2.2.1/kandy.js';

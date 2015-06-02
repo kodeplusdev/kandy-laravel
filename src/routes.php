@@ -9,8 +9,10 @@ Route::post('/kandy/registerGuest', 'Kodeplusdev\Kandylaravel\KandyController@re
 
 Route::get('/kandy/getFreeUser', 'Kodeplusdev\Kandylaravel\KandyController@getFreeUser');
 
-Route::get('/kandy/endChatSession', 'Kodeplusdev\Kandylaravel\KandyController@endChatSession');
+Route::get('/kandy/endChatSession', array('as' => 'kandy.endChatSession', 'uses' => 'Kodeplusdev\Kandylaravel\KandyController@endChatSession'));
 
 Route::get('/kandy/chatting', 'Kodeplusdev\Kandylaravel\KandyController@updateChatSession');
 Route::get('/kandy/getUserForAgent', 'Kodeplusdev\Kandylaravel\KandyController@getUsersForChatAgent');
+
+Route::post('/kandy/rateagent', 'Kodeplusdev\Kandylaravel\KandyController@rateAgent');
 
