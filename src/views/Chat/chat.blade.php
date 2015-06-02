@@ -67,8 +67,9 @@
               'onBoot': kandy_onUserBoot,
 //              'onActive': kandy_onActiveGroup,
 //              'onInactive': onInactive,
-              'onTermination': kandy_onTerminateGroup
-//              'onJoinApprove': kandy_onJoinApprove
+              'onTermination': kandy_onTerminateGroup,
+              'onJoinApprove': kandy_onJoinApprove,
+              'onJoinReject' : kandy_onJoinReject
             };
     var sessionListeners = [];
 

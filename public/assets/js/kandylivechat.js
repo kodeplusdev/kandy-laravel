@@ -190,18 +190,7 @@ $(function(){
     })
 
     /** Rating for agents JS code **/
-    $("#liveChat #ratingForm .rateit").bind('rated', function(){
-        var ri = $(this);
-        rateData = rateData || {};
-        rateData.rate = {id: agent.main_user_id, point: ri.rateit('value')}
-    });
 
-    $("#liveChat #ratingForm .rateit").bind('reset', function(){
-        rateData = rateData || {};
-        if(rateData.hasOwnProperty('rate')){
-            delete rateData.rate;
-        }
-    });
 
     $("#liveChat #ratingForm #btnEndSession").click(function(e){
         e.preventDefault();
