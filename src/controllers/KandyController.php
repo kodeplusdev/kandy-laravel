@@ -19,7 +19,11 @@ class KandyController extends \BaseController
         foreach ($contacts as &$contact) {
             $userId = "";
             $domain = "";
-            $contactUsername = $contact['contact_user_name'];
+            if(isset($contact['contact_user_name'])) {
+                $contactUsername = $contact['contact_user_name'];
+            } else {
+                $contactUsername = $contact['full_user_id'];
+            }
             $parseResult = explode('@', $contactUsername);
             if (!empty($parseResult[0])) {
                 $userId = $parseResult[0];
