@@ -160,9 +160,10 @@ class KandyController extends \BaseController
         $agents = \DB::table($kandyUserTable)
             ->leftJoin($kandyLiveChatTable, "$kandyUserTable.user_id", '=', "$kandyLiveChatTable.agent_user_id")
             ->leftJoin($userTable, "$kandyUserTable.main_user_id", '=', "$userTable.id")
-            ->select(\DB::raw("CONCAT(user_id, '@', domain_name) as full_user_id, $kandyUserTable.password as password, $userTable.username as username, main_user_id"))
+            ->select(\DB::raw("CONCAT(user_id, '@', domain_name) as full_user_id, $kandyUserTable.password as password,
+            $userTable.username as username, main_user_id, $kandyLiveChatTable.end_at as last_end_chat"))
             ->where('type', '=', $kandyLaravel::USER_TYPE_CHAT_AGENT)
-            ->orderBy("$kandyLiveChatTable.last_chat", "ASC")->get();
+            ->orderBy("last_end_chat", "ASC")->get();
         \DB::setFetchMode(\PDO::FETCH_CLASS);
         $arrayUsers = array_merge(array_keys($users), array_keys($agents));
         $lastSeen = $kandyLaravel->getLastSeen($arrayUsers);
@@ -180,7 +181,8 @@ class KandyController extends \BaseController
                         }
                     }
                     //get agent
-                    if(isset($agents[$user->full_user_id]) && !$availableAgent){
+                    if(isset($agents[$user->full_user_id]) && !$availableAgent
+                        && $agents[$user->full_user_id][0]['last_end_chat'] != '0'){
                         // get agents online in last 3 secs
                         if(($serverTimestamp - $user->last_seen) < 3000) {
                             $availableAgent = $user;
@@ -194,29 +196,17 @@ class KandyController extends \BaseController
             }
 
             if($freeUser && $availableAgent){
-
                 \Session::set('kandyLiveChatUserInfo.agent', $availableAgent->user_id);
-
-                $model = KandyLiveChat::whereRaw(
-                    'customer_email=? AND agent_user_id=?', array($userInfo['email'], $availableAgent->user_id)
-                )->first();
                 $now = time();
-                if(!$model){
-                    KandyLiveChat::create(array(
-                        'agent_user_id'     => $availableAgent->user_id,
-                        'customer_user_id'  => $freeUser->full_user_id,
-                        'customer_name'     => $userInfo['username'],
-                        'customer_email'    => $userInfo['email'],
-                        'last_time'         => $now,
-                        'first_time'        => $now,
-                        'times'             => 1,
-                    ));
-                }else{
-                    $model->update(array(
-                        'last_time' => $now,
-                        'times'     => ++$model->times //increase times connect
-                    ));
-                }
+                $result = KandyLiveChat::create(array(
+                    'agent_user_id'     => $availableAgent->user_id,
+                    'customer_user_id'  => $freeUser->full_user_id,
+                    'customer_name'     => $userInfo['username'],
+                    'customer_email'    => $userInfo['email'],
+                    'begin_at'         => $now,
+                ));
+                //save last insert id for user later
+                \Session::set('kandyLiveChatUserInfo.sessionId', $result->id);
                 $result = array(
                     'status' => 'success',
                     'user'  => $freeUser,
@@ -243,6 +233,10 @@ class KandyController extends \BaseController
     public function endChatSession()
     {
         if(\Session::has('kandyLiveChatUserInfo')){
+            $currentSession = KandyLiveChat::find(\Session::get('kandyLiveChatUserInfo.sessionId'));
+            //save end session time
+            $currentSession->end_at = time();
+            $currentSession->save();
             \Session::forget('kandyLiveChatUserInfo');
         }
         if(\Request::ajax()){
@@ -251,21 +245,6 @@ class KandyController extends \BaseController
             ));
         }
         return \Redirect::back();
-    }
-
-    /**
-     *
-     * Update last_chat when agent chat
-     * @return mixed
-     */
-    public function updateChatSession(){
-        $now = time();
-        if(\Session::has('kandyLiveChatUserInfo')){
-            $userInfo = \Session::get('kandyLiveChatUserInfo');
-            $model = KandyLiveChat::whereRaw('customer_email=? AND agent_user_id=?',
-                array($userInfo['email'],$userInfo['agent']))->update(array('last_chat' => $now));
-        }
-        return \Response::json(array('last' => $now));
     }
 
     /**

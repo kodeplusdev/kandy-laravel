@@ -27,11 +27,11 @@
             <h3 class="formTitle">Rate for <span class="agentName"></span> </h3>
             <form>
                 <select id="backing2b">
-                    <option title="" value="1" selected="selected">1</option>
+                    <option title="" value="1">1</option>
                     <option title="" value="2">2</option>
                     <option title="" value="3">3</option>
                     <option title="" value="4">4</option>
-                    <option title="" value="5">5</option>
+                    <option title="" value="5" selected="selected">5</option>
                 </select>
                 <div class="rateit" data-rateit-backingfld="#backing2b"></div>
                 <textarea id="rateComment" rows="3" placeholder="Say something about your supporter"></textarea>

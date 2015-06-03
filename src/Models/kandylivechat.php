@@ -22,8 +22,7 @@ class KandyLiveChat extends Eloquent
     public $timestamps = false;
 
     protected $fillable = array(
-        'agent_user_id', 'customer_user_id', 'customer_name', 'customer_email',
-        'last_time', 'first_time', 'times', 'last_chat'
+        'agent_user_id', 'customer_user_id', 'customer_name', 'customer_email','begin_at', 'end_at'
     );
 
     public function __construct(array $attributes = array())
