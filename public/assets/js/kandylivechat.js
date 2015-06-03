@@ -77,8 +77,6 @@ var getKandyUsers = function(){
                 var username = res.user.full_user_id.split('@')[0];
                 login(res.apiKey, username, res.user.password, login_success_callback, login_fail_callback);
                 agent = res.agent;
-                console.log('agent:'+agent, 'user:'+username);
-
                 setInterval(getIm, 3000);
             }else{
                 if(!checkAvailable){
@@ -92,17 +90,15 @@ var getKandyUsers = function(){
     })
 };
 
-
 var endChatSession = function(){
     logout();
     $.ajax({
         url: '/kandy/endChatSession',
         type: 'GET',
         success: function(){
-            window.location.reload();
+            //window.location.reload();
         }
     });
-
 };
 
 var sendIM = function(username, message){
@@ -118,14 +114,6 @@ var sendIM = function(username, message){
     );
 };
 
-var chatting = function(){
-    $.ajax({
-        url: '/kandy/chatting',
-        type: 'GET',
-        success: function(data){}
-    })
-};
-
 var getIm = function(){
     KandyAPI.Phone.getIm(
         //success callback
@@ -139,16 +127,12 @@ var getIm = function(){
                         var messageBox = $("#messageBox");
                         messageBox.find("ul").append("<li class='their-message'><span class='username'>"+sender+": </span>"+message+"</li>");
                         messageBox.scrollTop(messageBox[0].scrollHeight);
-                        chatting();
                     }
                 }
             }
         },
         //fail callback
-        function(){
-
-        }
-
+        function(){}
     )
 };
 
@@ -187,17 +171,18 @@ $(function(){
     $("#formChat").on('submit', function(e){
         e.preventDefault();
         sendIM(agent.full_user_id, $("#messageToSend").val());
-    })
-
+    });
+    //end chat session if user close browser or tab
+    window.onbeforeunload = function() {
+        endChatSession();
+    };
     /** Rating for agents JS code **/
-
-
     $("#liveChat #ratingForm #btnEndSession").click(function(e){
         e.preventDefault();
         LiveChatUI.changeState('ENDING_CHAT');
         setTimeout(endChatSession, 3000);
+        window.location.reload();
     });
-
     $('#liveChat #ratingForm #btnSendRate').click(function(e){
         e.preventDefault();
         rateData = rateData || {};
@@ -213,11 +198,9 @@ $(function(){
                 if(res.success){
                     LiveChatUI.changeState("ENDING_CHAT");
                     setTimeout(endChatSession, 3000);
+                    window.location.reload();
                 }
             }
         })
     })
-
-
-
 });

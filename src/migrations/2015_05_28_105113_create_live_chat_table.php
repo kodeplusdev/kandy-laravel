@@ -21,11 +21,8 @@ class CreateLiveChatTable extends Migration {
                 $table->string('customer_user_id');//kandy user id of customer
                 $table->string('customer_name');
                 $table->string('customer_email');
-                $table->integer('last_time')->default(0)->unsigned();// the last time connect
-                $table->integer('first_time')->nullable()->unsigned();// the first time connect
-                $table->tinyInteger('times')->default(0)->unsigned();// this pair(agent, customer) connect how many times?
-                $table->bigInteger('last_chat')->default(0)->unsigned();//the last interaction time
-                //$table->primary(array('agent_user_id', 'customer_email'));
+                $table->integer('begin_at')->default(0)->unsigned();// begin chat time
+                $table->integer('end_at')->default(0)->unsigned();// end chat time
                 $table->index(array('customer_email', 'agent_user_id'));
             }
         );
