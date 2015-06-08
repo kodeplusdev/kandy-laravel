@@ -46,6 +46,8 @@ class KandylaravelServiceProvider extends ServiceProvider
 
         $this->registerLiveChat();
 
+        $this->registerCoBrowsing();
+
         $this->publishAssets();
 
     }
@@ -160,6 +162,14 @@ class KandylaravelServiceProvider extends ServiceProvider
         $this->app['kandy-laravel::liveChat'] = $this->app->share(function($app)
         {
             return new \Kodeplusdev\Kandylaravel\liveChat();
+        });
+    }
+
+    private function registerCoBrowsing()
+    {
+        $this->app['kandy-laravel::coBrowsing'] = $this->app->share(function($app)
+        {
+            return new \Kodeplusdev\Kandylaravel\CoBrowsing();
         });
     }
 

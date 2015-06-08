@@ -21,6 +21,7 @@ class Kandylaravel
     const KANDY_JS_FCS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/fcs/3.0.4/fcs.js';
     const KANDY_JS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/2.2.1/kandy.js';
     const KANDY_JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js';
+    const KANDY_CO_BROWSE = 'https://kandy-portal.s3.amazonaws.com/public/javascript/cobrowse/1.0.1/kandy.cobrowse.min.js';
 
     // KANDY USER FILTERING STATUS
     const KANDY_USER_ALL = 1;
