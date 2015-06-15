@@ -1279,6 +1279,24 @@ var kandy_onSessionJoinRequest = function(notification) {
     }
 };
 
+var kandy_sendSms = function(receiver, sender, message, successCallback, errorCallback) {
+    KandyAPI.Phone.sendSMS(
+        receiver,
+        sender,
+        message,
+        function() {
+            if(typeof successCallback == 'function'){
+                successCallback();
+            }
+        },
+        function(message, status) {
+            if(typeof errorCallback == 'function'){
+                errorCallback(message, status);
+            }
+        }
+    );
+};
+
 // ======================JQUERY READY =======================
 $(document).ready(function () {
     setup();

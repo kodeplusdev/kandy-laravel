@@ -48,6 +48,8 @@ class KandylaravelServiceProvider extends ServiceProvider
 
         $this->registerCoBrowsing();
 
+        $this->registerSms();
+
         $this->publishAssets();
 
     }
@@ -172,5 +174,14 @@ class KandylaravelServiceProvider extends ServiceProvider
             return new \Kodeplusdev\Kandylaravel\CoBrowsing();
         });
     }
+
+    private function registerSms()
+    {
+        $this->app['kandy-laravel::sms'] = $this->app->share(function($app)
+        {
+            return new \Kodeplusdev\Kandylaravel\Sms();
+        });
+    }
+
 
 }
