@@ -38,7 +38,7 @@ class KandyController extends \BaseController
                 $kandylaravel = new Kandylaravel();
                 $displayName = $kandylaravel->getDisplayName($user->id);
                 if (empty($displayName)) {
-                    $displayName = $contact['contact_user_name'];
+                    $displayName = $contactUsername;
                 }
             }
             $contact['display_name'] = $displayName;
