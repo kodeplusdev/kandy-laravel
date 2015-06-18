@@ -424,11 +424,15 @@
     color:red;
 }
 
-.kandyChat .cd-tabs-navigation li.group .groupAction, .kandyChat .cd-tabs-navigation li.group .remove{
+.kandyChat .cd-tabs-navigation li.group .groupAction:hover, .kandyChat .cd-tabs-navigation li.group .approve:hover{
+    cursor: pointer;
+    color:green;
+}
+
+
+.kandyChat .cd-tabs-navigation li.group .groupAction, .kandyChat .cd-tabs-navigation li.group .actions{
     float: right;
-    top: 0;
-    right: 0;
-    position: absolute;
+
 }
 
 .kandyChat .cd-tabs-navigation li.group .groupAction a{

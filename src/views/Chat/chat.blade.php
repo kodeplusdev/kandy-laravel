@@ -89,7 +89,7 @@
         });
 
          $('.list-users li .remove').live('click', function(e){
-                var userId = $(this).parent().data('user');
+                var userId = $(this).closest('li').data('user');
                 var groupId = $(this).closest('[data-group]').data('group');
                 kandy_removeFromGroup(groupId,userId);
            });
