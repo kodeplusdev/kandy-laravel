@@ -24,7 +24,7 @@ class RestClient
         curl_setopt(
             $ch,
             CURLOPT_SSL_VERIFYPEER,
-            \Config::get('kandy-laravel::ssl_verify')
+            \Config::get('kandy-laravel.ssl_verify')
         );
         if (is_array($headers) && count($headers) > 0) {
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -52,7 +52,7 @@ class RestClient
         curl_setopt(
             $ch,
             CURLOPT_SSL_VERIFYPEER,
-            \Config::get('kandy-laravel::ssl_verify')
+            \Config::get('kandy-laravel.ssl_verify')
         );
         if (is_array($headers) && count($headers) > 0) {
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -80,7 +80,7 @@ class RestClient
         curl_setopt(
             $ch,
             CURLOPT_SSL_VERIFYPEER,
-            \Config::get('kandy-laravel::ssl_verify')
+            \Config::get('kandy-laravel.ssl_verify')
         );
         if (is_array($headers) && count($headers) > 0) {
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -108,7 +108,7 @@ class RestClient
         curl_setopt(
             $ch,
             CURLOPT_SSL_VERIFYPEER,
-            \Config::get('kandy-laravel::ssl_verify')
+            \Config::get('kandy-laravel.ssl_verify')
         );
         if (is_array($headers) && count($headers) > 0) {
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);

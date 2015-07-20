@@ -1,5 +1,6 @@
 <?php
 namespace Kodeplusdev\Kandylaravel;
+use Kodeplusdev\Kandylaravel\KandyUsers;
 
 class Kandylaravel
 {
@@ -149,9 +150,9 @@ class Kandylaravel
     public function getDomainAccessToken()
     {
         $params = array(
-            'key'               => \Config::get('kandy-laravel::key'),
+            'key'               => \Config::get('kandy-laravel.key'),
             'domain_api_secret' => \Config::get(
-                'kandy-laravel::domain_api_secret'
+                'kandy-laravel.domain_api_secret'
             )
         );
 
@@ -319,7 +320,7 @@ class Kandylaravel
         }
         $params = array(
             'key'            => $this->domainAccessToken,
-            'domain_api_key' => \Config::get('kandy-laravel::key')
+            'domain_api_key' => \Config::get('kandy-laravel.key')
         );
 
         $fieldsString = http_build_query($params);
@@ -355,8 +356,8 @@ class Kandylaravel
      */
     public function assignAllUser()
     {
-        $kandyUserTable = \Config::get('kandy-laravel::kandy_user_table');
-        $mainUserTable = \Config::get('kandy-laravel::user_table');
+        $kandyUserTable = \Config::get('kandy-laravel.kandy_user_table');
+        $mainUserTable = \Config::get('kandy-laravel.user_table');
         $mainUserTablePrimaryKey = $this->getMainUserIdColumn();
 
         $sql = "SELECT m.$mainUserTablePrimaryKey as id
@@ -443,7 +444,7 @@ class Kandylaravel
             $this->username = $kandyUser->user_id;
             $this->password = $kandyUser->password;
         }
-        $this->apiKey = \Config::get('kandy-laravel::key');
+        $this->apiKey = \Config::get('kandy-laravel.key');
 
         $return = $this->css();
         $return .= $this->js();
@@ -496,7 +497,7 @@ class Kandylaravel
     public function js()
     {
         $return = "";
-        $jqueryReload = \Config::get('kandy-laravel::key');
+        $jqueryReload = \Config::get('kandy-laravel.key');
         if ($jqueryReload) {
             $return .= $this->add('script', asset(self::KANDY_JQUERY));
         }
@@ -521,7 +522,7 @@ class Kandylaravel
     public function logout()
     {
         $return = "";
-        $jqueryReload = \Config::get('kandy-laravel::key');
+        $jqueryReload = \Config::get('kandy-laravel.key');
         if ($jqueryReload) {
             $return .= $this->add('script', asset(self::KANDY_JQUERY));
         }
@@ -565,9 +566,9 @@ class Kandylaravel
     {
         $result = "";
         $displayNameColumn = $this->getColumnForDisplayName('u');
-        $mainUserTable = \Config::get('kandy-laravel::user_table');
+        $mainUserTable = \Config::get('kandy-laravel.user_table');
         $mainUserTablePrimaryKey = $this->getMainUserIdColumn();
-        $kandyUserTable = \Config::get('kandy-laravel::kandy_user_table');
+        $kandyUserTable = \Config::get('kandy-laravel.kandy_user_table');
 
         $sql = "SELECT $displayNameColumn as displayName FROM $mainUserTable as u, $kandyUserTable as k WHERE u.$mainUserTablePrimaryKey = k.main_user_id AND k.id = $id";
         $data = \DB::select($sql);
@@ -587,9 +588,9 @@ class Kandylaravel
     public function getDisplayNameFromKandyUser($name) {
         $result = "";
         $displayNameColumn = $this->getColumnForDisplayName('u');
-        $mainUserTable = \Config::get('kandy-laravel::user_table');
+        $mainUserTable = \Config::get('kandy-laravel.user_table');
         $mainUserTablePrimaryKey = $this->getMainUserIdColumn();
-        $kandyUserTable = \Config::get('kandy-laravel::kandy_user_table');
+        $kandyUserTable = \Config::get('kandy-laravel.kandy_user_table');
 
         $sql = "SELECT $displayNameColumn as displayName FROM $mainUserTable as u, $kandyUserTable as k WHERE u.$mainUserTablePrimaryKey = k.main_user_id AND k.user_id = '" . $name . "'";
 
@@ -618,7 +619,7 @@ class Kandylaravel
     public function getMainUserIdColumn()
     {
         $result = null;
-        $mainUserTable = \Config::get('kandy-laravel::user_table');
+        $mainUserTable = \Config::get('kandy-laravel.user_table');
         $keys = \DB::select('SHOW KEYS FROM ' . $mainUserTable . ' WHERE Key_name = "PRIMARY"');
         if (!empty($keys)) {
             $key = $keys[0];
@@ -636,15 +637,15 @@ class Kandylaravel
     public function getColumnForDisplayName($table)
     {
         $columns = array();
-        $result = \Config::get('kandy-laravel::user_name_display');
+        $result = \Config::get('kandy-laravel.user_name_display');
 
         preg_match_all('/{(.*?)}/', $result, $columns);
         $count = count ($columns[0]);
         for ($i = 0; $i < $count; $i++) {
-            $result = str_replace($columns[0][$i], "',$table.".$columns[1][$i].",'", $result);
+            $result = str_replace($columns[0][$i], "`,$table.".$columns[1][$i].",`", $result);
         }
 
-        $result = "CONCAT('$result')";
+        $result = "CONCAT(`$result`)";
 
         return $result;
     }

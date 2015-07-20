@@ -114,7 +114,7 @@
 }
 
 .kandyChat .imMessageToSend {
-    width: 175px
+    width: 100%;
 }
 
 .kandyChat .messages {
@@ -130,6 +130,10 @@
     width: 100%;
     height: 425px;
     overflow: auto;
+    min-height: 425px;
+    border: 1px solid #CCC;
+    padding: 5px 10px;
+    box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.1);
 }
 
 .kandyChat .my-message {
@@ -152,6 +156,10 @@
 
 .kandyChat .btnSendMessage {
     width: 100%;
+}
+
+.kandyChat .cd-tabs-navigation li{
+    list-style: none !important;
 }
 
 .kandyChat .cd-tabs-navigation li a{
@@ -479,6 +487,7 @@
 
 .modalToggle {
     margin-right: 23px;
+    float: right;
 }
 
 .fa {

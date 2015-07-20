@@ -1,8 +1,9 @@
 <?php
 
 namespace Kodeplusdev\Kandylaravel;
+use App\Http\Controllers\Controller;
 
-class KandyController extends \BaseController
+class KandyController extends Controller
 {
 
     /**
@@ -89,8 +90,8 @@ class KandyController extends \BaseController
 
         $search = $_GET['q'];
         $kandyLaravel = new Kandylaravel();
-        $kandyUserTable = \Config::get('kandy-laravel::kandy_user_table');
-        $mainUserTable = \Config::get('kandy-laravel::user_table');
+        $kandyUserTable = \Config::get('kandy-laravel.kandy_user_table');
+        $mainUserTable = \Config::get('kandy-laravel.user_table');
         $displayNameColumn = $kandyLaravel->getColumnForDisplayName('m');
         $mainUserTablePrimaryKey = $kandyLaravel->getMainUserIdColumn();
 

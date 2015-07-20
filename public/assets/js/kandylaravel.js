@@ -455,7 +455,8 @@ kandy_searchDirectoryByUserName = function () {
     var userName = $('.kandyAddressBook .kandyDirectorySearch #kandySearchUserName').val();
     $.ajax({
         url: "/kandy/getUsersForSearch",
-        data: {q:userName}
+        data: {q:userName},
+        headers: { 'X-CSRF-Token' : $('meta[name=_token]').attr('content') }
     }).done(function (results) {
         $(".kandyAddressBook .kandyDirSearchResults div:not(:first)").remove();
         var div = null;
@@ -505,6 +506,7 @@ var getDisplayNameForChatContent = function (data) {
             url: "/kandy/getNameForChatContent",
             type: "POST",
             data: {data:data.messages},
+            headers: { 'X-CSRF-Token' : $('meta[name=_token]').attr('content') },
             async: false
         }).done(function(response) {
             data.messages = response;
@@ -526,6 +528,7 @@ var getDisplayNameForContact = function (data) {
             url: "/kandy/getNameForContact",
             data: {data: data},
             async: false,
+            headers: { 'X-CSRF-Token' : $('meta[name=_token]').attr('content') },
             type: "POST"
         }).done(function (response) {
             data = response;

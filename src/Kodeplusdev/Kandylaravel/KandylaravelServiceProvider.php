@@ -20,8 +20,21 @@ class KandylaravelServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->package('kandy-io/kandy-laravel');
-        include __DIR__.'/../../routes.php';
+        //define package view namespace
+        $this->loadViewsFrom(__DIR__.'/../../views', 'kandy-laravel');
+
+        //config publishing
+        $this->publishes([
+            __DIR__.'/../../config/config.php' => config_path('kandy-laravel.php'),
+        ], 'config');
+        //database migration
+        $this->publishes([
+            __DIR__.'/../../migrations/' => database_path('migrations')
+        ], 'migrations');
+        //include package routes
+        if (! $this->app->routesAreCached()) {
+            require __DIR__ . '/../../routes.php';
+        }
     }
 
     /**
@@ -44,8 +57,6 @@ class KandylaravelServiceProvider extends ServiceProvider
 
         $this->registerChat();
 
-        $this->registerGroupChat();
-
         $this->publishAssets();
 
     }
@@ -54,9 +65,10 @@ class KandylaravelServiceProvider extends ServiceProvider
      * Auto publish assets when update core
      */
     public function publishAssets(){
-        if(isset($this->app['artisan'])){
-            $this->app['artisan']->call("asset:publish", array("kandy-io/kandy-laravel"));
-        }
+        //public assets
+        $this->publishes([
+            __DIR__.'/../../../public/assets' => public_path('packages/kandy-io/kandy-laravel/assets'),
+        ], 'public');
 
     }
 
@@ -155,14 +167,5 @@ class KandylaravelServiceProvider extends ServiceProvider
         return array();
     }
 
-    private function registerGroupChat()
-    {
-        $this->app->bind(
-            'kandy-laravel::groupChat',
-            function () {
-                return new GroupChat();
-            }
-        );
-    }
 
 }
