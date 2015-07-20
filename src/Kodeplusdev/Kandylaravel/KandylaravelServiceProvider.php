@@ -73,7 +73,7 @@ class KandylaravelServiceProvider extends ServiceProvider
     public function publishAssets(){
         //public assets
         $this->publishes([
-            __DIR__.'/../../../public/assets' => public_path('packages/kandy-io/kandy-laravel/assets'),
+            __DIR__.'/../../../public/assets' => public_path('packages/kodeplusdev/kandylaravel/assets'),
         ], 'public');
 
     }

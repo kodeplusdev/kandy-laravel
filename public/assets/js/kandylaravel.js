@@ -1404,6 +1404,19 @@ $(document).ready(function () {
     });
 
     $(".btnInviteUser").live('click', function(){
-        $("#inviteModal").attr('data-group', $(this).closest('li.group').data('group')).foundation('reveal', 'open');
+        //$("#inviteModal").attr('data-group', $(this).closest('li.group').data('group')).foundation('reveal', 'open');
+        if(typeof openDialogInviteUser == "function") {
+            openDialogInviteUser();
+        } else {
+            console.error('You must define your own openDialogInviteUser function to open "invite user" dialog');
+        }
+    });
+
+    $(".btnOpenModalCreateGroup").live('click', function(){
+        if(typeof openDialogCreateGroup == "function") {
+            openDialogCreateGroup();
+        } else {
+            console.error('You must define your own openDialogCreateGroup function to open "create group" dialog');
+        }
     })
 });

@@ -21,7 +21,7 @@
         <div class="chat-with-message">
             Chatting with <span class="chat-friend-name"></span>
         </div>
-        <a href="#" class="button tiny right modalToggle" data-reveal-id="myModal">Create Group</a>
+        <a href="javascript:;" class="button tiny right btnOpenModalCreateGroup" data-reveal-id="myModal">Create Group</a>
 
         <div class="clear-fix"></div>
     </div>

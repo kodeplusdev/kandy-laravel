@@ -264,7 +264,7 @@ class Kandylaravel
     public function listUser($type = self::KANDY_USER_ALL, $remote = false)
     {
         //get all excluded kandy users
-        $excludedUsers = array_flatten(\Config::get('kandy-laravel::excluded_kandy_users'));
+        $excludedUsers = array_flatten(\Config::get('kandy-laravel.excluded_kandy_users'));
         $result = array();
         if ($remote) {
 
