@@ -9,25 +9,36 @@ class Kandylaravel
      */
     const API_BASE_URL = 'https://api.kandy.io/v1.2/';
 
-    const KANDY_CSS = 'packages/kandy-io/kandy-laravel/assets/css/kandylaravel.css';
-    const KANDY_JS_CUSTOM = 'packages/kandy-io/kandy-laravel/assets/js/kandylaravel.js';
+    const KANDY_CSS = 'packages/kodeplusdev/kandylaravel/assets/css/kandylaravel.css';
+    const KANDY_JS_CUSTOM = 'packages/kodeplusdev/kandylaravel/assets/js/kandylaravel.js';
+
+    const KANDY_CSS_LIVE_CHAT = 'packages/kodeplusdev/kandylaravel/assets/css/kandylivechat.css';
+    const KANDY_JS_LIVE_CHAT = 'packages/kodeplusdev/kandylaravel/assets/js/kandylivechat.js';
+
+    const RATE_JS = 'packages/kodeplusdev/kandylaravel/assets/js/jquery.rateit.min.js';
+    const RATE_CSS = 'packages/kodeplusdev/kandylaravel/assets/css/rateit.css';
 
     // Default KANDY JS from cloud
     const KANDY_JS_FCS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/fcs/3.0.4/fcs.js';
     const KANDY_JS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/2.2.1/kandy.js';
     const KANDY_JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js';
+    const KANDY_CO_BROWSE = 'https://kandy-portal.s3.amazonaws.com/public/javascript/cobrowse/1.0.1/kandy.cobrowse.min.js';
 
     // KANDY USER FILTERING STATUS
     const KANDY_USER_ALL = 1;
     const KANDY_USER_ASSIGNED = 2;
     const KANDY_USER_UNASSIGNED = 3;
+    const KANDY_USER_EXCLUDED = 4;
 
     // DISPLAY NAME FOR KANDY UNASSIGNED USER
     const KANDY_UNASSIGNED_USER = "KANDY UNASSIGNED USER";
 
     // SELECT2
-    const SELECT2_CSS = "packages/kandy-io/kandy-laravel/assets/css/select2.css";
-    const SELECT2_JS = "packages/kandy-io/kandy-laravel/assets/js/select2.min.js";
+    const SELECT2_CSS = "packages/kodeplusdev/kandylaravel/assets/css/select2.css";
+    const SELECT2_JS = "packages/kodeplusdev/kandylaravel/assets/js/select2.min.js";
+
+    const USER_TYPE_CHAT_AGENT = 1;
+    const USER_TYPE_NORMAL = 0;
 
     // Kandy Laravel configuration variables which could be overridden at application
     public $domainAccessToken;
@@ -252,6 +263,8 @@ class Kandylaravel
      */
     public function listUser($type = self::KANDY_USER_ALL, $remote = false)
     {
+        //get all excluded kandy users
+        $excludedUsers = array_flatten(\Config::get('kandy-laravel::excluded_kandy_users'));
         $result = array();
         if ($remote) {
 
@@ -290,13 +303,13 @@ class Kandylaravel
             }
         } else {
             if ($type == self::KANDY_USER_ALL) {
-                $models = KandyUsers::all();
+                $models = KandyUsers::whereNotIn('user_id', $excludedUsers)->get();
             } else {
                 if ($type == self::KANDY_USER_ASSIGNED) {
                     $models = KandyUsers::whereNotNull('main_user_id')->get();
                 } else {
                     // type = self::KANDY_USER_UNASSIGNED
-                    $models = KandyUsers::whereNull('main_user_id')->get();
+                    $models = KandyUsers::whereNull('main_user_id')->whereNotIn('user_id', $excludedUsers)->get();
                 }
             }
             $result = $models;
@@ -360,11 +373,14 @@ class Kandylaravel
         $mainUserTable = \Config::get('kandy-laravel.user_table');
         $mainUserTablePrimaryKey = $this->getMainUserIdColumn();
 
-        $sql = "SELECT m.$mainUserTablePrimaryKey as id
-        FROM $mainUserTable m LEFT JOIN $kandyUserTable k ON m.$mainUserTablePrimaryKey = k.main_user_id
-        WHERE k.main_user_id is NULL ";
-
-        $unassignedUsers = \DB::select($sql);
+//        $sql = "SELECT m.$mainUserTablePrimaryKey as id
+//        FROM $mainUserTable m LEFT JOIN $kandyUserTable k ON m.$mainUserTablePrimaryKey = k.main_user_id
+//        WHERE k.main_user_id is NULL ";
+        $unassignedUsers = \DB::table($mainUserTable)
+            ->leftJoin($kandyUserTable, "$mainUserTable.$mainUserTablePrimaryKey" , '=', "$kandyUserTable.main_user_id")
+            ->select("$mainUserTable.$mainUserTablePrimaryKey as id")
+            ->whereNull("$kandyUserTable.main_user_id")
+            ->get();
         shuffle($unassignedUsers);
 
         foreach ($unassignedUsers as $user) {
@@ -382,6 +398,8 @@ class Kandylaravel
      */
     public function assignUser($mainUserId, $user_id = null)
     {
+        //get all excluded kandy user
+        $excludedKandyUsers = array_flatten(\Config::get('kandy-laravel::excluded_kandy_users'));
         $getDomainNameResponse = $this->getDomain();
         if ($getDomainNameResponse['success']) {
             // Get domain name successfully
@@ -389,7 +407,7 @@ class Kandylaravel
             $domainName = $getDomainNameResponse['data'];
             $kandyUser = is_null($user_id) ? KandyUsers::whereNull('main_user_id')->wheredomain_name(
                 $domainName
-            )->first() : KandyUsers::whereuser_id($user_id)->wheredomain_name($domainName)->first();
+            )->whereNotIn('user_id', $excludedKandyUsers)->first() : KandyUsers::whereuser_id($user_id)->wheredomain_name($domainName)->first();
             if (empty($kandyUser)) {
                 $result = array('success' => false, 'message' => 'Cannot find the Kandy user.');
             } else {
@@ -682,5 +700,35 @@ class Kandylaravel
             $result = $email ? $user->user_id . "@" . $user->domain_name : $user->user_id;
         }
         return $result;
+    }
+
+    /**
+     * Get last seen of kandy users
+     * @param array $users
+     * @return mixed|null
+     */
+    public function getLastSeen($users)
+    {
+        $result = $this->getDomainAccessToken();
+        if ($result['success'] == true) {
+            $this->domainAccessToken = $result['data'];
+        } else {
+            // Catch errors
+        }
+
+        $users = json_encode($users);
+
+        $params = array(
+            'key' => $this->domainAccessToken,
+            'users' => $users
+        );
+        $url = Kandylaravel::API_BASE_URL . 'users/presence/last_seen?' . http_build_query($params);
+        try{
+            $response = json_decode((new RestClient())->get($url)->getContent());
+        }catch (\Exception $e){
+            $response = null;
+        }
+        return $response;
+
     }
 }

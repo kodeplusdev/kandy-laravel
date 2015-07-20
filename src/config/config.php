@@ -52,4 +52,16 @@ return array(
     */
     'jquery_reload'     => false,
 
+    'kandy_live_chat_table' => 'kandy_live_chat',
+
+    'kandy_live_chat_rate_table' => 'kandy_live_chat_rate',
+
+    'excluded_kandy_users'     => array(
+        //exclude users for live chat feature
+        'liveChat'  => array(
+             'user2', 'user1'
+        ),
+        //and more
+    ),
+
 );

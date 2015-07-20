@@ -495,5 +495,32 @@
 }
 
 
+#coBrowsing .buttons button{
+    display: none;
+}
+
+#coBrowsing.browsing .buttons #btnStartCoBrowsing,
+#coBrowsing.browsing .buttons #btnStartCoBrowsingViewer,
+#coBrowsing.browsing .buttons #btnTerminateSession,
+#coBrowsing.browsing .buttons #btnLeaveSession {
+    display: none !important;
+}
+
+#coBrowsing.browsing .buttons #btnStopCoBrowsing {
+    display: inline-block !important;
+}
+#coBrowsing #cobrowsing-holder {
+    overflow-y: auto;
+}
+iframe {
+    width: 100% !important;
+    height: 500px !important;
+}
+
+.openSessionWrap {
+    width: 300px;
+    margin-right: 30px;
+}
+
 
 

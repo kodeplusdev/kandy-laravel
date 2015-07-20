@@ -57,6 +57,12 @@ class KandylaravelServiceProvider extends ServiceProvider
 
         $this->registerChat();
 
+        $this->registerLiveChat();
+
+        $this->registerCoBrowsing();
+
+        $this->registerSms();
+
         $this->publishAssets();
 
     }
@@ -165,6 +171,30 @@ class KandylaravelServiceProvider extends ServiceProvider
     public function provides()
     {
         return array();
+    }
+
+    private function registerLiveChat()
+    {
+        $this->app['kandy-laravel::liveChat'] = $this->app->share(function($app)
+        {
+            return new \Kodeplusdev\Kandylaravel\liveChat();
+        });
+    }
+
+    private function registerCoBrowsing()
+    {
+        $this->app['kandy-laravel::coBrowsing'] = $this->app->share(function($app)
+        {
+            return new \Kodeplusdev\Kandylaravel\CoBrowsing();
+        });
+    }
+
+    private function registerSms()
+    {
+        $this->app['kandy-laravel::sms'] = $this->app->share(function($app)
+        {
+            return new \Kodeplusdev\Kandylaravel\Sms();
+        });
     }
 
 
