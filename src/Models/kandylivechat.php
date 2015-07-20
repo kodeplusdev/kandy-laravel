@@ -30,7 +30,7 @@ class KandyLiveChat extends Eloquent
         parent::__construct($attributes);
 
         // Set the prefix
-        $tableName = \Config::get('kandy-laravel::kandy_live_chat_table');
+        $tableName = \Config::get('kandy-laravel.kandy_live_chat_table');
         $this->table = $this->prefix . $tableName;
     }
 }

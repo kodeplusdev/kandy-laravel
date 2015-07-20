@@ -1,6 +1,6 @@
-{{HTML::style(asset(\Kodeplusdev\Kandylaravel\Kandylaravel::KANDY_CSS_LIVE_CHAT))}}
-{{HTML::style(asset(\Kodeplusdev\Kandylaravel\Kandylaravel::RATE_CSS))}}
-<div id="liveChat" class="@if(!\Session::has('kandyLiveChatUserInfo')) hidden @endif">
+{!!HTML::style(asset(\Kodeplusdev\Kandylaravel\Kandylaravel::KANDY_CSS_LIVE_CHAT))!!}
+{!!HTML::style(asset(\Kodeplusdev\Kandylaravel\Kandylaravel::RATE_CSS))!!}
+<div id="liveChat" class="@if(!\Session::has('kandyLiveChatUserInfo')) kandy_hidden @endif">
     <div class="header">
         Kandy live chat
         <span class="closeChat handle" title="end chat" style="display: none">x</span>
@@ -64,10 +64,10 @@
             </div>
     </div>
 </div>
-{{HTML::script(\Kodeplusdev\Kandylaravel\Kandylaravel::KANDY_JS_FCS)}}
-{{HTML::script(\Kodeplusdev\Kandylaravel\Kandylaravel::KANDY_JS)}}
-{{HTML::script(\Kodeplusdev\Kandylaravel\Kandylaravel::KANDY_JS_LIVE_CHAT)}}
-{{HTML::script(\Kodeplusdev\Kandylaravel\Kandylaravel::RATE_JS)}}
+{!!HTML::script(\Kodeplusdev\Kandylaravel\Kandylaravel::KANDY_JS_FCS)!!}
+{!!HTML::script(\Kodeplusdev\Kandylaravel\Kandylaravel::KANDY_JS)!!}
+{!!HTML::script(\Kodeplusdev\Kandylaravel\Kandylaravel::KANDY_JS_LIVE_CHAT)!!}
+{!!HTML::script(\Kodeplusdev\Kandylaravel\Kandylaravel::RATE_JS)!!}
 
 <script>
     //agent user id

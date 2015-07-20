@@ -64,6 +64,7 @@ var getKandyUsers = function(){
         url:'/kandy/getFreeUser',
         type: 'GET',
         dataType: 'json',
+        headers: { 'X-CSRF-Token' : $('meta[name=_token]').attr('content') },
         success: function(res){
             if(checkAvailable){
                 LiveChatUI.changeState('RECONNECTING');
@@ -95,6 +96,7 @@ var endChatSession = function(){
     $.ajax({
         url: '/kandy/endChatSession',
         type: 'GET',
+        headers: { 'X-CSRF-Token' : $('meta[name=_token]').attr('content') },
         success: function(){
             //window.location.reload();
         }
@@ -139,7 +141,7 @@ var getIm = function(){
 $(function(){
     //hide vs restore box chat
     $(".handle.minimize, #restoreBtn").click(function(){
-        $("#liveChat").toggleClass('hidden');
+        $("#liveChat").toggleClass('kandy_hidden');
     });
 
     $(".handle.closeChat").click(function(){
@@ -153,6 +155,7 @@ $(function(){
             url: form.attr('action'),
             data: form.serialize(),
             type: 'POST',
+            headers: { 'X-CSRF-Token' : $('meta[name=_token]').attr('content') },
             success: function(res){
                 if(res.hasOwnProperty('errors')){
                     form.find("span.error").empty().hide();
@@ -194,6 +197,7 @@ $(function(){
             url: '/kandy/rateagent',
             data: rateData,
             type: 'POST',
+            headers: { 'X-CSRF-Token' : $('meta[name=_token]').attr('content') },
             success: function (res){
                 if(res.success){
                     LiveChatUI.changeState("ENDING_CHAT");

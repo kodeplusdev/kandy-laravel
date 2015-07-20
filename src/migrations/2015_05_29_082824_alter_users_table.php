@@ -13,7 +13,7 @@ class AlterUsersTable extends Migration {
 	public function up()
 	{
 		//
-        $tableName = \Config::get("kandy-laravel::kandy_user_table");
+        $tableName = \Config::get("kandy-laravel.kandy_user_table");
         Schema::table($tableName, function($table)
         {
             //add type of user (e.g: support agent,...)

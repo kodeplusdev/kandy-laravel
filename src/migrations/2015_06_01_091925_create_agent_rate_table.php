@@ -13,7 +13,7 @@ class CreateAgentRateTable extends Migration {
 	public function up()
 	{
 		//
-        $tableName = \Config::get("kandy-laravel::kandy_live_chat_rate_table");
+        $tableName = \Config::get("kandy-laravel.kandy_live_chat_rate_table");
         Schema::create(
             $tableName,
             function (Blueprint $table) {

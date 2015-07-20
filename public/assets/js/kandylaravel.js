@@ -1391,6 +1391,7 @@ $(document).ready(function () {
             url: "/kandy/getUsersForSearch",
             dataType: 'json',
             delay: 250,
+            headers: { 'X-CSRF-Token' : $('meta[name=_token]').attr('content') },
             data: function (params) {
                 return {
                     q: params

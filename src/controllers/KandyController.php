@@ -150,10 +150,10 @@ class KandyController extends Controller
         $freeUser = null;
         $availableAgent = null;
         //get all unassigned users
-        $kandyUserTable = \Config::get('kandy-laravel::kandy_user_table');
-        $kandyLiveChatUser = \Config::get('kandy-laravel::excluded_kandy_users.liveChat');
-        $kandyLiveChatTable = \Config::get('kandy-laravel::kandy_live_chat_table');
-        $userTable = \Config::get('kandy-laravel::user_table');
+        $kandyUserTable = \Config::get('kandy-laravel.kandy_user_table');
+        $kandyLiveChatUser = \Config::get('kandy-laravel.excluded_kandy_users.liveChat');
+        $kandyLiveChatTable = \Config::get('kandy-laravel.kandy_live_chat_table');
+        $userTable = \Config::get('kandy-laravel.user_table');
         \DB::setFetchMode(\PDO::FETCH_ASSOC | \PDO::FETCH_GROUP);
         $users = \DB::table($kandyUserTable)
             ->select(\DB::raw("CONCAT(user_id,'@',domain_name) as full_user_id, password"))
@@ -212,7 +212,7 @@ class KandyController extends Controller
                     'status' => 'success',
                     'user'  => $freeUser,
                     'agent' => $availableAgent,
-                    'apiKey' => \Config::get('kandy-laravel::key')
+                    'apiKey' => \Config::get('kandy-laravel.key')
                 );
             }else{
                 $result = array(
@@ -257,8 +257,8 @@ class KandyController extends Controller
         $result = array();
         $query = \Request::get('q',"");
         $kandyLaravel = new Kandylaravel();
-        $kandyUserTable = \Config::get('kandy-laravel::kandy_user_table');
-        $mainUserTable = \Config::get('kandy-laravel::user_table');
+        $kandyUserTable = \Config::get('kandy-laravel.kandy_user_table');
+        $mainUserTable = \Config::get('kandy-laravel.user_table');
         $displayNameColumn = $kandyLaravel->getColumnForDisplayName($mainUserTable);
         $users = \DB::table($mainUserTable)
             ->join($kandyUserTable, "$mainUserTable.id",'=',"$kandyUserTable.main_user_id")
