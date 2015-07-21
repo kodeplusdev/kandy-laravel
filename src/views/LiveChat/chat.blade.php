@@ -64,7 +64,6 @@
             </div>
     </div>
 </div>
-{{HTML::script(\Kodeplusdev\Kandylaravel\Kandylaravel::KANDY_JS_FCS)}}
 {{HTML::script(\Kodeplusdev\Kandylaravel\Kandylaravel::KANDY_JS)}}
 {{HTML::script(\Kodeplusdev\Kandylaravel\Kandylaravel::KANDY_JS_LIVE_CHAT)}}
 {{HTML::script(\Kodeplusdev\Kandylaravel\Kandylaravel::RATE_JS)}}

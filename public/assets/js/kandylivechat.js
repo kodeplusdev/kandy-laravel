@@ -47,6 +47,27 @@ var login = function(domainApiKey, userName, password, success_callback) {
     kandy.login(domainApiKey, userName, password, success_callback);
 };
 
+var kandy_onMessage = function(msg){
+    if(msg) {
+        if (msg.messageType == 'chat') {
+            var sender = agent.username;
+            var message = msg.message.text;
+            var messageBox = $("#messageBox");
+            messageBox.find("ul").append("<li class='their-message'><span class='username'>" + sender + ": </span>" + message + "</li>");
+            messageBox.scrollTop(messageBox[0].scrollHeight);
+        }
+    }
+};
+
+var setup = function() {
+    kandy.setup({
+        listeners: {
+            message: kandy_onMessage
+        }
+    });
+};
+
+
 var logout = function(){
     kandy.logout();
 };
@@ -64,6 +85,7 @@ var getKandyUsers = function(){
         url:'/kandy/getFreeUser',
         type: 'GET',
         dataType: 'json',
+        async: false,
         success: function(res){
             if(checkAvailable){
                 LiveChatUI.changeState('RECONNECTING');
@@ -77,7 +99,7 @@ var getKandyUsers = function(){
                 var username = res.user.full_user_id.split('@')[0];
                 login(res.apiKey, username, res.user.password, login_success_callback, login_fail_callback);
                 agent = res.agent;
-                setInterval(getIm, 3000);
+                setup();
             }else{
                 if(!checkAvailable){
                     checkAvailable = setInterval(getKandyUsers, 5000);
@@ -112,28 +134,6 @@ var sendIM = function(username, message){
             alert("IM send failed");
         }
     );
-};
-
-var getIm = function(){
-    KandyAPI.Phone.getIm(
-        //success callback
-        function(data){
-            if(data.messages.length){
-                for(var i = 0; i< data.messages.length; i++){
-                    var msg = data.messages[i];
-                    if(msg.messageType == 'chat'){
-                        var sender = agent.username;
-                        var message = msg.message.text;
-                        var messageBox = $("#messageBox");
-                        messageBox.find("ul").append("<li class='their-message'><span class='username'>"+sender+": </span>"+message+"</li>");
-                        messageBox.scrollTop(messageBox[0].scrollHeight);
-                    }
-                }
-            }
-        },
-        //fail callback
-        function(){}
-    )
 };
 
 $(function(){

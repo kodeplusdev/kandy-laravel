@@ -18,8 +18,7 @@ class Kandylaravel
     const RATE_CSS = 'packages/kodeplusdev/kandylaravel/assets/css/rateit.css';
 
     // Default KANDY JS from cloud
-    const KANDY_JS_FCS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/fcs/3.0.4/fcs.js';
-    const KANDY_JS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/2.2.1/kandy.js';
+    const KANDY_JS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/2.3.0/kandy.js';
     const KANDY_JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js';
     const KANDY_CO_BROWSE = 'https://kandy-portal.s3.amazonaws.com/public/javascript/cobrowse/1.0.1/kandy.cobrowse.min.js';
 
@@ -518,11 +517,10 @@ class Kandylaravel
         if ($jqueryReload) {
             $return .= $this->add('script', asset(self::KANDY_JQUERY));
         }
-        $return .= $this->add('script', self::KANDY_JS_FCS);
         $return .= $this->add('script', self::KANDY_JS);
         $return .= "<script>
                     window.login = function() {
-                        KandyAPI.Phone.login('" . $this->apiKey . "', '" . $this->username . "', '" . $this->password . "');
+                        kandy.login('" . $this->apiKey . "', '" . $this->username . "', '" . $this->password . "', kandy_login_success_callback, kandy_login_failed_callback);
                     };
                     </script>";
         $return .= $this->add('script', asset(self::KANDY_JS_CUSTOM));
@@ -543,7 +541,6 @@ class Kandylaravel
         if ($jqueryReload) {
             $return .= $this->add('script', asset(self::KANDY_JQUERY));
         }
-        $return .= $this->add('script', self::KANDY_JS_FCS);
         $return .= $this->add('script', self::KANDY_JS);
         $return .= $this->add('script', asset(self::KANDY_JS_CUSTOM));
         $return .= $this->add('script', asset(self::SELECT2_JS));

@@ -57,27 +57,25 @@ class KandyController extends \BaseController
         if (!isset($_POST['data'])) {
             return Response::make('Your request is invalid.', 403);
         }
-        $messages = $_POST['data'];
-        foreach ($messages as &$message) {
-            if (!isset($message['sender'])) {
-                continue;
-            }
-            $sender = $message['sender'];
-            $user = KandyUsers::whereuser_id($sender['user_id'])->first();
-            if (empty($user)) {
-                $displayName = "";
-            } else {
-                $kandylaravel = new Kandylaravel();
-                $displayName = $kandylaravel->getDisplayName($user->id);
-                if (empty($displayName)) {
-                    $displayName = $sender['full_user_id'];
-                }
-            }
-            $sender['display_name'] = $displayName;
-            $sender['contact_user_name'] = $sender['full_user_id'];
-            $message['sender'] = $sender;
+        $message = $_POST['data'];
+        if (!isset($message['sender'])) {
+            return;
         }
-        return \Response::json($messages, 200);
+        $sender = $message['sender'];
+        $user = KandyUsers::whereuser_id($sender['user_id'])->first();
+        if (empty($user)) {
+            $displayName = "";
+        } else {
+            $kandylaravel = new Kandylaravel();
+            $displayName = $kandylaravel->getDisplayName($user->id);
+            if (empty($displayName)) {
+                $displayName = $sender['full_user_id'];
+            }
+        }
+        $sender['display_name'] = $displayName;
+        $sender['contact_user_name'] = $sender['full_user_id'];
+        $message['sender'] = $sender;
+        return \Response::json($message, 200);
     }
 
     public function getUsersForSearch()
@@ -145,85 +143,93 @@ class KandyController extends \BaseController
     public function getFreeUser()
     {
         $userInfo = \Session::get('kandyLiveChatUserInfo');
-        $kandyLaravel = new Kandylaravel();
-        $freeUser = null;
-        $availableAgent = null;
-        //get all unassigned users
-        $kandyUserTable = \Config::get('kandy-laravel::kandy_user_table');
-        $kandyLiveChatUser = \Config::get('kandy-laravel::excluded_kandy_users.liveChat');
-        $kandyLiveChatTable = \Config::get('kandy-laravel::kandy_live_chat_table');
-        $userTable = \Config::get('kandy-laravel::user_table');
-        \DB::setFetchMode(\PDO::FETCH_ASSOC | \PDO::FETCH_GROUP);
-        $users = \DB::table($kandyUserTable)
-            ->select(\DB::raw("CONCAT(user_id,'@',domain_name) as full_user_id, password"))
-            ->whereIn('user_id', $kandyLiveChatUser)->get();
-        $agents = \DB::table($kandyUserTable)
-            ->leftJoin($kandyLiveChatTable, "$kandyUserTable.user_id", '=', "$kandyLiveChatTable.agent_user_id")
-            ->leftJoin($userTable, "$kandyUserTable.main_user_id", '=', "$userTable.id")
-            ->select(\DB::raw("CONCAT(user_id, '@', domain_name) as full_user_id, $kandyUserTable.password as password,
+        if(isset($userInfo['username']) && isset($userInfo['email'])) {
+            $kandyLaravel = new Kandylaravel();
+            $freeUser = null;
+            $availableAgent = null;
+            //get all unassigned users
+            $kandyUserTable = \Config::get('kandy-laravel::kandy_user_table');
+            $kandyLiveChatUser = \Config::get('kandy-laravel::excluded_kandy_users.liveChat');
+            $kandyLiveChatTable = \Config::get('kandy-laravel::kandy_live_chat_table');
+            $userTable = \Config::get('kandy-laravel::user_table');
+            \DB::setFetchMode(\PDO::FETCH_ASSOC | \PDO::FETCH_GROUP);
+            $users = \DB::table($kandyUserTable)
+                ->select(\DB::raw("CONCAT(user_id,'@',domain_name) as full_user_id, password"))
+                ->whereIn('user_id', $kandyLiveChatUser)->get();
+            $agents = \DB::table($kandyUserTable)
+                ->leftJoin($kandyLiveChatTable, "$kandyUserTable.user_id", '=', "$kandyLiveChatTable.agent_user_id")
+                ->leftJoin($userTable, "$kandyUserTable.main_user_id", '=', "$userTable.id")
+                ->select(\DB::raw("CONCAT(user_id, '@', domain_name) as full_user_id, $kandyUserTable.password as password,
             $userTable.username as username, main_user_id, $kandyLiveChatTable.end_at as last_end_chat"))
-            ->where('type', '=', $kandyLaravel::USER_TYPE_CHAT_AGENT)
-            ->orderBy("last_end_chat", "ASC")->get();
-        \DB::setFetchMode(\PDO::FETCH_CLASS);
-        $arrayUsers = array_merge(array_keys($users), array_keys($agents));
-        $lastSeen = $kandyLaravel->getLastSeen($arrayUsers);
-        if($lastSeen){
-            if($lastSeen->message == 'success'){
-                //current time of kandy server
-                $serverTimestamp = $lastSeen->result->server_timestamp;
-                foreach($lastSeen->result->users as $user){
-                    //get user
-                    if(isset($users[$user->full_user_id]) && !$freeUser){
-                        //get users not online in last 10 secs
-                        if(($serverTimestamp - $user->last_seen) > 10000){
-                            $freeUser = $user;
-                            $freeUser->password = $users[$user->full_user_id][0]['password'];
+                ->where('type', '=', $kandyLaravel::USER_TYPE_CHAT_AGENT)
+                ->orderBy("last_end_chat", "ASC")->get();
+            \DB::setFetchMode(\PDO::FETCH_CLASS);
+            $arrayUsers = array_merge(array_keys($users), array_keys($agents));
+            $lastSeen = $kandyLaravel->getLastSeen($arrayUsers);
+            if ($lastSeen) {
+                if ($lastSeen->message == 'success') {
+                    //current time of kandy server
+                    $serverTimestamp = $lastSeen->result->server_timestamp;
+                    foreach ($lastSeen->result->users as $user) {
+                        //get user
+                        if (isset($users[$user->full_user_id]) && !$freeUser) {
+                            //get users not online in last 10 secs
+                            if (($serverTimestamp - $user->last_seen) > 10000) {
+                                $freeUser = $user;
+                                $freeUser->password = $users[$user->full_user_id][0]['password'];
+                            }
                         }
-                    }
-                    //get agent
-                    if(isset($agents[$user->full_user_id]) && !$availableAgent
-                        && $agents[$user->full_user_id][0]['last_end_chat'] != '0'){
-                        // get agents online in last 3 secs
-                        if(($serverTimestamp - $user->last_seen) < 3000) {
-                            $availableAgent = $user;
-                            $availableAgent->user_id = current(explode('@',$availableAgent->full_user_id));
-                            $availableAgent->username = $agents[$user->full_user_id][0]['username'];
-                            $availableAgent->main_user_id = $agents[$user->full_user_id][0]['main_user_id'];
+                        //get agent
+                        if (isset($agents[$user->full_user_id]) && !$availableAgent
+                            && $agents[$user->full_user_id][0]['last_end_chat'] != '0'
+                        ) {
+                            // get agents online in last 3 secs
+                            if (($serverTimestamp - $user->last_seen) < 3000) {
+                                $availableAgent = $user;
+                                $availableAgent->user_id = current(explode('@', $availableAgent->full_user_id));
+                                $availableAgent->username = $agents[$user->full_user_id][0]['username'];
+                                $availableAgent->main_user_id = $agents[$user->full_user_id][0]['main_user_id'];
+                            }
                         }
+                        if ($freeUser && $availableAgent) break;
                     }
-                    if($freeUser && $availableAgent) break;
                 }
-            }
 
-            if($freeUser && $availableAgent){
-                \Session::set('kandyLiveChatUserInfo.agent', $availableAgent->user_id);
-                $now = time();
-                $result = KandyLiveChat::create(array(
-                    'agent_user_id'     => $availableAgent->user_id,
-                    'customer_user_id'  => $freeUser->full_user_id,
-                    'customer_name'     => $userInfo['username'],
-                    'customer_email'    => $userInfo['email'],
-                    'begin_at'         => $now,
-                ));
-                //save last insert id for user later
-                \Session::set('kandyLiveChatUserInfo.sessionId', $result->id);
+                if ($freeUser && $availableAgent) {
+                    \Session::set('kandyLiveChatUserInfo.agent', $availableAgent->user_id);
+                    $now = time();
+                    $result = KandyLiveChat::create(array(
+                        'agent_user_id' => $availableAgent->user_id,
+                        'customer_user_id' => $freeUser->full_user_id,
+                        'customer_name' => $userInfo['username'],
+                        'customer_email' => $userInfo['email'],
+                        'begin_at' => $now,
+                    ));
+                    //save last insert id for user later
+                    \Session::set('kandyLiveChatUserInfo.sessionId', $result->id);
+                    $result = array(
+                        'status' => 'success',
+                        'user' => $freeUser,
+                        'agent' => $availableAgent,
+                        'apiKey' => \Config::get('kandy-laravel::key')
+                    );
+                } else {
+                    $result = array(
+                        'status' => 'fail'
+                    );
+                }
+            } else {
                 $result = array(
-                    'status' => 'success',
-                    'user'  => $freeUser,
-                    'agent' => $availableAgent,
-                    'apiKey' => \Config::get('kandy-laravel::key')
-                );
-            }else{
-                $result = array(
-                    'status'    => 'fail'
+                    'status' => 'fail'
                 );
             }
-        }else{
-            $result = array(
-                'status'    => 'fail'
-            );
+            return \Response::json($result);
+
+        }else {
+            \Session::forget('kandyLiveChatUserInfo');
         }
-        return \Response::json($result);
+        return '';
+
     }
 
     /**
