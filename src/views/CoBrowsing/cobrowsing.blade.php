@@ -16,14 +16,14 @@
     </div>
     <div id="{{$holderId}}"></div>
 </div>
-{{ HTML::script(\Kodeplusdev\Kandylaravel\Kandylaravel::KANDY_CO_BROWSE)}}
+{!! HTML::script(\Kodeplusdev\Kandylaravel\Kandylaravel::KANDY_CO_BROWSE)!!}
 <script>
     var openSessions = [];
     var currentSession;
     var myOwnSessions = [];// sessions that current user created
     var mySessions    = [];// sessions that current user is a participant
     var browsingType;
-    var currentKandyUser = '{{$currentUser->user_id , '@', $currentUser->domain_name}}';
+    var currentKandyUser = '<?php echo $currentUser->user_id . "@" . $currentUser->domain_name ?>';
     var sessionListeners = {
         'onUserJoinRequest': kandy_onSessionJoinRequest,
         'onJoinApprove': kandy_onSessionJoinApprove
