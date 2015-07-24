@@ -2,6 +2,7 @@
 namespace Kodeplusdev\Kandylaravel;
 use Illuminate\Support\ServiceProvider;
 use Artisan;
+use Event;
 
 class KandylaravelServiceProvider extends ServiceProvider
 {
@@ -22,6 +23,8 @@ class KandylaravelServiceProvider extends ServiceProvider
     {
         $this->package('kandy-io/kandy-laravel');
         include __DIR__.'/../../routes.php';
+        $eventHandler = new EventHandler();
+        Event::subscribe($eventHandler);
     }
 
     /**

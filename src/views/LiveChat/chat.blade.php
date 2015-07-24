@@ -79,6 +79,10 @@
             //default ui state
             LiveChatUI.changeState();
         @endif
+        @if(\Session::has('kandyLiveChatUserInfo.user'))
+            var stillAlive = heartBeat(60000);
+        @endif
+
         $("#liveChat #ratingForm .rateit").bind('rated', function(){
             var ri = $(this);
             rateData = rateData || {};

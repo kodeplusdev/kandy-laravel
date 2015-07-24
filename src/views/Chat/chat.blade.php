@@ -1,7 +1,8 @@
+<?php $userParts = explode("@", $kandyUser) ?>
 <div class="row {{$class}} cd-tabs" id="{{$id}}" {{$htmlOptionsAttributes}} >
     <input type="hidden" class="kandy_current_username" value="{{ $displayName }}"/>
     <input type="hidden" class="kandy_user" value="{{ $kandyUser }}"/>
-    <input type="hidden" class="kandy_domain_name" value="{{explode('@', $kandyUser)[1]}}">
+    <input type="hidden" class="kandy_domain_name" value="{{$userParts[1]}}">
 
     <div class="chat-heading">
         <div class="contact-heading">
@@ -28,8 +29,10 @@
     <nav>
         <ul class="cd-tabs-navigation contacts">
         </ul>
-        <div class="separator hide"><span>Groups</span></div>
+        <div class="separator hide group"><span>Groups</span></div>
         <ul class="cd-tabs-navigation groups"></ul>
+        <div class="separator hide livechatgroup"><span>Live Chat</span></div>
+        <ul class="cd-tabs-navigation livechats "></ul>
     </nav>
 
     <ul class="cd-tabs-content">
@@ -51,7 +54,9 @@
     var activeClass = "selected";
     var liTabGroupsWrap = liTabWrapSelector + '.groups';
     var liTabContactWrap = liTabWrapSelector + '.contacts';
-    var groupSeparator = '#' + wrapDivId + ' .separator';
+    var liTabLiveChatWrap = liTabWrapSelector + '.livechats';
+    var groupSeparator = '#' + wrapDivId + ' .separator.group';
+    var liveChatGroupSeparator = '#' + wrapDivId + ' .separator.livechatgroup';
     // group chat vars
     var displayNames = [];
     var groupNames = [];
@@ -71,11 +76,17 @@
      *  Ready
      */
     $(document).ready(function () {
+        heartBeat(60000);
+        $(window).bind('beforeunload', kandy_updateUserStatus);
         $("form.send-message").live("submit", function (e) {
             var username = $(this).attr('data-user');
+            var realID = jQuery(this).data('real-id');
+            if(realID == ''){
+                realID = username;
+            }
             e.preventDefault();
             if($(this).is('[data-user]')){
-                kandy_sendIm(username);
+                kandy_sendIm(realID,username);
             }else{
                 kandy_sendGroupIm($(this).data('group'),$(this).find('.imMessageToSend').val());
                 $(this).find('.imMessageToSend').val('');
@@ -138,7 +149,7 @@
         $(".toggle").live('click',function(){
             $(this).toggleClass('fa-plus-square-o').toggleClass('fa-minus-square-o');
             $(this).siblings('.list-users').toggleClass('expanding');
-        })
-
+        });
     });// End document ready.
 </script>
+

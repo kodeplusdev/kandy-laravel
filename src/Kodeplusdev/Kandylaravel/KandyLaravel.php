@@ -37,6 +37,10 @@ class Kandylaravel
 
     const USER_TYPE_CHAT_AGENT = 1;
     const USER_TYPE_NORMAL = 0;
+    const USER_TYPE_CHAT_END_USER = 2;
+
+    const USER_STATUS_ONLINE = 1;
+    const USER_STATUS_OFFLINE = 0;
 
     // Kandy Laravel configuration variables which could be overridden at application
     public $domainAccessToken;

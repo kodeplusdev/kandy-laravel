@@ -122,6 +122,16 @@ class Chat extends RenderedObject
         $kandy_user_id = $data["options"]['user']['name'];
         $data["displayName"] = $kandylaravel->getDisplayNameFromKandyUser($kandy_user_id);
         $data["kandyUser"] = $data["options"]['user']['kandyUser'];
+        if($kandy_user_id){
+            //check if user is now inactive, then active user
+            if(KandyUsers::where('user_id', $kandy_user_id)->where('type', Kandylaravel::USER_TYPE_CHAT_AGENT)){
+                $userLogin = KandyUserLogin::where('kandy_user_id',$kandy_user_id )->where('status', Kandylaravel::USER_STATUS_OFFLINE)->first();
+                if($userLogin){
+                    $userLogin->status = Kandylaravel::USER_STATUS_ONLINE;
+                    $userLogin->save();
+                }
+            }
+        }
 
         $this->data = $data;
     }
@@ -141,6 +151,7 @@ class Chat extends RenderedObject
     public function show($data = array())
     {
         $this->init($data);
+
         $this->contents = \View::make(
             'kandy-laravel::Chat.chat',
             $this->data

@@ -43,8 +43,8 @@ LiveChatUI.changeState = function(state){
     }
 };
 
-var login = function(domainApiKey, userName, password, success_callback) {
-    kandy.login(domainApiKey, userName, password, success_callback);
+var login = function(domainApiKey, userName, password, success_callback, fail_callback) {
+    kandy.login(domainApiKey, userName, password, success_callback, fail_callback);
 };
 
 var kandy_onMessage = function(msg){
@@ -98,8 +98,9 @@ var getKandyUsers = function(){
                 }
                 var username = res.user.full_user_id.split('@')[0];
                 login(res.apiKey, username, res.user.password, login_success_callback, login_fail_callback);
-                agent = res.agent;
                 setup();
+                agent = res.agent;
+                heartBeat(60000);
             }else{
                 if(!checkAvailable){
                     checkAvailable = setInterval(getKandyUsers, 5000);
@@ -113,12 +114,14 @@ var getKandyUsers = function(){
 };
 
 var endChatSession = function(){
+    LiveChatUI.changeState('ENDING_CHAT');
     logout();
     $.ajax({
         url: '/kandy/endChatSession',
         type: 'GET',
-        success: function(){
-            //window.location.reload();
+        async: false,
+        success: function(data){
+            console.log(data);
         }
     });
 };
@@ -136,7 +139,15 @@ var sendIM = function(username, message){
     );
 };
 
+var heartBeat = function(interval){
+    return setInterval(function(){
+        $.get('/kandy/stillAlive');
+    },parseInt(interval));
+};
+
 $(function(){
+    //$(window).bind('beforeunload', endChatSession);
+
     //hide vs restore box chat
     $(".handle.minimize, #restoreBtn").click(function(){
         $("#liveChat").toggleClass('hidden');
@@ -172,15 +183,12 @@ $(function(){
         e.preventDefault();
         sendIM(agent.full_user_id, $("#messageToSend").val());
     });
-    //end chat session if user close browser or tab
-    window.onbeforeunload = function() {
-        endChatSession();
-    };
+
     /** Rating for agents JS code **/
     $("#liveChat #ratingForm #btnEndSession").click(function(e){
         e.preventDefault();
-        LiveChatUI.changeState('ENDING_CHAT');
-        setTimeout(endChatSession, 3000);
+
+        endChatSession();
         window.location.reload();
     });
     $('#liveChat #ratingForm #btnSendRate').click(function(e){
@@ -196,8 +204,7 @@ $(function(){
             type: 'POST',
             success: function (res){
                 if(res.success){
-                    LiveChatUI.changeState("ENDING_CHAT");
-                    setTimeout(endChatSession, 3000);
+                    endChatSession();
                     window.location.reload();
                 }
             }
