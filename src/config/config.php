@@ -59,7 +59,7 @@ return array(
     'excluded_kandy_users'     => array(
         //exclude users for live chat feature
         'liveChat'  => array(
-             'user2', 'user1'
+             //'user2', 'user1'
         ),
         //and more
     ),
