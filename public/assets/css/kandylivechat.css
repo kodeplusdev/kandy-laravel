@@ -1,0 +1,138 @@
+#liveChat {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 300px;
+    background-color: #FFFFFF;
+    z-index: 9999;
+    border: 1px #E4E4E4 solid;
+}
+
+#liveChat .header {
+    background-color: #34302A;
+    color: #FFFFFF;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 10px;
+}
+
+#liveChat #messageBox {
+    height: 200px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: none;
+}
+
+#liveChat #registerForm {
+    padding: 20px;
+    display: none;
+}
+
+#liveChat #messageBox ul li {
+    list-style: none;
+}
+
+#liveChat .handle, #liveChat #restoreBtn {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    color: #FFFFFF;
+    float: right;
+}
+
+#liveChat .handle:hover, #liveChat #restoreBtn:hover {
+    cursor: pointer;
+}
+
+#liveChat #restoreBtn {
+    display: none;
+}
+
+#liveChat form {
+    margin-top: 20px;
+}
+
+#liveChat input[type="text"]{
+    height: 40px;
+}
+
+#liveChat #messageBox .my-message {
+    color: #0995FF;
+}
+
+#liveChat #messageBox .their-message {
+    color: #ff2f5d;
+}
+
+#liveChat #messageBox .username {
+    font-weight: bold;
+}
+
+#liveChat.hidden .liveChatBody, #liveChat.hidden .handle{
+    display: none;
+}
+
+#liveChat.hidden #restoreBtn {
+    display: inline-block;
+}
+
+#liveChat .formChat {
+    padding: 20px 20px 0 20px;
+    display: none;
+}
+
+#liveChat #restoreBtn {
+    border: 2px #FFFFFF solid;
+}
+
+#liveChat .customerService {
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #f6f6f6;
+    height: 80px;
+    display: none;
+}
+
+#liveChat .customerService .helpdeskInfo {
+    padding: 10px;
+}
+
+
+#liveChat .customerService .helpdeskInfo .title {
+    font-size: 13px;
+    line-height: 10px;
+    padding: 5px;
+}
+
+#liveChat .customerService .avatar {
+    width: 50px;
+    height: 50px;
+    float: left;
+    margin-right: 10px;
+}
+
+#liveChat #waiting {
+    background-color: #E4E4E4;
+    width: 300px;
+    height: 300px;
+    padding: 100px 30px;
+    text-align: center;
+    display: none;
+}
+
+#liveChat .helpdeskInfo #agentName {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+#liveChat .liveChatBody {
+}
+
+#liveChat #ratingForm {
+    padding: 20px;
+    display: none;
+}
+
+#liveChat #ratingForm .message {
+    display: none;
+}

@@ -2,6 +2,7 @@
 namespace Kodeplusdev\Kandylaravel;
 use Illuminate\Support\ServiceProvider;
 use Artisan;
+use Event;
 
 class KandylaravelServiceProvider extends ServiceProvider
 {
@@ -22,6 +23,8 @@ class KandylaravelServiceProvider extends ServiceProvider
     {
         $this->package('kandy-io/kandy-laravel');
         include __DIR__.'/../../routes.php';
+        $eventHandler = new EventHandler();
+        Event::subscribe($eventHandler);
     }
 
     /**
@@ -44,7 +47,11 @@ class KandylaravelServiceProvider extends ServiceProvider
 
         $this->registerChat();
 
-        $this->registerGroupChat();
+        $this->registerLiveChat();
+
+        $this->registerCoBrowsing();
+
+        $this->registerSms();
 
         $this->publishAssets();
 
@@ -155,14 +162,29 @@ class KandylaravelServiceProvider extends ServiceProvider
         return array();
     }
 
-    private function registerGroupChat()
+    private function registerLiveChat()
     {
-        $this->app->bind(
-            'kandy-laravel::groupChat',
-            function () {
-                return new GroupChat();
-            }
-        );
+        $this->app['kandy-laravel::liveChat'] = $this->app->share(function($app)
+        {
+            return new \Kodeplusdev\Kandylaravel\liveChat();
+        });
     }
+
+    private function registerCoBrowsing()
+    {
+        $this->app['kandy-laravel::coBrowsing'] = $this->app->share(function($app)
+        {
+            return new \Kodeplusdev\Kandylaravel\CoBrowsing();
+        });
+    }
+
+    private function registerSms()
+    {
+        $this->app['kandy-laravel::sms'] = $this->app->share(function($app)
+        {
+            return new \Kodeplusdev\Kandylaravel\Sms();
+        });
+    }
+
 
 }

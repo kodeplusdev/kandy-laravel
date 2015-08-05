@@ -4,3 +4,17 @@ Route::post('/kandy/getNameForContact', 'Kodeplusdev\Kandylaravel\KandyControlle
 Route::post('/kandy/getNameForChatContent', 'Kodeplusdev\Kandylaravel\KandyController@getNameForChatContent');
 
 Route::get('/kandy/getUsersForSearch', 'Kodeplusdev\Kandylaravel\KandyController@getUsersForSearch');
+
+Route::post('/kandy/registerGuest', 'Kodeplusdev\Kandylaravel\KandyController@registerGuest');
+
+Route::get('/kandy/getFreeUser', 'Kodeplusdev\Kandylaravel\KandyController@getFreeUser');
+
+Route::get('/kandy/endChatSession', array('as' => 'kandy.endChatSession', 'uses' => 'Kodeplusdev\Kandylaravel\KandyController@endChatSession'));
+
+Route::get('/kandy/getUserForAgent', 'Kodeplusdev\Kandylaravel\KandyController@getUsersForChatAgent');
+
+Route::post('/kandy/rateagent', 'Kodeplusdev\Kandylaravel\KandyController@rateAgent');
+
+Route::get('/kandy/updateUserStatus','Kodeplusdev\Kandylaravel\KandyController@updateUserStatus');
+Route::get('/kandy/stillAlive','Kodeplusdev\Kandylaravel\KandyController@stillAlive');
+
