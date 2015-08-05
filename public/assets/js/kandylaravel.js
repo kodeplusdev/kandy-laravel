@@ -38,7 +38,6 @@ setup = function () {
     // initialize KandyAPI.Phone, passing a config JSON object that contains listeners (event callbacks)
     kandy.setup({
         // respond to Kandy events...
-        kandyApiUrl: 'https://api.kandy.io/v1.2',
         remoteVideoContainer: $('#theirVideo')[0],
         localVideoContainer: $('#myVideo')[0],
         listeners: {
