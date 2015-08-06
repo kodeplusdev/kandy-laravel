@@ -29,7 +29,7 @@ class LiveChat extends RenderedObject
                 )
             ),
             'agentInfo' => array(
-                'avatar'    => asset('packages/kodeplusdev/kandylaravel/assets/img/icon-helpdesk.png'),
+                'avatar'    => asset('packages/kandy-io/kandy-laravel/assets/img/icon-helpdesk.png'),
                 'title'     => 'Support Agent',
             )
         );

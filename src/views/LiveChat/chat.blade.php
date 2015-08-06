@@ -9,7 +9,7 @@
     </div>
     <div class="liveChatBody">
         <div id="waiting">
-            <img id="loading" width="30px" height="30px" src="{{asset('packages/kodeplusdev/kandylaravel/assets/img/loading.gif')}}" title="loading">
+            <img id="loading" width="30px" height="30px" src="{{asset('packages/kandy-io/kandy-laravel/assets/img/loading.gif')}}" title="loading">
             <p>Please wait a moment...</p>
         </div>
         <div id="registerForm">

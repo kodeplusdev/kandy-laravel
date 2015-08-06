@@ -8,14 +8,14 @@ class Kandylaravel
      */
     const API_BASE_URL = 'https://api.kandy.io/v1.2/';
 
-    const KANDY_CSS = 'packages/kodeplusdev/kandylaravel/assets/css/kandylaravel.css';
-    const KANDY_JS_CUSTOM = 'packages/kodeplusdev/kandylaravel/assets/js/kandylaravel.js';
+    const KANDY_CSS = 'packages/kandy-io/kandy-laravel/assets/css/kandylaravel.css';
+    const KANDY_JS_CUSTOM = 'packages/kandy-io/kandy-laravel/assets/js/kandylaravel.js';
 
-    const KANDY_CSS_LIVE_CHAT = 'packages/kodeplusdev/kandylaravel/assets/css/kandylivechat.css';
-    const KANDY_JS_LIVE_CHAT = 'packages/kodeplusdev/kandylaravel/assets/js/kandylivechat.js';
+    const KANDY_CSS_LIVE_CHAT = 'packages/kandy-io/kandy-laravel/assets/css/kandylivechat.css';
+    const KANDY_JS_LIVE_CHAT = 'packages/kandy-io/kandy-laravel/assets/js/kandylivechat.js';
 
-    const RATE_JS = 'packages/kodeplusdev/kandylaravel/assets/js/jquery.rateit.min.js';
-    const RATE_CSS = 'packages/kodeplusdev/kandylaravel/assets/css/rateit.css';
+    const RATE_JS = 'packages/kandy-io/kandy-laravel/assets/js/jquery.rateit.min.js';
+    const RATE_CSS = 'packages/kandy-io/kandy-laravel/assets/css/rateit.css';
 
     // Default KANDY JS from cloud
     const KANDY_JS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/2.3.0/kandy.js';
@@ -32,8 +32,8 @@ class Kandylaravel
     const KANDY_UNASSIGNED_USER = "KANDY UNASSIGNED USER";
 
     // SELECT2
-    const SELECT2_CSS = "packages/kodeplusdev/kandylaravel/assets/css/select2.css";
-    const SELECT2_JS = "packages/kodeplusdev/kandylaravel/assets/js/select2.min.js";
+    const SELECT2_CSS = "packages/kandy-io/kandy-laravel/assets/css/select2.css";
+    const SELECT2_JS = "packages/kandy-io/kandy-laravel/assets/js/select2.min.js";
 
     const USER_TYPE_CHAT_AGENT = 1;
     const USER_TYPE_NORMAL = 0;
