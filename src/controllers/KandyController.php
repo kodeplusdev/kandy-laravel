@@ -201,11 +201,12 @@ class KandyController extends \BaseController
                     ->join($userLoginTable, "$kandyUserTable.user_id", '=', "$userLoginTable.kandy_user_id")
                     ->select(\DB::raw("user_id, CONCAT(user_id, '@', domain_name) as full_user_id,
                         $kandyUserTable.password as password,$userTable.username as username, main_user_id,
-                        MAX($kandyLiveChatTable.end_at) as last_end_chat, $userLoginTable.time as last_active"))
+                        MAX($kandyLiveChatTable.end_at) as last_end_chat, (UNIX_TIMESTAMP() - $userLoginTable.time) as last_active"))
                     ->where("$kandyUserTable.type", '=', $kandyLaravel::USER_TYPE_CHAT_AGENT)
                     ->where("$userLoginTable.status", '=', Kandylaravel::USER_STATUS_ONLINE)
                     ->groupBy("$userTable.id")
                     ->having('last_end_chat', '<', $fakeEndTime)
+                    ->having('last_active', '<=',60)
                     ->orHavingRaw('last_end_chat IS NULL')
                     ->orderBy("last_end_chat", "ASC")
                     ->first();
@@ -281,6 +282,10 @@ class KandyController extends \BaseController
                 }
             }
         }
+        return \Response::json(array(
+          'status'    => 'success'
+        ));
+
     }
 
     /**
