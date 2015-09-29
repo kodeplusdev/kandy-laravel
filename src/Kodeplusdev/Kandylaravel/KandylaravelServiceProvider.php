@@ -32,9 +32,10 @@ class KandylaravelServiceProvider extends ServiceProvider
             __DIR__.'/../../migrations/' => database_path('migrations')
         ], 'migrations');
         //include package routes
-        if (! $this->app->routesAreCached()) {
-            require __DIR__ . '/../../routes.php';
-        }
+        require __DIR__ . '/../../routes.php';
+
+        $eventHandler = new EventHandler();
+        \Event::subscribe($eventHandler);
     }
 
     /**

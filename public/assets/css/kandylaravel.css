@@ -110,7 +110,6 @@
 /* KANDY CHAT STYLE */
 .kandyChat .imUsername {
     display: inline-block;
-    width: 200px
 }
 
 .kandyChat .imMessageToSend {
@@ -523,8 +522,20 @@ iframe {
 }
 
 
-.btnOpenModalCreateGroup {
+.kandy-open-dialog-btn {
     float: right;
+}
+
+.kandy-session-dialog {
+    display: none;
+}
+
+.no-close .ui-dialog-titlebar-close {
+    display: none;
+}
+
+.kandy-create-group-btn {
+    float: left;
 }
 
 

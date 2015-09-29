@@ -21,21 +21,34 @@
         <div class="chat-with-message">
             Chatting with <span class="chat-friend-name"></span>
         </div>
-        <a href="javascript:;" class="button tiny right btnOpenModalCreateGroup" data-reveal-id="myModal">Create Group</a>
+        <a href="javascript:;" class="kandy-create-group-btn">Create Group</a>
 
         <div class="clear-fix"></div>
     </div>
     <nav>
-        <ul class="cd-tabs-navigation contacts">
-        </ul>
-        <div class="separator hide"><span>Groups</span></div>
+        <ul class="cd-tabs-navigation contacts"></ul>
+        <div class="separator hide group"><span>Groups</span></div>
         <ul class="cd-tabs-navigation groups"></ul>
+        <div class="separator hide livechatgroup"><span>Live Chat</span></div>
+        <ul class="cd-tabs-navigation livechats "></ul>
     </nav>
 
     <ul class="cd-tabs-content">
     </ul>
 
     <div style="clear: both;"></div>
+    <div class="kandy-group-dialog">
+        <form action="">
+            <label>Group Name</label>
+            <input type="text" placeholder="Group Name" id="groupName">
+        </form>
+    </div>
+    <div class="kandy-invite-dialog">
+        <form action="">
+            <label for="right-label" class="right inline">Username</label>
+            <input class="select2" type="text" id="kandy-chat-invite-username" placeholder="username"><br><br>
+        </form>
+    </div>
 </div>
 
 <script>
@@ -51,7 +64,9 @@
     var activeClass = "selected";
     var liTabGroupsWrap = liTabWrapSelector + '.groups';
     var liTabContactWrap = liTabWrapSelector + '.contacts';
-    var groupSeparator = '#' + wrapDivId + ' .separator';
+    var liTabLiveChatWrap = liTabWrapSelector + '.livechats';
+    var groupSeparator = '#' + wrapDivId + ' .separator.group';
+    var liveChatGroupSeparator = '#' + wrapDivId + ' .separator.livechatgroup';
     // group chat vars
     var displayNames = [];
     var groupNames = [];
@@ -71,11 +86,58 @@
      *  Ready
      */
     $(document).ready(function () {
+        $(window).bind('beforeunload', kandy_updateUserStatus(USER_STATUS_OFFLINE));
+        heartBeat(60000);
+        $(".kandy-group-dialog").dialog({
+             dialogClass: "no-close",
+             autoOpen: false,
+             height: 300,
+             width: 350,
+             modal: true,
+             buttons: {
+               "Create":function(){
+               var groupName = $('.kandy-group-dialog #groupName').val();
+                kandy_createGroup(groupName, kandy_loadGroups);
+               },
+               Cancel: function() {
+                 $(".kandy-group-dialog").dialog( "close" );
+               }
+             }
+        });
+
+        $(".kandy-invite-dialog").dialog({
+             dialogClass: "no-close",
+             autoOpen: false,
+             height: 300,
+             width: 350,
+             modal: true,
+             buttons: {
+               "Invite":function(){
+                    var username = jQuery("#kandy-chat-invite-username").val();
+                    var groupId = jQuery(".kandy-invite-dialog").data('group');
+                    if(username != '') {
+                        kandy_inviteUserToGroup(groupId,[username]);
+                    } else {
+                        alert('Please select a user to invite to group');
+                    }
+               }
+               ,
+               Cancel: function() {
+                 $(".kandy-invite-dialog").dialog( "close" );
+               }
+             }
+        });
+
+
         $("form.send-message").live("submit", function (e) {
             var username = $(this).attr('data-user');
+             var realID = jQuery(this).data('real-id');
+            if(realID == ''){
+                realID = username;
+            }
             e.preventDefault();
             if($(this).is('[data-user]')){
-                kandy_sendIm(username);
+                kandy_sendIm(realID, username);
             }else{
                 kandy_sendGroupIm($(this).data('group'),$(this).find('.imMessageToSend').val());
                 $(this).find('.imMessageToSend').val('');
@@ -138,6 +200,10 @@
         $(".toggle").live('click',function(){
             $(this).toggleClass('fa-plus-square-o').toggleClass('fa-minus-square-o');
             $(this).siblings('.list-users').toggleClass('expanding');
+        });
+
+        $(".kandy-create-group-btn").click(function(){
+            $(".kandy-group-dialog").dialog('open');
         })
 
     });// End document ready.

@@ -1,5 +1,11 @@
 <div id="coBrowsing">
-    <button class="small tiny modalToggle" data-reveal-id="sessionModal">Create Session</button>
+    <div class="kandy-session-dialog">
+        <form action="">
+            <label>Session name</label>
+            <input type="text" name="sessionName" placeholder="Session Name" id="sessionName">
+        </form>
+    </div>
+    <button class="kandy-open-dialog-btn">Create Session</button>
     <div>
         <div class="openSessionWrap">
             <label>Available sessions</label>
@@ -28,6 +34,12 @@
         'onUserJoinRequest': kandy_onSessionJoinRequest,
         'onJoinApprove': kandy_onSessionJoinApprove
     };
+
+    function openDialog() {
+        $('.kandy-session-dialog').dialog('open');
+    }
+
+
     function displayButtons(){
         var isAdmin = false, isMember = false;
         currentSession = openSessions[parseInt($("#openSessions").val())];
@@ -95,8 +107,33 @@
         displayButtons();
     };
         /* Document ready */
-        $(function(){
+        $(document).ready(function(){
+           $(".kandy-session-dialog").dialog({
+             dialogClass: "no-close",
+             autoOpen: false,
+             height: 300,
+             width: 350,
+             modal: true,
+             buttons: {
+               "Create session":function(){
+               var creationTime = new Date().getTime();
+               var timeExpire = creationTime + 31536000;// expire in 1 year
+                var config = { //config
+                    session_type: 'cobrowsing',
+                    session_name: $('.kandy-session-dialog #sessionName').val(),
+                    creation_timestamp: creationTime,
+                    expiry_timestamp: timeExpire
+                };
+                kandy_createSession(config, function(){
+                    kandy_getOpenSessionsByType('cobrowsing', loadSessionList);
+                })
+               },
+               Cancel: function() {
+                 $(".kandy-session-dialog").dialog( "close" );
+               }
+             }
 
+           });
             $("#<?php echo $btnConnectSessionId?>").click(function(){
                 currentSession = openSessions[parseInt($("#openSessions").val())];
                 kandy_joinSession(currentSession.session_id);
@@ -154,6 +191,9 @@
                         displayButtons();
                     }
                 }
+            })
+            $('.kandy-open-dialog-btn').click(function(){
+                $('.kandy-session-dialog').dialog('open');
             })
         });
 </script>

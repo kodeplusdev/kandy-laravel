@@ -4,6 +4,9 @@ var unassignedUser = "KANDY UNASSIGNED USER";
 var chatMessageTimeStamp = 0;
 var activeContainerId;
 
+var USER_STATUS_OFFLINE = 0;
+var USER_STATUS_ONLINE = 1;
+
 // Create audio objects to play incoming calls and outgoing calls sound
 var $audioRingIn = jQuery('<audio>', { loop: 'loop', id: 'ring-in' });
 var $audioRingOut = jQuery('<audio>', { loop: 'loop', id: 'ring-out' });
@@ -36,13 +39,11 @@ audioSource.ringOut.forEach(function (entry) {
  */
 setup = function () {
     // initialize KandyAPI.Phone, passing a config JSON object that contains listeners (event callbacks)
-    KandyAPI.Phone.setup({
+    kandy.setup({
         // respond to Kandy events...
         remoteVideoContainer: $('#theirVideo')[0],
         localVideoContainer: $('#myVideo')[0],
         listeners: {
-            loginsuccess: kandy_login_success_callback,
-            loginfailed: kandy_login_failed_callback,
             callinitiated: kandy_on_call_initiate_callback,
             callincoming: kandy_incoming_call_callback,
             // when an outgoing call is connected
@@ -59,6 +60,7 @@ setup = function () {
     if($(".kandyChat").length){
         kandy.setup({
             listeners: {
+                message: kandy_onMessage,
                 chatGroupMessage: kandy_onGroupMessage,
                 chatGroupInvite: kandy_onGroupInvite,
                 chatGroupBoot: kandy_onRemovedFromGroup,
@@ -75,6 +77,7 @@ setup = function () {
  * Login Success Callback.
  */
 kandy_login_success_callback = function () {
+    console.log('login successful');
     KandyAPI.Phone.updatePresence(0);
 
     //have kandyAddressBook widget
@@ -85,7 +88,6 @@ kandy_login_success_callback = function () {
     if ($(".kandyChat").length) {
         kandy_loadContacts_chat();
         kandy_loadGroups();
-        setInterval(kandy_getIms, 3000);
         setTimeout(updateUserGroupStatus,3000);
 
     }
@@ -97,6 +99,8 @@ kandy_login_success_callback = function () {
     if (typeof login_success_callback == 'function') {
         login_success_callback();
     }
+
+    kandy_updateUserStatus(USER_STATUS_ONLINE);
 
     //call user logout if exists
     if (typeof kandy_logout == 'function') {
@@ -343,7 +347,7 @@ kandy_end_call = function (target) {
 kandy_loadContacts_addressBook = function () {
     var contactListForPresence = [];
     var contactToRemove = [];
-    KandyAPI.Phone.retrievePersonalAddressBook(
+    kandy.addressbook.retrievePersonalAddressBook(
             function (results) {
                 results = getDisplayNameForContact(results);
                 // clear out the current address book list
@@ -411,7 +415,7 @@ kandy_addToContacts = function (userId) {
         alert("This person is already in your contact list.")
     } else {
         // get and AddressBook.Entry object for this contact
-        KandyAPI.Phone.searchDirectoryByUserName(
+        kandy.addressbook.searchDirectoryByUserName(
                 userId,
                 function (results) {
                     for (var i = 0; i < results.length; ++i) {
@@ -434,7 +438,7 @@ kandy_addToContacts = function (userId) {
                                 contact['contact_email'] = results[i].user_email;
                             }
 
-                            KandyAPI.Phone.addToPersonalAddressBook(
+                            kandy.addressbook.addToPersonalAddressBook(
                                     contact,
                                     kandy_loadContacts_addressBook, // function to call on success
                                     function (message) {
@@ -457,11 +461,10 @@ kandy_addToContacts = function (userId) {
  * @param nickname
  */
 kandy_removeFromContacts = function (nickname) {
-    KandyAPI.Phone.removeFromPersonalAddressBook(nickname,
-            kandy_loadContacts_addressBook,  // function to call on success
-            function () {
-                console.log('Error kandy_removeFromContacts ');
-            }
+    kandy.addressbook.removeFromPersonalAddressBook(nickname,kandy_loadContacts_addressBook,  // function to call on success
+        function () {
+            console.log('Error kandy_removeFromContacts ');
+        }
     );
 };
 
@@ -517,20 +520,20 @@ var addExampleBox = function () {
  * @param data
  * @returns {*}
  */
-var getDisplayNameForChatContent = function (data) {
-    if (data.messages.length) {
-        $.ajax({
-            url: "/kandy/getNameForChatContent",
-            type: "POST",
-            data: {data:data.messages},
-            headers: { 'X-CSRF-Token' : $('meta[name=_token]').attr('content') },
-            async: false
-        }).done(function(response) {
-            data.messages = response;
-        }).fail(function(e) {
-        });
-    }
-    return data;
+var getDisplayNameForChatContent = function (msg) {
+  if (msg) {
+    jQuery.ajax({
+      url: '/kandy/getNameForChatContent',
+      type: "POST",
+      data: {data: msg},
+      headers: { 'X-CSRF-Token' : $('meta[name=_token]').attr('content') },
+      async: false
+    }).done(function (response) {
+      msg = response;
+    }).fail(function (e) {
+    });
+  }
+  return msg;
 };
 
 /**
@@ -560,7 +563,7 @@ var getDisplayNameForContact = function (data) {
  */
 kandy_loadContacts_chat = function () {
     var contactListForPresence = [];
-    KandyAPI.Phone.retrievePersonalAddressBook(
+    kandy.addressbook.retrievePersonalAddressBook(
             function (results) {
                 results = getDisplayNameForContact(results);
                 emptyContact();
@@ -583,17 +586,19 @@ kandy_loadContacts_chat = function () {
 /**
  * Send a message with kandyChat
  */
-kandy_sendIm = function (username) {
-    var displayName = $('.kandyChat .kandy_current_username').val();
-    var inputMessage = $('.kandyChat .imMessageToSend[data-user="' + username + '"]');
+kandy_sendIm = function (username, dataHolder) {
+  var displayName = $('.kandyChat .kandy_current_username').val();
+  var dataHolder = (typeof dataHolder!= 'undefined')? dataHolder : username;
+
+  var inputMessage = $('.kandyChat .imMessageToSend[data-user="' + dataHolder + '"]');
     var message = inputMessage.val();
     inputMessage.val('');
-    KandyAPI.Phone.sendIm(username, message, function () {
+    kandy.messaging.sendIm(username, message, function () {
                 var newMessage = '<div class="my-message">\
                     <b><span class="imUsername">' + displayName + ':</span></b>\
                     <span class="imMessage">' + message + '</span>\
                 </div>';
-                var messageDiv = $('.kandyChat .kandyMessages[data-user="' + username + '"]');
+                var messageDiv = $('.kandyChat .kandyMessages[data-user="' + dataHolder + '"]');
                 messageDiv.append(newMessage);
                 messageDiv.scrollTop(messageDiv[0].scrollHeight);
             },
@@ -604,61 +609,45 @@ kandy_sendIm = function (username) {
 };
 
 /**
- * Get messages with kandyChat
+ * on Message event listener callback
+ * @param msg
  */
-kandy_getIms = function () {
-    KandyAPI.Phone.getIm(
-            function (data) {
-                if (data.messages.length) {
-
-                    data = getDisplayNameForChatContent(data);
-                }
-
-                var i;
-                for (i = 0; i < data.messages.length; ++i) {
-                    var msg = data.messages[i];
-                    if (msg.messageType == 'chat') {
-                        if(chatMessageTimeStamp == msg.timestamp) {
-                            continue;
-                        } else {
-                            chatMessageTimeStamp = msg.timestamp;
-                        }
-                        // Get user info
-                        var username = data.messages[i].sender.full_user_id;
-                        var displayName = data.messages[i].sender.display_name;
-
-                        // Process tabs
-                        if (!$(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + username + "']").length) {
-                            prependContact(data.messages[i].sender);
-                        }
-                        if (!$('input.imMessageToSend').is(':focus')) {
-                            moveContactToTopAndSetActive(data.messages[i].sender);
-                        } else {
-                            moveContactToTop(data.messages[i].sender);
-                        }
-
-                        // Process message
-                        if ((data.messages[i].hasOwnProperty('message'))) {
-                            var msg = data.messages[i].message.text;
-                            var newMessage = '<div class="their-message">\
+var kandy_onMessage = function(msg) {
+  if(msg){
+    var get_name_for_chat_content_url = jQuery(".kandyChat #get_name_for_chat_content_url").val();
+    msg = getDisplayNameForChatContent(msg, get_name_for_chat_content_url);
+  }
+  if(msg.messageType == 'chat' && msg.contentType === 'text' && msg.message.mimeType == 'text/plain'){
+    // Get user info
+    var username = msg.sender.full_user_id;
+    if(typeof msg.sender.user_email != "undefined" ){
+      username = msg.sender.user_email;
+    }
+    var displayName = msg.sender.display_name;
+    // Process tabs
+    if (!jQuery(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + username + "']").length) {
+      prependContact(msg.sender);
+    }
+    if (!jQuery('input.imMessageToSend').is(':focus')) {
+      moveContactToTopAndSetActive(msg.sender);
+    } else {
+      moveContactToTop(msg.sender);
+    }
+    // Process message
+    if ((msg.hasOwnProperty('message'))) {
+      var msg = msg.message.text;
+      var newMessage = '<div class="their-message">\
                             <b><span class="imUsername">' + displayName + ':</span></b>\
                             <span class="imMessage">' + msg + '</span>\
                         </div>';
+      var messageDiv = jQuery('.kandyChat .kandyMessages[data-user="' + username + '"]');
+      messageDiv.append(newMessage);
+      messageDiv.scrollTop(messageDiv[0].scrollHeight);
+    }
+  }
 
-                            var messageDiv = $('.kandyChat .kandyMessages[data-user="' + username + '"]');
-                            messageDiv.append(newMessage);
-                            messageDiv.scrollTop(messageDiv[0].scrollHeight);
-                        }
-                    } else {
-                        //alert("received " + msg.messageType + ": ");
-                    }
-                }
-            },
-            function () {
-                console.log("error receiving IMs");
-            }
-    )
 };
+
 
 /* Tab */
 
@@ -677,24 +666,34 @@ var emptyContact = function () {
  * @param user
  */
 var prependContact = function (user) {
+  var isLiveChat = false;
+  var username = user.contact_user_name;
+  if(typeof user.user_email != "undefined"){
+    isLiveChat = true;
+    username = user.user_email;
+  }
 
-    var username = user.contact_user_name;
-
-    var liParent = $(liTabContactWrap + " li a[" + userHoldingAttribute + "='" + username + "']").parent();
-    var liContact = "";
-    if(liParent.length){
-        liContact =  liParent[0].outerHTML;
-    } else {
-        liContact = getLiContact(user);
-    }
-
+  var liParent = $(liTabContactWrap + " li a[" + userHoldingAttribute + "='" + username + "']").parent();
+  var liContact = "";
+  if(liParent.length){
+    liContact =  liParent[0].outerHTML;
+  } else {
+    liContact = getLiContact(user);
+  }
+  if(!isLiveChat){
     $(liTabContactWrap).prepend(liContact);
-    if (!$(liContentWrapSelector + " li[" + userHoldingAttribute + "='" + username + "']").length) {
-        var liContent = getLiContent(username);
-        $(liContentWrapSelector).prepend(liContent);
+  }else {
+    if($(liTabLiveChatWrap ))
+    $(liTabLiveChatWrap).prepend(liContact);
+    if($(liveChatGroupSeparator).hasClass('hide')){
+      $(liveChatGroupSeparator).removeClass('hide');
     }
+  }
+  if (!$(liContentWrapSelector + " li[" + userHoldingAttribute + "='" + username + "']").length) {
+    var liContent = getLiContent(username, user.contact_user_name);
+    $(liContentWrapSelector).prepend(liContent);
+  }
 };
-
 /**
  * Get current active user name
  *
@@ -720,7 +719,9 @@ var setFocusContact = function (user) {
  */
 var moveContactToTop = function (user) {
     var username = user.contact_user_name;
-
+    if(typeof user.user_email != "undefined"){
+      username = user.user_email;
+    }
     var contact = $(liTabWrapSelector + " li a[" + userHoldingAttribute + "='" + username + "']").parent();
     var active = contact.hasClass(activeClass);
 
@@ -751,11 +752,16 @@ var moveContactToTopAndSetActive = function (user) {
  */
 var getLiContact = function (user, active) {
     // Set false as default
-    var username = user.contact_user_name;
-    var displayName = user.display_name;
-    var id = username.replace(/[.@]/g, '_');
-    var liClass = (typeof active !== 'undefined') ? active : "";
-    return '<li id="'+ id +'" class="' + liClass + '"><a ' + userHoldingAttribute + '="' + username + '" href="#">' + displayName + '</a><i class="status"></i></li>';
+  var username = user.contact_user_name;
+  var real_id = '';
+  if(typeof user.user_email != 'undefined'){
+    username = user.user_email;
+    real_id = "data-real-id='" + user.contact_user_name + "' ";
+  }
+  var displayName = user.display_name;
+  var id = username.replace(/[.@]/g, '_');
+  var liClass = (typeof active !== 'undefined') ? active : "";
+  return '<li id="' + id + '" class="' + liClass + '"><a ' + real_id + userHoldingAttribute + '="' + username + '" href="#">' + displayName + '</a><i class="status"></i></li>';
 };
 
 /**
@@ -764,7 +770,11 @@ var getLiContact = function (user, active) {
  * @param user
  * @returns {string}
  */
-var getLiContent = function (user) {
+var getLiContent = function (user, real_id) {
+    var uid= '';
+    if(typeof real_id != "undefined"){
+      uid = real_id;
+    }
     var result =
             '<li ' + userHoldingAttribute + '="' + user + '">\
                 <div class="kandyMessages" data-user="' + user + '">\
@@ -773,7 +783,7 @@ var getLiContent = function (user) {
                     Messages:\
                 </div>\
                 <div class="{{ $options["message"]["class"] }}">\
-                            <form class="send-message" data-user="' + user + '">\
+                            <form class="send-message" data-real-id="'+ uid + '" data-user="' + user + '">\
                         <div class="input-message">\
                             <input class="imMessageToSend chat-input" type="text" data-user="' + user + '">\
                         </div>\
@@ -851,7 +861,7 @@ var kandy_loadGroupDetails = function(groupId){
             if(currentUser === result.owners[0].full_user_id ){
                 //add admin functionality
                 isOwner = true;
-                groupActivity = '<a class="" href="javascipt:;"><i title="Remove group" onclick="kandy_terminateGroup(\''+result.group_id+'\')" class="fa fa-remove"></i></a>';
+                groupActivity = '<a class="" href="javascipt:;"><i title="Remove group" onclick="kandy_terminateGroup(\''+result.group_id+'\', kandy_loadGroups)" class="fa fa-remove"></i></a>';
                 $(liTabWrapSelector + ' li[data-group="'+groupId+'"] ' + ' .'+ listUserClass+' li[data-user!="'+result.owners[0].full_user_id +'"] .actions').append(
                     '<i title="Remove user" class="remove fa fa-remove"></i>'
                 );
@@ -1155,6 +1165,8 @@ var kandy_onRemovedFromGroup = function(message){
                 </div>';
     var messageDiv = $('.kandyChat .kandyMessages[data-group="' + message.group_id + '"]');
     messageDiv.append(newMessage);
+    jQuery(liContentWrapSelector + " li[" + userHoldingAttribute + "='" + message.group_id + "']").find('.btnSendMessage').attr('disabled', true);
+
 };
 
 /**
@@ -1381,10 +1393,30 @@ var kandy_sendSms = function(receiver, sender, message, successCallback, errorCa
     );
 };
 
+var heartBeat = function(interval){
+  return setInterval(function(){
+    $.get('/kandy/stillAlive');
+  },parseInt(interval));
+};
+
+var kandy_updateUserStatus = function(status) {
+  if(typeof status == 'undefined'){
+    status = USER_STATUS_OFFLINE;
+  }
+  $.ajax({
+    url: '/kandy/updateUserStatus',
+    async: false,
+    data: {'status': status}
+  });
+};
+
 // ======================JQUERY READY =======================
 $(document).ready(function () {
     setup();
     login();
+    if(($('.kandyChat').length > 0 || $('#coBrowsing').length > 0) && typeof $.fn.dialog == 'undefined') {
+      alert('Kandy require jquery ui.');
+    }
     $(".select2").select2({
         ajax: {
             quietMillis: 100,
@@ -1406,11 +1438,8 @@ $(document).ready(function () {
 
     $(".btnInviteUser").live('click', function(){
         //$("#inviteModal").attr('data-group', $(this).closest('li.group').data('group')).foundation('reveal', 'open');
-        if(typeof openDialogInviteUser == "function") {
-            openDialogInviteUser();
-        } else {
-            console.error('You must define your own openDialogInviteUser function to open "invite user" dialog');
-        }
+        $(".kandy-invite-dialog").attr('data-group', jQuery(this).closest('li.group').data('group'));
+        $('.kandy-invite-dialog').dialog('open');
     });
 
     $(".btnOpenModalCreateGroup").live('click', function(){

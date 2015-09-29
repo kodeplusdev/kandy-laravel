@@ -15,3 +15,7 @@ Route::get('/kandy/getUserForAgent', 'Kodeplusdev\Kandylaravel\KandyController@g
 
 Route::post('/kandy/rateagent', 'Kodeplusdev\Kandylaravel\KandyController@rateAgent');
 
+Route::get('/kandy/stillAlive', 'Kodeplusdev\Kandylaravel\KandyController@stillAlive');
+
+Route::get('/kandy/updateUserStatus', 'Kodeplusdev\Kandylaravel\KandyController@updateUserStatus');
+

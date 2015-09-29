@@ -56,6 +56,8 @@ return array(
 
     'kandy_live_chat_rate_table' => 'kandy_live_chat_rate',
 
+    'kandy_user_login_table' => 'kandy_user_login',
+
     'excluded_kandy_users'     => array(
         //exclude users for live chat feature
         'liveChat'  => array(
