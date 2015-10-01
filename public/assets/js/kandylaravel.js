@@ -3,6 +3,7 @@
 var unassignedUser = "KANDY UNASSIGNED USER";
 var chatMessageTimeStamp = 0;
 var activeContainerId;
+var sessionNames = {};
 
 var USER_STATUS_OFFLINE = 0;
 var USER_STATUS_ONLINE = 1;
@@ -1366,7 +1367,7 @@ var kandy_stopCoBrowsingAgent = function() {
  * @param notification
  */
 var kandy_onSessionJoinRequest = function(notification) {
-    var message = 'User '+notification.full_user_id+' request to join session '+ notification.session_id;
+    var message = 'User '+notification.full_user_id+' request to join session '+ sessionNames[notification.session_id];
     var confirm = window.confirm(message);
     if(confirm){
         kandy_ApproveJoinSession(notification.session_id, notification.full_user_id);

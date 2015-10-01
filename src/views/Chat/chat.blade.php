@@ -96,8 +96,12 @@
              modal: true,
              buttons: {
                "Create":function(){
-               var groupName = $('.kandy-group-dialog #groupName').val();
-                kandy_createGroup(groupName, kandy_loadGroups);
+                var groupName = $('.kandy-group-dialog #groupName').val();
+                if(groupName != '') {
+                    kandy_createGroup(groupName, kandy_loadGroups);
+                } else {
+                    alert('Please provide group name.');
+                }
                },
                Cancel: function() {
                  $(".kandy-group-dialog").dialog( "close" );

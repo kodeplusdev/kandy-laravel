@@ -35,11 +35,6 @@
         'onJoinApprove': kandy_onSessionJoinApprove
     };
 
-    function openDialog() {
-        $('.kandy-session-dialog').dialog('open');
-    }
-
-
     function displayButtons(){
         var isAdmin = false, isMember = false;
         currentSession = openSessions[parseInt($("#openSessions").val())];
@@ -82,6 +77,7 @@
                 //only use session with type = cobrowsing
                 if(session.session_type == 'cobrowsing'){
                     openSessions.push(session);
+                    sessionNames[session.session_id] = session.session_name;
                     if((session.admin_full_user_id == currentKandyUser) && (myOwnSessions.indexOf(session.session_id) == -1)){
                         myOwnSessions.push(session.session_id);
                     }
@@ -106,94 +102,95 @@
         mySessions.push(sessionId);
         displayButtons();
     };
-        /* Document ready */
-        $(document).ready(function(){
-           $(".kandy-session-dialog").dialog({
-             dialogClass: "no-close",
-             autoOpen: false,
-             height: 300,
-             width: 350,
-             modal: true,
-             buttons: {
-               "Create session":function(){
-               var creationTime = new Date().getTime();
-               var timeExpire = creationTime + 31536000;// expire in 1 year
-                var config = { //config
-                    session_type: 'cobrowsing',
-                    session_name: $('.kandy-session-dialog #sessionName').val(),
-                    creation_timestamp: creationTime,
-                    expiry_timestamp: timeExpire
-                };
-                kandy_createSession(config, function(){
-                    kandy_getOpenSessionsByType('cobrowsing', loadSessionList);
-                })
-               },
-               Cancel: function() {
-                 $(".kandy-session-dialog").dialog( "close" );
-               }
-             }
+    /* Document ready */
+    $(document).ready(function(){
 
-           });
-            $("#<?php echo $btnConnectSessionId?>").click(function(){
-                currentSession = openSessions[parseInt($("#openSessions").val())];
-                kandy_joinSession(currentSession.session_id);
-            });
-            $("#<?php echo $sessionListId ?>").on('change',displayButtons);
-
-            $("#coBrowsing #<?php echo $btnTerminateId;?>").on('click', function(){
-                var confirm = window.confirm("are you sure to terminate this session?")
-                if(confirm){
-                    var session = openSessions[parseInt($("#openSessions").val())];
-                    myOwnSessions.splice(myOwnSessions.indexOf(session.session_id,1));
-                    mySessions.splice(mySessions.indexOf(session.session_id),1);
-                    kandy_terminateSession(session.session_id, getCoBrowsingSessions);
-                }
-            });
-            $("#coBrowsing #<?php echo $btnStartCoBrowsingId?>").on('click', function(){
-                if(currentSession){
-                    $("#coBrowsing").addClass("browsing");
-                    $("#<?php echo $sessionListId ?>").attr("disabled", true);
-                    browsingType = 'user';
-                    kandy_startCoBrowsing(currentSession.session_id);
-                }
-            });
-            $("#coBrowsing #<?php echo $btnStartBrowsingViewerId?>").on('click', function(){
-                if(currentSession){
-                    browsingType = 'agent';
-                    $("#<?php echo $sessionListId ?>").attr("disabled", true);
-                    $("#coBrowsing").addClass("browsing");
-                    kandy_startCoBrowsingAgent(currentSession.session_id, document.getElementById("<?php echo $holderId ?>"));
-                }
-            });
-
-            $("#coBrowsing #<?php echo $btnStopId ?>").on('click', function(){
-                $("#coBrowsing").removeClass("browsing");
-                try{
-                    if(browsingType == 'user'){
-                        kandy_stopCoBrowsing();
-                    }else if(browsingType == 'agent'){
-                        kandy_stopCoBrowsingAgent();
-                    }
-                }catch(e){
-                    console.log("Error:");
-                    console.log(e);
-                }finally {
-                    $("#<?php echo $sessionListId ?>").attr("disabled", false);
-                }
-            });
-            $("#coBrowsing #<?php echo $btnLeaveId?>").on('click', function(){
-                var confirm = window.confirm("Are you sure to leave this session?");
-                if(confirm){
-                    if(currentSession){
-                        //delete from my session array
-                        mySessions.splice(mySessions.indexOf(currentSession),1);
-                        kandy_LeaveSession(currentSession.session_id);
-                        displayButtons();
-                    }
-                }
-            })
-            $('.kandy-open-dialog-btn').click(function(){
-                $('.kandy-session-dialog').dialog('open');
-            })
+        $("#<?php echo $btnConnectSessionId?>").click(function(){
+            currentSession = openSessions[parseInt($("#openSessions").val())];
+            kandy_joinSession(currentSession.session_id);
         });
+        $("#<?php echo $sessionListId ?>").on('change',displayButtons);
+
+        $("#coBrowsing #<?php echo $btnTerminateId;?>").on('click', function(){
+            var confirm = window.confirm("are you sure to terminate this session?")
+            if(confirm){
+                var session = openSessions[parseInt($("#openSessions").val())];
+                myOwnSessions.splice(myOwnSessions.indexOf(session.session_id,1));
+                mySessions.splice(mySessions.indexOf(session.session_id),1);
+                kandy_terminateSession(session.session_id, getCoBrowsingSessions);
+            }
+        });
+        $("#coBrowsing #<?php echo $btnStartCoBrowsingId?>").on('click', function(){
+            if(currentSession){
+                $("#coBrowsing").addClass("browsing");
+                $("#<?php echo $sessionListId ?>").attr("disabled", true);
+                browsingType = 'user';
+                kandy_startCoBrowsing(currentSession.session_id);
+            }
+        });
+        $("#coBrowsing #<?php echo $btnStartBrowsingViewerId?>").on('click', function(){
+            if(currentSession){
+                browsingType = 'agent';
+                $("#<?php echo $sessionListId ?>").attr("disabled", true);
+                $("#coBrowsing").addClass("browsing");
+                kandy_startCoBrowsingAgent(currentSession.session_id, document.getElementById("<?php echo $holderId ?>"));
+            }
+        });
+
+        $("#coBrowsing #<?php echo $btnStopId ?>").on('click', function(){
+            $("#coBrowsing").removeClass("browsing");
+            try{
+                if(browsingType == 'user'){
+                    kandy_stopCoBrowsing();
+                }else if(browsingType == 'agent'){
+                    kandy_stopCoBrowsingAgent();
+                }
+            }catch(e){
+                console.log("Error:");
+                console.log(e);
+            }finally {
+                $("#<?php echo $sessionListId ?>").attr("disabled", false);
+            }
+        });
+        $("#coBrowsing #<?php echo $btnLeaveId?>").on('click', function(){
+            var confirm = window.confirm("Are you sure to leave this session?");
+            if(confirm){
+                if(currentSession){
+                    //delete from my session array
+                    mySessions.splice(mySessions.indexOf(currentSession),1);
+                    kandy_LeaveSession(currentSession.session_id);
+                    displayButtons();
+                }
+            }
+        });
+        $(".kandy-session-dialog").dialog({
+         dialogClass: "no-close",
+         autoOpen: false,
+         height: 300,
+         width: 350,
+         modal: true,
+         buttons: {
+           "Create session":function(){
+           var creationTime = new Date().getTime();
+           var timeExpire = creationTime + 31536000;// expire in 1 year
+            var config = { //config
+                session_type: 'cobrowsing',
+                session_name: $('.kandy-session-dialog #sessionName').val(),
+                creation_timestamp: creationTime,
+                expiry_timestamp: timeExpire
+            };
+            kandy_createSession(config, function(){
+                kandy_getOpenSessionsByType('cobrowsing', loadSessionList);
+            })
+           },
+           Cancel: function() {
+             $(".kandy-session-dialog").dialog( "close" );
+           }
+         }
+
+       });
+        $('.kandy-open-dialog-btn').click(function(){
+            $('.kandy-session-dialog').dialog('open');
+        })
+    });
 </script>
