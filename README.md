@@ -118,7 +118,7 @@ Prepare Kandy css/javascript and log-in Kandy user who is associated with userId
 
 ### Use Kandy Widget:
 
-**Kandy Video**
+**Kandy Video**: Make a Kandy video component (video call)
 ```php
 {!! 
     KandyButton::videoCall(array(
@@ -180,7 +180,7 @@ Prepare Kandy css/javascript and log-in Kandy user who is associated with userId
  !!}
 ```
 
-**Kandy Voice**
+**Kandy Voice**: Make a Kandy voice call button component (voice call)
 ```php
 {!! 
     KandyButton::voiceCall(
@@ -215,7 +215,7 @@ Prepare Kandy css/javascript and log-in Kandy user who is associated with userId
  !!}
 ```
 	
-**Kandy Status**
+**Kandy Status**: Make a Kandy user status component (available, unavailable, awway, busy....). Kandy Status usually use with kandy address book component.
 ```php
 {!! 
     KandyStatus::show(
@@ -228,7 +228,7 @@ Prepare Kandy css/javascript and log-in Kandy user who is associated with userId
  !!}
 ```
 	
-**Kandy Addressbook**
+**Kandy Addressbook**: Make a Kandy address book component which list all friend in your contact.
 ```php
 {!! 
     KandyAddressBook::show(
@@ -238,10 +238,10 @@ Prepare Kandy css/javascript and log-in Kandy user who is associated with userId
 	        "class" => "myAddressBookStyle",
 	    )
 	)
- !!}
+!!}
 ```
 	
-**Kandy Chat**
+**Kandy Chat**: Make a Kandy chat component which help you send instant message to your friend in contact.
 ```php
 {!! 
     KandyChat::show(
@@ -264,10 +264,46 @@ Prepare Kandy css/javascript and log-in Kandy user who is associated with userId
 
         )
     )
- !!}
+!!}
 ```
 
-**Kandy Live Chat**
+**Kandy SMS**: Make a Kandy SMS component which help you send SMS to someone's phone number
+```php
+{!!
+ KandySms::show(
+     array(
+         'class'         => 'kandyButton myButtonStyle smsContainer',
+         'htmlAttr'      => array('style' => 'width:40%; margin-top:10px'),
+         'options'       => array(
+             'messageHolder' => 'Enter your message',
+             'numberHolder'  => 'Enter your number',
+             'btnSendId'     => 'btnSendSms',
+             'btnSendLabel'  => 'Send Sms'
+         )
+
+     )
+ )
+!!}
+```
+
+**Kandy Co-browsing**: Make a Kandy co-browsing component which help you share your browser screen with your friends.
+```php
+{!!
+KandyCoBrowsing::show(array(
+    'holderId'                  => 'cobrowsing-holder',
+    'btnTerminateId'            => 'btnTerminateSession',
+    'btnStopId'                 => 'btnStopCoBrowsing',
+    'btnLeaveId'                => 'btnLeaveSession',
+    'btnStartBrowsingViewerId'  => 'btnStartCoBrowsingViewer',
+    'btnStartCoBrowsingId'      => 'btnStartCoBrowsing',
+    'btnConnectSessionId'       => 'btnConnectSession',
+    'currentUser'               => KandyLaravel::getUser(Auth::user()->id),
+    'sessionListId'             => 'openSessions'
+));
+!!}
+```
+
+**Kandy Live Chat**: Make a small widget to help you implement live chat, give your customers ability to chat with customer service agent.
 ```php
 @if(Auth::check() == false)
     {!! KandyLiveChat::show(array(
