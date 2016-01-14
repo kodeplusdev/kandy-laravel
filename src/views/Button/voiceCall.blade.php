@@ -10,7 +10,7 @@
     <div class="kandyVideoButton kandyVideoButtonCallOut"
          id="{{$options['callOut']['id']}}">
         <label>{{$options['callOut']['label']}}</label>
-        <input value="{{isset($options['callOut']['value'])?$options['callOut']['value']:''}}" id="callOutUserId" <?php if(!isset($options['callOut']['value'])) echo 'class="select2"'?> {{isset($options['callOut']['type'])?'type="'.$options['callOut']['type'].'"':''}} />
+        <input value="{{isset($options['callOut']['value'])?$options['callOut']['value']:''}}" id="callOutUserId" <?php if(!isset($options['callOut']['value'])) echo 'class="select2"'?> {{isset($options['callOut']['type'])?'type='.$options['callOut']['type']:''}} />
         <input data-container="{{$id}}" class="btnCall" id="callBtn" type="button"
                value="{{$options['callOut']['btnLabel']}}"
                onclick="kandy_make_voice_call(this)"/>

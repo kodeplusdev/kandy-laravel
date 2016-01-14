@@ -22,7 +22,7 @@
         <div class="chat-with-message">
             Chatting with <span class="chat-friend-name"></span>
         </div>
-        <a href="#" class="button tiny right modalToggle" data-reveal-id="myModal">Create Group</a>
+        <a href="javascript:;" class="button tiny right modalToggle" data-reveal-id="myModal">Create Group</a>
 
         <div class="clear-fix"></div>
     </div>
@@ -78,7 +78,7 @@
     $(document).ready(function () {
         heartBeat(60000);
         $(window).bind('beforeunload', kandy_updateUserStatus);
-        $("form.send-message").live("submit", function (e) {
+        $(document).on("submit", "form.send-message", function (e) {
             var username = $(this).attr('data-user');
             var realID = jQuery(this).data('real-id');
             if(realID == ''){
@@ -93,13 +93,13 @@
             }
         });
 
-         $('.list-users li .remove').live('click', function(e){
+         $(document).on('click', '.list-users li .remove', function(e){
                 var userId = $(this).closest('li').data('user');
                 var groupId = $(this).closest('[data-group]').data('group');
                 kandy_removeFromGroup(groupId,userId);
            });
 
-        $('.cd-tabs-navigation > li > a').live('click', function (event) {
+        $(document).on('click', '.cd-tabs-navigation > li > a', function (event) {
             event.preventDefault();
             var selectedItem = $(this);
             if (!selectedItem.hasClass('selected')) {
@@ -113,6 +113,7 @@
 
                 // Set focus
                 selectedContent.find(".imMessageToSend").focus();
+                $(this).parent().find('.toggle').trigger('click');
 
                 // Set chat heading
                 $(".chat-with-message").show();
@@ -146,7 +147,7 @@
             }
         }
 
-        $(".toggle").live('click',function(){
+        $(document).on('click', ".toggle", function(){
             $(this).toggleClass('fa-plus-square-o').toggleClass('fa-minus-square-o');
             $(this).siblings('.list-users').toggleClass('expanding');
         });

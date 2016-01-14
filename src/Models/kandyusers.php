@@ -1,5 +1,5 @@
 <?php
-namespace Kodeplusdev\Kandylaravel;
+namespace Kodeplus\Kandylaravel;
 
 use Config;
 use Illuminate\Database\Eloquent\Model as Eloquent;
@@ -23,7 +23,7 @@ class KandyUsers extends Eloquent
         parent::__construct($attributes);
 
         // Set the prefix
-        $tableName = \Config::get('kandy-laravel::kandy_user_table');
+        $tableName = \Config::get('kandy-laravel.kandy_user_table');
         $this->table = $this->prefix . $tableName;
     }
 }

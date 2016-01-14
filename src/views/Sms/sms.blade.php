@@ -9,9 +9,9 @@
     <!-- end oncall -->
 </div>
 <script>
-    $(function(){
-        $("#<?php echo $options['btnSendId'] ?>").click(function(){
-            kandy_sendSms($("#phoneNum").val(),'', $("#msg").val());
+    jQuery(function(){
+        jQuery("#<?php echo $options['btnSendId'] ?>").click(function(){
+            kandy_sendSms(jQuery("#phoneNum").val(),'', jQuery("#msg").val());
         });
-    })
+    });
 </script>

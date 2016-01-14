@@ -1,0 +1,518 @@
+.kandyVideo {
+    margin-right: 10px;
+    float: left;
+}
+
+.kandyVideo .video {
+    display: block;
+}
+
+.kandyVideo .title {
+    margin: 5px 0;
+}
+
+/* Kandy Button */
+.kandyButton {
+    overflow: auto;
+    padding: 8px;
+}
+
+.kandyButton .kandyButtonComponent {
+    margin: 15px 0;
+}
+
+.kandyButton .kandyButtonComponent input {
+    width: 90px;
+    float: left;
+    margin-right: 5px;
+}
+
+.kandyButton .kandyButtonComponent input[type='text'] {
+    width: 250px;
+}
+
+.kandyButton .kandyButtonComponent input[type='button'] {
+    width: 90px;
+}
+
+.kandyButton .kandyButtonComponent .someonesCalling {
+    display: none;
+}
+
+.kandyButton .kandyButtonComponent .someonesCalling {
+    display: none;
+}
+
+.kandyButton .kandyVideoButtonOnCall {
+    display: none;
+}
+
+.kandyButton .kandyVideoButtonCalling {
+    display: none;
+}
+
+.kandyButton .kandyVideoButtonSomeonesCalling {
+    display: none;
+}
+
+.kandyButton .videoVoiceCallHolder{
+    display: none;
+}
+
+/*KANDY ADDRESS BOOK */
+.kandyAddressBook .kandyAddressContactList {
+    background-color: #646567;
+    color: white;
+    width: 100%;
+    padding: 5px 10px;
+    border: 1px solid #375761
+}
+
+.kandyAddressBook .kandyAddressContactList .myContacts Title {
+    text-align: center;
+    text-decoration: underline
+}
+
+.kandyAddressBook .kandyDirectorySearch {
+    margin-top: 20px
+}
+
+.kandyAddressBook .kandyDirSearchTitle {
+    text-align: center;
+    text-decoration: underline
+}
+
+.kandyAddressBook .kandyDirSearchResults {
+    background-color: lightgray;
+    padding: 5px 10px;
+    width: 100%;
+    border: 1px solid black
+}
+
+.kandyAddressBook .userId {
+    width: 190px;
+    display: inline-block
+}
+
+.kandyAddressBook .presence {
+    width: 130px;
+    display: inline-block
+}
+
+.kandyAddressBook .kandyContactItem {
+    padding: 5px;
+}
+
+.kandyAddressBook .kandySearchItem {
+    padding: 5px;
+}
+
+/* KANDY CHAT STYLE */
+.kandyChat .imUsername {
+    display: inline-block;
+
+}
+
+.kandyChat .imMessageToSend {
+    width: 175px
+}
+
+.kandyChat .messages {
+    border: solid black 1px
+}
+
+.kandyChat .imMessage {
+    display: inline-block;
+
+}
+
+.kandyChat .kandyMessages {
+    width: 100%;
+    height: 425px;
+    overflow: auto;
+}
+
+.kandyChat .my-message {
+    color: #0995FF;
+}
+
+.kandyChat .their-message {
+    color: #F47063;
+}
+
+.kandyChat .chat-heading .contact-heading label{
+    display: inline-block;
+}
+
+.kandyChat .chat-heading .contact-heading select{
+    display: inline-block;
+    width: 110px;
+    padding: 2px 0;
+}
+
+.kandyChat .btnSendMessage {
+    width: 100%;
+    height: 40px;
+}
+
+.kandyChat .cd-tabs-navigation li a{
+
+    text-indent: 16px;
+}
+
+.kandyChat .cd-tabs-navigation li i.status{
+    font-size: 0.75rem;
+    text-indent: 16px;
+    display: block;
+    line-height: 1em;
+}
+
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-available > a{
+    background: url("../img/available.png") left center no-repeat;
+}
+
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-offline > a{
+    background: url("../img/offline.png") left center no-repeat;
+}
+
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-unavailable a,
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-away a,
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-busy a,
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-out-to-lunch a,
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-on-vacation a,
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-be-right-back a{
+    background: url("../img/busy.png") left center no-repeat;
+}
+
+/* CSS for tab */
+
+.kandyChat.row.cd-tabs {
+    position: relative;
+    width: 90%;
+    max-width: 960px;
+    margin: 2em 0;
+    height: 500px!important;
+}
+
+.kandyChat.cd-tabs nav {
+    width: 20%;
+    height: 100%;
+    float: left;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 5px;
+    box-shadow: inset 0 0 2px #aaa;
+}
+
+.kandyChat .cd-tabs-navigation {
+    width: 100%;
+    margin: 0;
+    padding-bottom: 20px;
+}
+
+.kandyChat .cd-tabs-navigation li {
+    float: left;
+    width: 98%;
+    position: relative;
+}
+
+.kandyChat .cd-tabs-navigation a {
+    background-color: #ffffff !important;
+    position: relative;
+    display: block;
+    width: 100%;
+    font-size: 0.75rem;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #000;
+}
+
+.no-touch .cd-tabs-navigation a:hover {
+    font-weight: 700;
+    background-color: rgba(233, 230, 202, 0.3);
+}
+
+.kandyChat .cd-tabs-navigation a.selected {
+    background-color: #ffffff !important;
+    font-weight: 700;
+}
+
+.kandyChat .cd-tabs-navigation a::before {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    margin-left: -10px;
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+    background-repeat: no-repeat;
+}
+
+.kandyChat .cd-tabs-navigation a[data-content='inbox']::before {
+    background-position: 0 0;
+}
+
+.kandyChat .cd-tabs-navigation a[data-content='new']::before {
+    background-position: -20px 0;
+}
+
+.kandyChat .cd-tabs-navigation a[data-content='gallery']::before {
+    background-position: -40px 0;
+}
+
+.kandyChat .cd-tabs-navigation a[data-content='store']::before {
+    background-position: -60px 0;
+}
+
+.kandyChat .cd-tabs-navigation a[data-content='settings']::before {
+    background-position: -80px 0;
+}
+
+.kandyChat .cd-tabs-navigation a[data-content='trash']::before {
+    background-position: -100px 0;
+}
+
+.kandyChat .cd-tabs-navigation a[data-content='inbox'].selected::before {
+    background-position: 0 -20px;
+}
+
+.kandyChat .cd-tabs-navigation a[data-content='new'].selected::before {
+    background-position: -20px -20px;
+}
+
+.kandyChat .cd-tabs-navigation a[data-content='gallery'].selected::before {
+    background-position: -40px -20px;
+}
+
+.kandyChat .cd-tabs-navigation a[data-content='store'].selected::before {
+    background-position: -60px -20px;
+}
+
+.kandyChat .cd-tabs-navigation a[data-content='settings'].selected::before {
+    background-position: -80px -20px;
+}
+
+.kandyChat .cd-tabs-navigation a[data-content='trash'].selected::before {
+    background-position: -100px -20px;
+}
+
+.kandyChat .cd-tabs-content {
+    background: #ffffff;
+    height: 100%;
+    width: 80%;
+    float: left;
+    margin: 0;
+}
+
+.kandyChat .cd-tabs-content li {
+    display: none;
+    padding: 0 1.4em;
+}
+
+.kandyChat .cd-tabs-content li.selected {
+    display: block;
+    -webkit-animation: cd-fade-in 0.5s;
+    -moz-animation: cd-fade-in 0.5s;
+    animation: cd-fade-in 0.5s;
+}
+
+.kandyChat .cd-tabs-content li p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #8493bf;
+    margin-bottom: 2em;
+}
+
+@-webkit-keyframes cd-fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@-moz-keyframes cd-fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes cd-fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.kandyChat .input-message {
+    float: left;
+    width: 87%;
+}
+
+.kandyChat .button-send {
+    width: 12%;
+    float: right;
+}
+
+.kandyChat .clear-fix {
+    clear: both;
+}
+
+.kandyChat .contact-heading {
+    float: left;
+    width: 20%;
+}
+
+.kandyChat .chat-with-message {
+    float: left;
+    padding-left: 1.4em;
+    display: none;
+}
+
+.select2 {
+    min-width: 150px;
+    width: 30%;
+}
+
+.kandyChat .cd-tabs-navigation li .list-users {
+    list-style: none;
+    font-size: 12px;
+    display: none;
+}
+
+.kandyChat .cd-tabs-navigation li .list-users.expanding {
+    list-style: none;
+    display: block;
+    margin-left: 5px;
+}
+
+.kandyChat .cd-tabs-navigation li i.toggle{
+    font-size:10px;
+    margin-right:5px;
+}
+
+.kandyChat .cd-tabs-navigation li i.toggle.expand{
+    content: '&#8722;';
+}
+
+.kandyChat .cd-tabs-navigation li.group{
+    padding: 5px;
+}
+
+.kandyChat .cd-tabs-navigation li.group a{
+    display: inline;
+}
+
+.kandyChat .cd-tabs-navigation li.group li a{
+    padding-left: 15px;
+}
+
+.kandyChat .cd-tabs-navigation li.group a.join:hover{
+    color: green;
+}
+.kandyChat .cd-tabs-navigation li.group a.leave:hover{
+    color: red;
+}
+
+.kandyChat .cd-tabs-navigation li.group .groupAction:hover, .kandyChat .cd-tabs-navigation li.group .remove:hover{
+    cursor: pointer;
+    color:red;
+}
+
+.kandyChat .cd-tabs-navigation li.group .groupAction:hover, .kandyChat .cd-tabs-navigation li.group .approve:hover{
+    cursor: pointer;
+    color:green;
+}
+
+
+.kandyChat .cd-tabs-navigation li.group .groupAction, .kandyChat .cd-tabs-navigation li.group .actions{
+    float: right;
+
+}
+
+.kandyChat .cd-tabs-navigation li.group .groupAction a{
+    line-height: 40px;
+}
+
+.kandyChat .cd-tabs-navigation.contacts li:last-of-type {
+    margin-bottom: 20px;
+}
+
+.separator {
+    font-size: 12px;
+    line-height: 0.5;
+    text-align: center;
+    width: 100%;
+}
+.separator span {
+    display: inline-block;
+    position: relative;
+    height: 12px;
+    overflow: visible;
+}
+.separator span:before,
+.separator span:after {
+    content: "";
+    position: absolute;
+    height: 3px;
+    background: #e4e4e4;
+    top: 0;
+    width: 600px;
+}
+.separator span:before {
+    right: 100%;
+    margin-right: 15px;
+}
+.separator span:after {
+    left: 100%;
+    margin-left: 15px;
+}
+
+#myChat nav {
+    overflow-x: hidden;
+}
+
+.modalToggle {
+    margin-right: 23px;
+}
+
+.fa {
+    font-size: 15px;
+}
+
+
+#coBrowsing .buttons button{
+    display: none;
+}
+
+#coBrowsing.browsing .buttons #btnStartCoBrowsing,
+#coBrowsing.browsing .buttons #btnStartCoBrowsingViewer,
+#coBrowsing.browsing .buttons #btnTerminateSession,
+#coBrowsing.browsing .buttons #btnLeaveSession {
+    display: none !important;
+}
+
+#coBrowsing.browsing .buttons #btnStopCoBrowsing {
+    display: inline-block !important;
+}
+#coBrowsing #cobrowsing-holder {
+    overflow-y: auto;
+}
+iframe {
+    width: 100% !important;
+    height: 500px !important;
+}
+
+.openSessionWrap {
+    width: 300px;
+    margin-right: 30px;
+}
+i.toggle:hover {
+    cursor: pointer;
+}

@@ -1,40 +1,40 @@
 {
-    "name": "kandy-io/kandy-laravel",
-    "description": "This Laravel package encapsulates all of Kandy’s JS SDK and Restful APIs. Kandy is a product by GENBAND (www.genband.com) that utilizes WebRTC to enable peer to peer audio and video calls and chat. SMS and PSTN calling support will be added to this package in the near future.",
-    "keywords": [
-        "kandy",
-        "streaming",
-        "webrtc",
-        "video",
-        "audio",
-        "chat",
-        "streaming",
-        "video streaming",
-        "laravel webrtc",
-        "peer-to-peer video",
-        "collaboration"
+  "name": "kandy-io/kandy-laravel",
+  "description": "This Laravel package encapsulates all of Kandy’s JS SDK and Restful APIs. Kandy is a product by GENBAND (www.genband.com) that utilizes WebRTC to enable peer to peer audio and video calls and chat. SMS and PSTN calling support will be added to this package in the near future.",
+  "keywords": [
+    "kandy",
+    "streaming",
+    "webrtc",
+    "video",
+    "audio",
+    "chat",
+    "streaming",
+    "video streaming",
+    "laravel webrtc",
+    "peer-to-peer video",
+    "collaboration"
+  ],
+  "homepage": "https://github.com/Kandy-IO/kandy-laravel",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Kodeplus",
+      "email": "kodeplusdev@gmail.com",
+      "homepage": "http://kandy.io"
+    }
+  ],
+  "require": {
+    "php": ">=5.5.9"
+  },
+  "autoload": {
+    "classmap": [
+      "src/database/migrations",
+      "src/Models",
+      "src/controllers"
     ],
-    "homepage": "https://github.com/Kandy-IO/kandy-laravel",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Kodeplus",
-            "email": "kodeplusdev@gmail.com",
-            "homepage": "http://kandy.io"
-        }
-    ],
-    "require": {
-        "php": ">=5.4.0"
-    },
-    "autoload": {
-        "classmap": [
-            "src/migrations",
-            "src/Models",
-            "src/controllers"
-        ],
-        "psr-0": {
-            "Kodeplusdev\\Kandylaravel\\": "src/"
-        }
-    },
-    "minimum-stability": "stable"
+    "psr-4": {
+      "Kodeplus\\Kandylaravel\\": "src/"
+    }
+  },
+  "minimum-stability": "stable"
 }

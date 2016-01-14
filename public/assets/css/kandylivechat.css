@@ -5,11 +5,11 @@
     width: 300px;
     background-color: #FFFFFF;
     z-index: 9999;
-    border: 1px #E4E4E4 solid;
+    border: 1px #008cba solid;
 }
 
 #liveChat .header {
-    background-color: #34302A;
+    background-color: #008cba;
     color: #FFFFFF;
     font-size: 20px;
     font-weight: bold;
@@ -83,6 +83,11 @@
 
 #liveChat #restoreBtn {
     border: 2px #FFFFFF solid;
+    margin-top: 3px;
+}
+
+#liveChat .closeChat + span + #restoreBtn {
+    margin-right: 5px;
 }
 
 #liveChat .customerService {

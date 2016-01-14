@@ -16,14 +16,14 @@
     </div>
     <div id="{{$holderId}}"></div>
 </div>
-{{ HTML::script(\Kodeplusdev\Kandylaravel\Kandylaravel::KANDY_CO_BROWSE)}}
+{!! HTML::script(\Kodeplus\Kandylaravel\Kandylaravel::KANDY_CO_BROWSE) !!}
 <script>
     var openSessions = [];
     var currentSession;
     var myOwnSessions = [];// sessions that current user created
     var mySessions    = [];// sessions that current user is a participant
     var browsingType;
-    var currentKandyUser = '{{$currentUser->user_id , '@', $currentUser->domain_name}}';
+    var currentKandyUser = '{{$currentUser->user_id . '@' . $currentUser->domain_name}}';
     var sessionListeners = {
         'onUserJoinRequest': kandy_onSessionJoinRequest,
         'onJoinApprove': kandy_onSessionJoinApprove
@@ -97,13 +97,13 @@
         /* Document ready */
         $(function(){
 
-            $("#<?php echo $btnConnectSessionId?>").click(function(){
+            $(document).on("click", "#<?php echo $btnConnectSessionId?>", function(e){
                 currentSession = openSessions[parseInt($("#openSessions").val())];
                 kandy_joinSession(currentSession.session_id);
             });
-            $("#<?php echo $sessionListId ?>").on('change',displayButtons);
+            $(document).on('change', "#<?php echo $sessionListId ?>",displayButtons);
 
-            $("#coBrowsing #<?php echo $btnTerminateId;?>").on('click', function(){
+            $(document).on('click', "#coBrowsing #<?php echo $btnTerminateId;?>", function(e){
                 var confirm = window.confirm("are you sure to terminate this session?")
                 if(confirm){
                     var session = openSessions[parseInt($("#openSessions").val())];
@@ -112,7 +112,7 @@
                     kandy_terminateSession(session.session_id, getCoBrowsingSessions);
                 }
             });
-            $("#coBrowsing #<?php echo $btnStartCoBrowsingId?>").on('click', function(){
+            $(document).on('click', "#coBrowsing #<?php echo $btnStartCoBrowsingId?>", function(e){
                 if(currentSession){
                     $("#coBrowsing").addClass("browsing");
                     $("#<?php echo $sessionListId ?>").attr("disabled", true);
@@ -120,7 +120,7 @@
                     kandy_startCoBrowsing(currentSession.session_id);
                 }
             });
-            $("#coBrowsing #<?php echo $btnStartBrowsingViewerId?>").on('click', function(){
+            $(document).on('click', "#coBrowsing #<?php echo $btnStartBrowsingViewerId?>", function(e){
                 if(currentSession){
                     browsingType = 'agent';
                     $("#<?php echo $sessionListId ?>").attr("disabled", true);
@@ -129,7 +129,7 @@
                 }
             });
 
-            $("#coBrowsing #<?php echo $btnStopId ?>").on('click', function(){
+            $(document).on('click', "#coBrowsing #<?php echo $btnStopId ?>", function(e){
                 $("#coBrowsing").removeClass("browsing");
                 try{
                     if(browsingType == 'user'){
@@ -144,7 +144,7 @@
                     $("#<?php echo $sessionListId ?>").attr("disabled", false);
                 }
             });
-            $("#coBrowsing #<?php echo $btnLeaveId?>").on('click', function(){
+            $(document).on('click', "#coBrowsing #<?php echo $btnLeaveId?>", function(e){
                 var confirm = window.confirm("Are you sure to leave this session?");
                 if(confirm){
                     if(currentSession){

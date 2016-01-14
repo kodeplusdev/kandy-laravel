@@ -6,7 +6,7 @@
  * Time: 10:33 AM
  */
 
-namespace Kodeplusdev\Kandylaravel;
+namespace Kodeplus\Kandylaravel;
 use Config;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 

@@ -11,7 +11,7 @@ Home page: http://www.kandy.io/
 
 ## Requirements
 ---
-* PHP 5.4+
+* PHP 5.5.9+
 
 ## Package Setup
 ---
@@ -20,10 +20,11 @@ Home page: http://www.kandy.io/
 
 ```php
 "require": {
-    "laravel/framework": "4.2.*",
-    "toddish/verify": "3.*",
+    "laravel/framework": "5.1.*",
+    "illuminate/html" : "~5.0",
+    "toddish/verify": "~5",
+    "kandy-io/kandy-laravel": "2.4.2"
     ... // Others
-    "kandy-io/kandy-laravel": "2.3.0"
 },
 ```
 
@@ -33,49 +34,76 @@ Then, run a composer update on the command line from the root of your project:
 composer update
 ```
 
-### Database Migration
-
-Migrate the database tables for kandylaravel. Run these on the command line from the root of your project:
-
-```
-php artisan migrate --package="kandy-io/kandy-laravel"
-```
-
 ### Configuration
+
+Use an artisan command to publish public:
+
+```
+php artisan vendor:publish --force --provider=Kodeplus\Kandylaravel\KandylaravelServiceProvider --tag=public
+```
+
+Use an artisan command to publish migrations:
+
+```
+php artisan vendor:publish --force --provider=Kodeplus\Kandylaravel\KandylaravelServiceProvider --tag=migrations
+```
+
+Note: If you haven't run migrate the database tables for Verify, you need to run command line below:
+```
+php artisan vendor:publish --provider=Toddish\Verify\Providers\VerifyServiceProvider --tag=migrations
+```
 
 Use an artisan command to publish configuration:
 
 ```
-php artisan config:publish kandy-io/kandy-laravel
+php artisan vendor:publish --provider=Kodeplus\Kandylaravel\KandylaravelServiceProvider --tag=config
+```
+
+### Database Migration
+
+Before run migrations, edit database config in config\database.php.
+Migrate the database tables for kandylaravel. Run these on the command line from the root of your project:
+
+```
+php artisan migrate
+```
+
+Seed the database tables for kandylaravel. Run these on the command line from the root of your project:
+
+```
+php artisan db:seed
 ```
 
 Configuration file will be generated at
 
 ```
-    app\config\packages\kandy-io\kandy-laravel\config.php
+    config\kandy-laravel.php
 ```
 
 Login to [kandy.io](https://www.kandy.io) to retrieve the ```api key``` and ```domain_api_secret``` for the domain
 
 ### Provider and Alias
 
-Define service provider and alias for Kandy in ```app\config\app.php```
+Define service provider and alias for Kandy in ```config\app.php```
 ```php
-"providers" => array(
+"providers" => [
     ...	// Others
-    'Kodeplusdev\Kandylaravel\KandylaravelServiceProvider',
-),
+    Kodeplus\Kandylaravel\KandylaravelServiceProvider::class,
+],
 
 // Other configurations
-'aliases' => array(
+'aliases' => [
     ...	// Others
-    'KandyVideo'        => 'Kodeplusdev\Kandylaravel\Facades\Video',
-    'KandyButton'       => 'Kodeplusdev\Kandylaravel\Facades\Button',
-    'KandyStatus'       => 'Kodeplusdev\Kandylaravel\Facades\Status',
-    'KandyAddressBook'  => 'Kodeplusdev\Kandylaravel\Facades\AddressBook',
-    'KandyChat'         => 'Kodeplusdev\Kandylaravel\Facades\Chat',
-    'KandyLaravel'      => 'Kodeplusdev\Kandylaravel\Facades\KandyLaravel',
-),
+    'KandyLaravel'      => Kodeplus\Kandylaravel\Facades\KandyLaravel::class,
+    'KandyVideo'        => Kodeplus\Kandylaravel\Facades\Video::class,
+    'KandyButton'       => Kodeplus\Kandylaravel\Facades\Button::class,
+    'KandyStatus'       => Kodeplus\Kandylaravel\Facades\Status::class,
+    'KandyAddressBook'  => Kodeplus\Kandylaravel\Facades\AddressBook::class,
+    'KandyChat'         => Kodeplus\Kandylaravel\Facades\Chat::class,
+    'KandyLiveChat'     => Kodeplus\Kandylaravel\Facades\LiveChat::class,
+    'KandyCoBrowsing'   => Kodeplus\Kandylaravel\Facades\CoBrowsing::class,
+    'KandySms'          => Kodeplus\Kandylaravel\Facades\Sms::class
+],
 ```
 
 ## Usage
@@ -85,14 +113,14 @@ Define service provider and alias for Kandy in ```app\config\app.php```
 Prepare Kandy css/javascript and log-in Kandy user who is associated with userId:
 
 ```php
-{{KandyLaravel::init($userId);}}
+{!! KandyLaravel::init($userId); !!}
 ```
 
 ### Use Kandy Widget:
 
 **Kandy Video**
 ```php
-{{
+{!! 
     KandyButton::videoCall(array(
         "id"      => "kandyVideoAnswerButton",
         "class"   => "myButtonStyle",
@@ -119,9 +147,9 @@ Prepare Kandy css/javascript and log-in Kandy user who is associated with userId
             ),
         )
     ))
-}}
+ !!}
 
-{{
+{!! 
     KandyVideo::show(
         array(
             "title"       => "Them",
@@ -134,9 +162,9 @@ Prepare Kandy css/javascript and log-in Kandy user who is associated with userId
             )
         )
     )
-}}
+ !!}
 
-{{
+{!! 
     KandyVideo::show(
         array(
             "title"       => "Me",
@@ -149,12 +177,12 @@ Prepare Kandy css/javascript and log-in Kandy user who is associated with userId
             )
         )
     )
-}}
+ !!}
 ```
 
 **Kandy Voice**
 ```php
-{{
+{!! 
     KandyButton::voiceCall(
 	    array(
 	        "id" => "kandyVideoAnswerButton",
@@ -184,12 +212,12 @@ Prepare Kandy css/javascript and log-in Kandy user who is associated with userId
 	        )
 	    )
 	)
-}}
+ !!}
 ```
 	
 **Kandy Status**
 ```php
-{{
+{!! 
     KandyStatus::show(
         array(
             "title" => "My Status",
@@ -197,12 +225,12 @@ Prepare Kandy css/javascript and log-in Kandy user who is associated with userId
 	        "class" => "myStatusStyle",
 	    )
 	)
-}}
+ !!}
 ```
 	
 **Kandy Addressbook**
 ```php
-{{
+{!! 
     KandyAddressBook::show(
         array(
             "title" => "My Contact",
@@ -210,12 +238,12 @@ Prepare Kandy css/javascript and log-in Kandy user who is associated with userId
 	        "class" => "myAddressBookStyle",
 	    )
 	)
-}}
+ !!}
 ```
 	
 **Kandy Chat**
 ```php
-{{
+{!! 
     KandyChat::show(
         array(
             "id" => "myChat",
@@ -236,13 +264,35 @@ Prepare Kandy css/javascript and log-in Kandy user who is associated with userId
 
         )
     )
-}}
+ !!}
+```
+
+**Kandy Live Chat**
+```php
+@if(Auth::check() == false)
+    {!! KandyLiveChat::show(array(
+        'registerForm'  => array(
+            'email' => array(
+                'label' => 'Email *',
+                'class' => '',
+            ),
+            'name'  => array(
+                'label' => 'Name *',
+                'class' => ''
+            )
+        ),
+        'agentInfo' => array(
+            'avatar'    => asset('kandy-io/kandy-laravel/assets/img/icon-helpdesk.png'),
+            'title'     => 'Support Agent',
+        )
+    )) !!}
+@endif
 ```
 
 ## KANDY APIs
 ---
 
-Refer to:  ```kandy-laravel\src\Kodeplusdev\Kandylaravel\KandyLaravel.php```
+Refer to:  ```kandy-laravel\src\Kodeplus\Kandylaravel\KandyLaravel.php```
 
 ### Sync users from Kandy to local database table kandy_users
 
