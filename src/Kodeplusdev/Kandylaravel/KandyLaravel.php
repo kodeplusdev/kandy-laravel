@@ -18,7 +18,7 @@ class Kandylaravel
     const RATE_CSS = 'packages/kandy-io/kandy-laravel/assets/css/rateit.css';
 
     // Default KANDY JS from cloud
-    const KANDY_JS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/2.3.0/kandy.js';
+    const KANDY_JS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/2.4.2/kandy.js';
     const KANDY_JQUERY = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js';
     const KANDY_CO_BROWSE = 'https://kandy-portal.s3.amazonaws.com/public/javascript/cobrowse/1.0.1/kandy.cobrowse.min.js';
 
@@ -41,6 +41,24 @@ class Kandylaravel
 
     const USER_STATUS_ONLINE = 1;
     const USER_STATUS_OFFLINE = 0;
+
+    const USER_STATUS_AVAILABLE = 0;
+    const USER_STATUS_UNAVAILABLE = 1;
+    const USER_STATUS_AWAY = 2;
+    const USER_STATUS_OUTTOLUNCH = 3;
+    const USER_STATUS_BUSY = 4;
+    const USER_STATUS_ONVACATION = 5;
+    const USER_STATUS_BERIGHTBACK = 6;
+
+    public static $presenceStatus = [
+        self::USER_STATUS_AVAILABLE => 'Available',
+        self::USER_STATUS_UNAVAILABLE => 'Unavailable',
+        self::USER_STATUS_AWAY => 'Away',
+        self::USER_STATUS_OUTTOLUNCH => 'Out To Lunch',
+        self::USER_STATUS_BUSY => 'Busy',
+        self::USER_STATUS_ONVACATION => 'On Vacation',
+        self::USER_STATUS_BERIGHTBACK => 'Be Right Back'
+    ];
 
     // Kandy Laravel configuration variables which could be overridden at application
     public $domainAccessToken;
@@ -151,6 +169,59 @@ class Kandylaravel
                 'success' => false,
                 'message' => 'Response none json format!!'
             );
+        }
+    }
+
+    /**
+     * Get a Kandy anonymous user
+     *
+     * @return array
+     * @throws RestClientException
+     */
+    public function getAnonymousUser()
+    {
+        $result = $this->getDomainAccessToken();
+        if ($result['success'] == true) {
+            $this->domainAccessToken = $result['data'];
+        } else {
+            // Catch errors
+        }
+
+        $params = array(
+            'key' => $this->domainAccessToken
+        );
+
+        $fieldsString = http_build_query($params);
+        $url = Kandylaravel::API_BASE_URL . 'domains/access_token/users/user/anonymous' . '?' . $fieldsString;
+        $headers = array(
+            'Content-Type: application/json'
+        );
+
+        try {
+            $response = (new RestClient())->get($url, $headers)->getContent();
+        } catch (Exception $ex) {
+            return array(
+                'success' => false,
+                'message' => $ex->getMessage()
+            );
+        }
+
+        $response = json_decode($response);
+        if ($response) {
+            if (!empty($response->result)) {
+                $res = $response->result;
+                $user = new KandyUsers();
+                $user->user_id = $res->user_name;
+                $user->password = $res->user_password;
+                $user->email = $res->full_user_id;
+                $user->domain_name = $res->domain_name;
+                $user->user_access_token = $res->user_access_token;
+                return $user;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
         }
     }
 
@@ -523,6 +594,7 @@ class Kandylaravel
         }
         $return .= $this->add('script', self::KANDY_JS);
         $return .= "<script>
+                    var username = '" . $this->username . "';
                     window.login = function() {
                         kandy.login('" . $this->apiKey . "', '" . $this->username . "', '" . $this->password . "', kandy_login_success_callback, kandy_login_failed_callback);
                     };
@@ -703,6 +775,24 @@ class Kandylaravel
     }
 
     /**
+     * Get Kandy user by full user id
+     *
+     * @param $full_user_id
+     * @return string
+     */
+    public function getKandyUserByFullUserId($full_user_id)
+    {
+        $arrFullUserId = explode('@', $full_user_id);
+        $userId = $arrFullUserId[0];
+        $domain = $arrFullUserId[1];
+        $user = KandyUsers::where('user_id', $userId)->where('domain_name', $domain)->first();
+        if (!empty($user)) {
+            return $user;
+        }
+        return null;
+    }
+
+    /**
      * Get last seen of kandy users
      * @param array $users
      * @return mixed|null
@@ -728,7 +818,6 @@ class Kandylaravel
         }catch (\Exception $e){
             $response = null;
         }
-        return $response;
-
+        return !empty($response) ? $response->result : $response;
     }
 }

@@ -18,3 +18,8 @@ Route::post('/kandy/rateagent', 'Kodeplusdev\Kandylaravel\KandyController@rateAg
 Route::get('/kandy/updateUserStatus','Kodeplusdev\Kandylaravel\KandyController@updateUserStatus');
 Route::get('/kandy/stillAlive','Kodeplusdev\Kandylaravel\KandyController@stillAlive');
 
+Route::post('/kandy/updatePresence', 'Kodeplusdev\Kandylaravel\KandyController@updatePresence');
+
+Route::post('/kandy/getPresenceStatus', 'Kodeplusdev\Kandylaravel\KandyController@getPresenceStatus');
+
+Route::get('/kandy/checkAgentOnline','Kodeplusdev\Kandylaravel\KandyController@checkAgentOnline');

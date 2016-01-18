@@ -174,15 +174,29 @@
     background: url("../img/offline.png") left center no-repeat;
 }
 
-.kandyChat .cd-tabs-navigation li.kandy-chat-status-unavailable a,
-.kandyChat .cd-tabs-navigation li.kandy-chat-status-away a,
-.kandyChat .cd-tabs-navigation li.kandy-chat-status-busy a,
-.kandyChat .cd-tabs-navigation li.kandy-chat-status-out-to-lunch a,
-.kandyChat .cd-tabs-navigation li.kandy-chat-status-on-vacation a,
-.kandyChat .cd-tabs-navigation li.kandy-chat-status-be-right-back a{
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-busy a {
     background: url("../img/busy.png") left center no-repeat;
 }
 
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-unavailable a {
+    background: url("../img/unavailable.png") left center no-repeat;
+}
+
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-away a {
+    background: url("../img/away.png") left center no-repeat;
+}
+
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-out-to-lunch a {
+    background: url("../img/out-to-lunch.png") left center no-repeat;
+}
+
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-on-vacation a {
+    background: url("../img/on-vacation.png") left center no-repeat;
+}
+
+.kandyChat .cd-tabs-navigation li.kandy-chat-status-be-right-back a {
+    background: url("../img/be-right-back.png") left center no-repeat;
+}
 /* CSS for tab */
 
 .kandyChat.row.cd-tabs {

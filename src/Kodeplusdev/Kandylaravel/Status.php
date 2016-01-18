@@ -28,7 +28,7 @@ class Status extends RenderedObject
      * @var array A list of html options of the Status
      */
     protected $htmlOptions = array(
-        "style" => "width: 100px;"
+        "style" => "width: 130px;"
     );
 
     /**
@@ -87,6 +87,18 @@ class Status extends RenderedObject
         }
 
         $data["htmlOptionsAttributes"] = $htmlOptionsAttributes;
+
+        if(\Auth::check()){
+            $fullUserId = (new Kandylaravel())->getKandyUserFromMainUser(\Auth::user()->id, true);
+            if(!empty($fullUserId)) {
+                $data["fullUserId"] = $fullUserId;
+                $kandyUser = (new Kandylaravel())->getKandyUserByFullUserId($fullUserId);
+                if(!empty($kandyUser)) {
+                    $data['presenceStatus'] = $kandyUser->presence_status;
+                }
+            }
+        }
+
         $this->data = $data;
     }
 

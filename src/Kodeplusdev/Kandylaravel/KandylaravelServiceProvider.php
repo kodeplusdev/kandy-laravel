@@ -1,5 +1,6 @@
 <?php
 namespace Kodeplusdev\Kandylaravel;
+
 use Illuminate\Support\ServiceProvider;
 use Artisan;
 use Event;

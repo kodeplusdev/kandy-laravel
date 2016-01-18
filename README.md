@@ -23,7 +23,7 @@ Home page: http://www.kandy.io/
     "laravel/framework": "4.2.*",
     "toddish/verify": "3.*",
     ... // Others
-    "kandy-io/kandy-laravel": "2.3.0"
+    "kandy-io/kandy-laravel": "2.4.2"
 },
 ```
 
@@ -38,7 +38,17 @@ composer update
 Migrate the database tables for kandylaravel. Run these on the command line from the root of your project:
 
 ```
+php artisan migrate
+```
+
+```
 php artisan migrate --package="kandy-io/kandy-laravel"
+```
+
+Seed the database tables for kandylaravel. Run these on the command line from the root of your project:
+
+```
+php artisan db:seed
 ```
 
 ### Configuration
@@ -74,7 +84,10 @@ Define service provider and alias for Kandy in ```app\config\app.php```
     'KandyStatus'       => 'Kodeplusdev\Kandylaravel\Facades\Status',
     'KandyAddressBook'  => 'Kodeplusdev\Kandylaravel\Facades\AddressBook',
     'KandyChat'         => 'Kodeplusdev\Kandylaravel\Facades\Chat',
+    'KandyLiveChat'     => 'Kodeplusdev\Kandylaravel\Facades\LiveChat',
     'KandyLaravel'      => 'Kodeplusdev\Kandylaravel\Facades\KandyLaravel',
+    'KandyCoBrowsing'   => 'Kodeplusdev\Kandylaravel\Facades\CoBrowsing',
+    'KandySms'          => 'Kodeplusdev\Kandylaravel\Facades\Sms'
 ),
 ```
 
@@ -236,6 +249,63 @@ Prepare Kandy css/javascript and log-in Kandy user who is associated with userId
 
         )
     )
+}}
+```
+
+**Kandy Live Chat**
+```php
+@if(\Auth::check() == false)
+	{{ KandyLiveChat::show(array(
+		'registerForm'  => array(
+			'email' => array(
+				'label' => 'Email *',
+				'class' => '',
+			),
+			'name'  => array(
+				'label' => 'Name *',
+				'class' => ''
+			)
+		),
+		'agentInfo' => array(
+			'avatar'    => asset('packages/kandy-io/kandy-laravel/assets/img/icon-helpdesk.png'),
+			'title'     => 'Support Agent',
+		)
+	))
+}}
+@endif
+```
+
+**Kandy Co-Browsing**
+```php
+{{ KandyCoBrowsing::show(
+    array(
+        'holderId'                  => 'cobrowsing-holder',
+        'btnTerminateId'            => 'btnTerminateSession',
+        'btnStopId'                 => 'btnStopCoBrowsing',
+        'btnLeaveId'                => 'btnLeaveSession',
+        'btnStartBrowsingViewerId'  => 'btnStartCoBrowsingViewer',
+        'btnStartCoBrowsingId'      => 'btnStartCoBrowsing',
+        'btnConnectSessionId'       => 'btnConnectSession',
+        'currentUser'               => KandyLaravel::getUser($userId),
+        'sessionListId'             => 'openSessions'
+    ))
+}}
+```
+
+**Kandy Sms**
+```php
+{{ KandySms::show(
+    array(
+        'class'         => 'kandyButton myButtonStyle smsContainer',
+        'htmlAttr'      => array('style' => 'width:40%; margin-top:10px'),
+        'options'       => array(
+            'messageHolder' => 'Enter your message',
+            'numberHolder'  => 'Enter your number',
+            'btnSendId'     => 'btnSendSms',
+            'btnSendLabel'  => 'Send Sms'
+        )
+
+    ))
 }}
 ```
 

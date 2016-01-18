@@ -33,13 +33,6 @@ class LiveChat extends RenderedObject
                 'title'     => 'Support Agent',
             )
         );
-        if(($userKandy = \Session::has('kandyLiveChatUserInfo.user')) && $userKandy) {
-            $userLogin = KandyUserLogin::where('kandy_user_id', $userKandy)->where('status', Kandylaravel::USER_STATUS_OFFLINE)->first();
-            if($userLogin) {
-                $userLogin->status = Kandylaravel::USER_STATUS_ONLINE;
-                $userLogin->save();
-            }
-        }
         $options = array_merge($defaults, $data);
         $this->data = $options;
     }
