@@ -1,6 +1,6 @@
 <?php
 namespace Kodeplusdev\Kandylaravel;
-
+use Request;
 /**
  * Class Video that renders a video object
  *
@@ -109,8 +109,12 @@ class Video extends RenderedObject
     public function show($data = array())
     {
         $this->init($data);
-        $this->contents = \View::make('kandy-laravel::Video.video', $this->data)
-            ->render();
+        if(Request::secure() == true) {
+            $this->contents = \View::make('kandy-laravel::Video.video', $this->data)
+                ->render();
+        } else {
+            $this->contents = "<p>Can not setup kandy voice button. In order to use this feature, you need a secure origin, such as HTTPS</p>";
+        }
 
         return $this;
     }
