@@ -16,10 +16,6 @@
     padding: 10px;
 }
 
-#liveChat .errorStartChat {
-    color: #c92217;
-}
-
 #liveChat #messageBox {
     height: 200px;
     overflow-x: hidden;
@@ -87,7 +83,7 @@
 
 #liveChat #restoreBtn {
     border: 2px #FFFFFF solid;
-    margin-right: 5px;
+    margin-right: 2px;
 }
 
 #liveChat .customerService {

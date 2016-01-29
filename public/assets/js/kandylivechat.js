@@ -34,7 +34,6 @@ LiveChatUI.changeState = function(state){
             $("#liveChat .handle.closeChat").hide();
             $("#liveChat .customerService, #liveChat #messageBox, #liveChat .formChat").hide();
             $("#liveChat #waiting p").html('Chat agents not available, please wait...');
-            $('#liveChat #waiting').show();
             $("#liveChat #loading").show();
             break;
         case "RATING":
@@ -47,7 +46,6 @@ LiveChatUI.changeState = function(state){
             $("#liveChat #ratingForm .message").show();
             break;
         default :
-            $('#liveChat #registerForm').show();
             $("#liveChat .customerService, #liveChat #messageBox, #liveChat .formChat").hide();
             toggleLiveChat();
             break;
@@ -204,7 +202,7 @@ function toggleLiveChat() {
 };
 
 $(function(){
-    var elementsBlock = [];
+    var elementsBlock = [$("#registerForm")];
     //$(window).bind('beforeunload', endChatSession);
     //hide vs restore box chat
     $(".minimize.handle").click(function(){
@@ -242,33 +240,24 @@ $(function(){
     $("#customerInfo").on('submit', function(e){
         var form = $(this);
         e.preventDefault();
-        var customerName = form.find('#customerName').val().trim();
-        var customerEmail = form.find('#customerEmail').val().trim();
-        if($('.errorStartChat').length > 0) {
-            $('.errorStartChat').remove();
-        }
-        if(customerName.length > 0 && customerEmail.length > 0) {
-            $.ajax({
-                url: form.attr('action'),
-                data: form.serialize(),
-                type: 'POST',
-                beforeSend: function(xhr) {
-                    LiveChatUI.changeState('WAITING');
-                },
-                success: function(res){
-                    if(res.hasOwnProperty('errors')){
-                        form.find("span.error").empty().hide();
-                        for(var e in res.errors){
-                            form.find('span[data-input="'+e+'"]').html(res.errors[e]).show();
-                        }
-                    }else{
-                        getKandyUsers();
+        $.ajax({
+            url: form.attr('action'),
+            data: form.serialize(),
+            type: 'POST',
+            beforeSend: function(xhr) {
+                LiveChatUI.changeState('WAITING');
+            },
+            success: function(res){
+                if(res.hasOwnProperty('errors')){
+                    form.find("span.error").empty().hide();
+                    for(var e in res.errors){
+                        form.find('span[data-input="'+e+'"]').html(res.errors[e]).show();
                     }
+                }else{
+                    getKandyUsers();
                 }
-            })
-        } else {
-            $('#registerForm').prepend($('<p class="errorStartChat text-error">Please input all fields below.</p>'));
-        }
+            }
+        });
     });
 
     //form chat submit handle
