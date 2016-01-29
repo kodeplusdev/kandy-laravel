@@ -164,7 +164,12 @@ class Button extends RenderedObject
                 $this->data
             )->render();
         } else {
-            $this->contents = "<p>Can not setup kandy voice button. In order to use this feature, you need a secure origin, such as HTTPS</p>";
+            if(Kandylaravel::$flagShowHttps == false) {
+                Kandylaravel::$flagShowHttps = true;
+                $this->contents = "<p>Can not setup kandy video button. In order to use this feature, you need a secure origin, such as HTTPS</p>";
+            } else {
+                $this->contents = "";
+            }
         }
 
         return $this;
@@ -184,7 +189,12 @@ class Button extends RenderedObject
                 $this->data
             )->render();
         } else {
-            $this->contents = "<p>Can not setup kandy voice button. In order to use this feature, you need a secure origin, such as HTTPS</p>";
+            if(Kandylaravel::$flagShowHttps == false) {
+                Kandylaravel::$flagShowHttps = true;
+                $this->contents = "<p>Can not setup kandy voice button. In order to use this feature, you need a secure origin, such as HTTPS</p>";
+            } else {
+                $this->contents = "";
+            }
         }
 
         return $this;
@@ -204,7 +214,12 @@ class Button extends RenderedObject
                 $this->data
             )->render();
         } else {
-            $this->contents = "<p>Can not setup kandy voice button. In order to use this feature, you need a secure origin, such as HTTPS</p>";
+            if(Kandylaravel::$flagShowHttps == false) {
+                Kandylaravel::$flagShowHttps = true;
+                $this->contents = "<p>Can not setup kandy call button. In order to use this feature, you need a secure origin, such as HTTPS</p>";
+            } else {
+                $this->contents = "";
+            }
         }
 
         return $this;

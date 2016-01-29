@@ -16,6 +16,10 @@
     padding: 10px;
 }
 
+#liveChat .errorStartChat {
+    color: #c92217;
+}
+
 #liveChat #messageBox {
     height: 200px;
     overflow-x: hidden;

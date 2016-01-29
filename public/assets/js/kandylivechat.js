@@ -193,6 +193,16 @@ var heartBeat = function(interval){
     },parseInt(interval));
 };
 
+function toggleLiveChat() {
+    if($("#registerForm").hasClass('hidden')) {
+        $('#liveChat #restoreBtn').css('display', 'block');
+        $('#liveChat .minimize').css('display', 'none');
+    } else {
+        $('#liveChat #restoreBtn').css('display', 'none');
+        $('#liveChat .minimize').css('display', 'block');
+    }
+};
+
 $(function(){
     var elementsBlock = [];
     //$(window).bind('beforeunload', endChatSession);
@@ -221,16 +231,6 @@ $(function(){
         $('#liveChat .minimize').css('display', 'block');
     });
 
-    function toggleLiveChat() {
-        if($("#registerForm").hasClass('hidden')) {
-            $('#liveChat #restoreBtn').css('display', 'block');
-            $('#liveChat .minimize').css('display', 'none');
-        } else {
-            $('#liveChat #restoreBtn').css('display', 'none');
-            $('#liveChat .minimize').css('display', 'block');
-        }
-    };
-
     $(".handle.closeChat").click(function(){
         if(!$('#ratingForm').is(":visible")) {
             LiveChatUI.changeState('RATING');
@@ -242,24 +242,33 @@ $(function(){
     $("#customerInfo").on('submit', function(e){
         var form = $(this);
         e.preventDefault();
-        $.ajax({
-            url: form.attr('action'),
-            data: form.serialize(),
-            type: 'POST',
-            beforeSend: function(xhr) {
-                LiveChatUI.changeState('WAITING');
-            },
-            success: function(res){
-                if(res.hasOwnProperty('errors')){
-                    form.find("span.error").empty().hide();
-                    for(var e in res.errors){
-                        form.find('span[data-input="'+e+'"]').html(res.errors[e]).show();
+        var customerName = form.find('#customerName').val().trim();
+        var customerEmail = form.find('#customerEmail').val().trim();
+        if($('.errorStartChat').length > 0) {
+            $('.errorStartChat').remove();
+        }
+        if(customerName.length > 0 && customerEmail.length > 0) {
+            $.ajax({
+                url: form.attr('action'),
+                data: form.serialize(),
+                type: 'POST',
+                beforeSend: function(xhr) {
+                    LiveChatUI.changeState('WAITING');
+                },
+                success: function(res){
+                    if(res.hasOwnProperty('errors')){
+                        form.find("span.error").empty().hide();
+                        for(var e in res.errors){
+                            form.find('span[data-input="'+e+'"]').html(res.errors[e]).show();
+                        }
+                    }else{
+                        getKandyUsers();
                     }
-                }else{
-                    getKandyUsers();
                 }
-            }
-        })
+            })
+        } else {
+            $('#registerForm').prepend($('<p class="errorStartChat text-error">Please input all fields below.</p>'));
+        }
     });
 
     //form chat submit handle

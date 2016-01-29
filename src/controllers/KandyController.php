@@ -500,28 +500,32 @@ class KandyController extends \BaseController
      */
     public function getPresenceStatus()
     {
-        $fullUserId = isset($_POST['full_user_id']) ? $_POST['full_user_id'] : null;
-        if(!empty($fullUserId)) {
-            $kandyUser = (new Kandylaravel())->getKandyUserByFullUserId($fullUserId);
-            if(!empty($kandyUser)) {
-                return \Response::json(array(
-                    'status'    => 'success',
-                    'data'   => array(
-                        'full_user_id' => $fullUserId,
+        $fullUserIds = isset($_POST['full_user_ids']) ? $_POST['full_user_ids'] : null;
+        if(!empty($fullUserIds)) {
+            $kandyUsers = (new Kandylaravel())->getKandyUserByFullUserIds($fullUserIds);
+            if(!empty($kandyUsers)) {
+                $data = array();
+                foreach($kandyUsers as $kandyUser) {
+                    array_push($data, array(
+                        'full_user_id' => $kandyUser->user_id . '@' . $kandyUser->domain_name,
                         'presence_status' => $kandyUser->presence_status,
                         'presence_text' => Kandylaravel::$presenceStatus[$kandyUser->presence_status]
-                    )
+                    ));
+                }
+                return \Response::json(array(
+                    'status'    => 'success',
+                    'data'   => $data
                 ));
             } else {
                 return \Response::json(array(
                     'status'    => 'fail',
-                    'message'   => 'Kandy user not found'
+                    'message'   => 'List kandy users not found'
                 ));
             }
         } else {
             return \Response::json(array(
                 'status'    => 'fail',
-                'message'   => 'Full user id not found'
+                'message'   => 'List full user ids not found'
             ));
         }
     }

@@ -409,30 +409,36 @@ kandy_refresh_addressBook = function () {
                 var full_user_id = null;
                 var id_attr = null;
                 var last_seen = 0;
+                var online_users = [];
                 for (var i = 0; i < users.length; i++) {
                     full_user_id = users[i].full_user_id;
                     last_seen = users[i].last_seen;
                     id_attr = full_user_id.replace(/[.@]/g, '_');
                     //Is Online
                     if(parseInt(server_timestamp) - parseInt(last_seen) < 10000) {
-                        $.ajax({
-                            url: '/kandy/getPresenceStatus',
-                            data: {full_user_id : full_user_id},
-                            type: 'POST',
-                            success: function (res){
-                                if(res.status == 'success'){
-                                    $('#presence_' + res.data.full_user_id.replace(/[.@]/g, '_')).text(res.data.presence_text);
-                                } else {
-                                    console.log(res.message);
-                                }
-                            },
-                            error: function() {
-                                console.log('Error occur when getPresenceStatus');
-                            }
-                        });
+                        online_users.push(full_user_id);
                     } else {
                         $('#presence_' + id_attr).text('Offline');
                     }
+                }
+                if(online_users.length > 0) {
+                    $.ajax({
+                        url: '/kandy/getPresenceStatus',
+                        data: {full_user_ids : online_users},
+                        type: 'POST',
+                        success: function (res){
+                            if(res.status == 'success'){
+                                for(var i = 0; i < res.data.length; i++) {
+                                    $('#presence_' + res.data[i].full_user_id.replace(/[.@]/g, '_')).text(res.data[i].presence_text);
+                                }
+                            } else {
+                                console.log(res.message);
+                            }
+                        },
+                        error: function() {
+                            console.log('Error occur when getPresenceStatus');
+                        }
+                    });
                 }
             }, function () {
                 console.log("Error kandy_refresh_addressBook");
@@ -649,30 +655,37 @@ kandy_loadContacts_chat = function () {
                         var full_user_id = null;
                         var id_attr = null;
                         var last_seen = 0;
+                        var online_users = [];
                         for (var i = 0; i < users.length; i++) {
                             full_user_id = users[i].full_user_id;
                             last_seen = users[i].last_seen;
                             id_attr = full_user_id.replace(/[.@]/g, '_');
                             //Is Online
                             if (parseInt(server_timestamp) - parseInt(last_seen) < 10000) {
-                                $.ajax({
-                                    url: '/kandy/getPresenceStatus',
-                                    data: {full_user_id: full_user_id},
-                                    type: 'POST',
-                                    success: function (res) {
-                                        if (res.status == 'success') {
-                                            kandy_presence_notification_callback(res.data.full_user_id, res.data.presence_status, res.data.presence_text);
-                                        } else {
-                                            console.log(res.message);
-                                        }
-                                    },
-                                    error: function () {
-                                        console.log('Error occur when getPresenceStatus');
-                                    }
-                                });
+                                online_users.push(full_user_id);
                             } else {
                                 kandy_presence_notification_callback(id_attr, -1, "Offline");
                             }
+                        }
+
+                        if(online_users.length > 0) {
+                            $.ajax({
+                                url: '/kandy/getPresenceStatus',
+                                data: {full_user_ids : online_users},
+                                type: 'POST',
+                                success: function (res){
+                                    if(res.status == 'success'){
+                                        for(var i = 0; i < res.data.length; i++) {
+                                            kandy_presence_notification_callback(res.data[i].full_user_id, res.data[i].presence_status, res.data[i].presence_text);
+                                        }
+                                    } else {
+                                        console.log(res.message);
+                                    }
+                                },
+                                error: function() {
+                                    console.log('Error occur when getPresenceStatus');
+                                }
+                            });
                         }
                     }, function () {
                         console.log("Error occur when call function getLastSeen");
@@ -704,32 +717,39 @@ kandy_refresh_chat = function() {
                 var full_user_id = null;
                 var id_attr = null;
                 var last_seen = 0;
+                var online_users = [];
                 for (var i = 0; i < users.length; i++) {
                     full_user_id = users[i].full_user_id;
                     last_seen = users[i].last_seen;
                     id_attr = full_user_id.replace(/[.@]/g, '_');
                     //Is Online
                     if(parseInt(server_timestamp) - parseInt(last_seen) < 10000) {
-                        $.ajax({
-                            url: '/kandy/getPresenceStatus',
-                            data: {full_user_id : full_user_id},
-                            type: 'POST',
-                            success: function (res){
-                                if(res.status == 'success'){
-                                    var class_status = 'kandy-chat-status-' + res.data.presence_text.toLowerCase().replace(/\s/g, '-');
-                                    $('#' + res.data.full_user_id.replace(/[.@]/g, '_')).attr('class', class_status);
-                                    $('#' + res.data.full_user_id.replace(/[.@]/g, '_')).find('i.status').text(res.data.presence_text);
-                                } else {
-                                    console.log(res.message);
-                                }
-                            },
-                            error: function() {
-                                console.log('Error occur when getPresenceStatus');
-                            }
-                        });
+                        online_users.push(full_user_id);
                     } else {
                         $('#presence_' + id_attr).text('Offline');
                     }
+                }
+
+                if(online_users.length > 0) {
+                    $.ajax({
+                        url: '/kandy/getPresenceStatus',
+                        data: {full_user_ids : online_users},
+                        type: 'POST',
+                        success: function (res){
+                            if(res.status == 'success'){
+                                for(var i = 0; i < res.data.length; i++) {
+                                    var class_status = 'kandy-chat-status-' + res.data[i].presence_text.toLowerCase().replace(/\s/g, '-');
+                                    $('#' + res.data[i].full_user_id.replace(/[.@]/g, '_')).attr('class', class_status);
+                                    $('#' + res.data[i].full_user_id.replace(/[.@]/g, '_')).find('i.status').text(res.data[i].presence_text);
+                                }
+                            } else {
+                                console.log(res.message);
+                            }
+                        },
+                        error: function() {
+                            console.log('Error occur when getPresenceStatus');
+                        }
+                    });
                 }
             }, function () {
                 console.log("Error kandy_refresh_chat");

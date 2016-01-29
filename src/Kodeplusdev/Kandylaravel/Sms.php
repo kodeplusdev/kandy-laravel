@@ -52,14 +52,10 @@ class Sms extends RenderedObject
     public function show($data = array())
     {
         $this->init($data);
-        if(Request::secure() == true) {
-            $this->contents = \View::make(
-                'kandy-laravel::Sms.sms',
-                $this->data
-            )->render();
-        } else {
-            $this->contents = "<p>Can not setup kandy voice button. In order to use this feature, you need a secure origin, such as HTTPS</p>";
-        }
+        $this->contents = \View::make(
+            'kandy-laravel::Sms.sms',
+            $this->data
+        )->render();
 
         return $this;
     }

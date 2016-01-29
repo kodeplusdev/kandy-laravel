@@ -42,6 +42,11 @@ class Video extends RenderedObject
     protected $contents;
 
     /**
+     * @var bool
+     */
+    protected static $flagShowHttps = false;
+
+    /**
      * Initialize data of widget
      * @param array $data
      */
@@ -113,7 +118,12 @@ class Video extends RenderedObject
             $this->contents = \View::make('kandy-laravel::Video.video', $this->data)
                 ->render();
         } else {
-            $this->contents = "<p>Can not setup kandy voice button. In order to use this feature, you need a secure origin, such as HTTPS</p>";
+            if(Kandylaravel::$flagShowHttps == false) {
+                Kandylaravel::$flagShowHttps = true;
+                $this->contents = "<p>Can not setup kandy video call. In order to use this feature, you need a secure origin, such as HTTPS</p>";
+            } else {
+                $this->contents = "";
+            }
         }
 
         return $this;

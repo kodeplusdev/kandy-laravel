@@ -67,6 +67,11 @@ class Kandylaravel
     public $apiKey;
 
     /**
+     * @var bool
+     */
+    public static $flagShowHttps = false;
+
+    /**
      *
      * @var \Illuminate\Html\HtmlBuilder
      */
@@ -778,7 +783,7 @@ class Kandylaravel
      * Get Kandy user by full user id
      *
      * @param $full_user_id
-     * @return string
+     * @return Object
      */
     public function getKandyUserByFullUserId($full_user_id)
     {
@@ -788,6 +793,32 @@ class Kandylaravel
         $user = KandyUsers::where('user_id', $userId)->where('domain_name', $domain)->first();
         if (!empty($user)) {
             return $user;
+        }
+        return null;
+    }
+
+    /**
+     * Get list kandy user by list full user id
+     *
+     * @param $full_user_ids
+     * @return array
+     */
+    public function getKandyUserByFullUserIds($full_user_ids)
+    {
+        $andWheres = [];
+        $params = [];
+        foreach($full_user_ids as $full_user_id) {
+            $arrFullUserId = explode('@', $full_user_id);
+            $userId = $arrFullUserId[0];
+            $domain = $arrFullUserId[1];
+            $andWheres[] = "(user_id = ? AND domain_name = ?)";
+            $params[] = $userId;
+            $params[] = $domain;
+        }
+        $whereStr = implode(" OR ", $andWheres);
+        $users = KandyUsers::whereRaw($whereStr, $params)->get();
+        if (!empty($users)) {
+            return $users;
         }
         return null;
     }
