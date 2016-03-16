@@ -1,5 +1,9 @@
 {!! HTML::style(asset(\Kodeplus\Kandylaravel\Kandylaravel::KANDY_CSS_LIVE_CHAT)) !!}
 {!! HTML::style(asset(\Kodeplus\Kandylaravel\Kandylaravel::RATE_CSS)) !!}
+
+@if(Auth::check() == true)
+    <?php $user = Auth::user(); ?>
+@endif
 <div id="liveChat">
     <div class="header">
         Kandy live chat
@@ -17,10 +21,10 @@
             <form id="customerInfo" method="POST" action="/kandy/registerGuest" >
                 <input type="hidden" name="_token" value="<?= csrf_token() ?>">
                 <label for="customerName">{{$registerForm['name']['label']}}</label>
-                <input type="text" name="customerName" id="customerName" class="{{$registerForm['name']['class']}}" />
+                <input type="text" name="customerName" id="customerName" class="{{$registerForm['name']['class']}}" value="@if(!empty($user)){{trim($user->username)}}@endif"/>
                 <span data-input="customerName" style="display: none" class="error"></span>
                 <label for="customerEmail">{{$registerForm['email']['label']}}</label>
-                <input type="text" name="customerEmail" id="customerEmail" class="{{$registerForm['email']['class']}}" />
+                <input type="text" name="customerEmail" id="customerEmail" class="{{$registerForm['email']['class']}}" value="@if(!empty($user)){{trim($user->email)}}@endif" />
                 <span data-input="customerEmail" style="display: none" class="error"></span>
                 <button type="submit">Start chat</button>
             </form>

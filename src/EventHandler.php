@@ -5,6 +5,9 @@ namespace Kodeplus\Kandylaravel;
 class EventHandler {
     public function onUserLogin($user)
     {
+        if(\Session::has('kandyLiveChatUserInfo')) {
+            \Session::pull('kandyLiveChatUserInfo');
+        }
         $kandyUser = KandyUsers::where('main_user_id', $user->id)->first();
         //if login user is a chat agent
         if($kandyUser) {
@@ -37,6 +40,9 @@ class EventHandler {
     }
 
     public function onUserLogout($user){
+        if(\Session::has('kandyLiveChatUserInfo')) {
+            \Session::pull('kandyLiveChatUserInfo');
+        }
         $kandyUser = KandyUsers::where('main_user_id', $user->id)->first();
         //if login user is a chat agent
         if($kandyUser) {
