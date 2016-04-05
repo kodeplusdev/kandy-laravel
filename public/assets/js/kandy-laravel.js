@@ -8,6 +8,11 @@ var activeContainerId;
 var $audioRingIn = jQuery('<audio>', { loop: 'loop', id: 'ring-in' });
 var $audioRingOut = jQuery('<audio>', { loop: 'loop', id: 'ring-out' });
 var bindedCloseChatEvent = false;
+// Keep track of the callId.
+var callId;
+// Keep track of screen sharing status.
+var isSharing = false;
+
 // Load audio source to DOM to indicate call events
 var audioSource = {
     ringIn: [
@@ -48,7 +53,15 @@ setup = function () {
             // when an incoming call is connected
             // you indicated that you are answering the call
             callanswered: kandy_call_answered_callback,
-            callended: kandy_call_ended_callback
+            callended: kandy_call_ended_callback,
+            // Media Event
+            media: kandy_on_media_error,
+            // Screensharing Event
+            callscreenstopped: kandy_on_stop_success
+        },
+        // Reference the default Chrome extension.
+        chromeExtensionId: {
+            chromeExtensionId: 'daohbhpgnnlgkipndobecbmahalalhcp'
         }
     });
 
@@ -141,7 +154,9 @@ kandy_presence_notification_callback = function (userId, state, description) {
  * @param call
  */
 kandy_on_call_initiate_callback = function(call){
-    jQuery('#'+activeContainerId).attr('data-call-id', call.getId());
+    // Store the callId.
+    callId = call.getId();
+    jQuery('#'+activeContainerId).attr('data-call-id', callId);
     $audioRingIn[0].pause();
     $audioRingOut[0].play();
 };
@@ -156,8 +171,8 @@ kandy_on_call_callback = function (call) {
     }
 
     $audioRingOut[0].pause();
-
-    var target = jQuery('.kandyButton[data-call-id="'+call.getId()+'"]');
+    callId = call.getId();
+    var target = jQuery('.kandyButton[data-call-id="'+callId+'"]');
     changeAnswerButtonState("ON_CALL",target);
 };
 
@@ -175,7 +190,8 @@ kandy_incoming_call_callback = function (call, isAnonymous) {
     $audioRingIn[0].play();
 
     var target = jQuery('.kandyVideoButtonCallOut:visible').get(0).closest('.kandyButton');
-    jQuery(target).attr('data-call-id', call.getId());
+    callId = call.getId();
+    jQuery(target).attr('data-call-id', callId);
     changeAnswerButtonState('BEING_CALLED', target);
 };
 
@@ -192,12 +208,13 @@ kandy_call_answered_callback = function (call, isAnonymous) {
 
     $audioRingOut[0].pause();
     $audioRingIn[0].pause();
-
-    var target = jQuery('.kandyButton[data-call-id="'+call.getId()+'"]');
+    callId = call.getId();
+    var target = jQuery('.kandyButton[data-call-id="'+callId+'"]');
     changeAnswerButtonState("ON_CALL", target);
 };
 
 kandy_call_answer_failed_callback = function (call){
+    callId = null;
     console.log('call answer failed', call);
 }
 
@@ -208,7 +225,7 @@ kandy_call_answer_failed_callback = function (call){
 kandy_call_ended_callback = function (call) {
     $audioRingOut[0].play();
     $audioRingIn[0].pause();
-
+    callId = null;
     if (typeof call_ended_callback == 'function') {
         call_ended_callback();
     }
@@ -265,7 +282,8 @@ kandy_answer_video_call = function (target) {
     var kandyButtonId = jQuery(target).data('container');
     var currentCallId = jQuery('div#'+kandyButtonId).attr('data-call-id');
     activeContainerId = kandyButtonId;
-    KandyAPI.Phone.answerCall(currentCallId, true);
+    callId = currentCallId;
+    kandy.call.answerCall(currentCallId, true);
     if (typeof answer_video_call_callback == 'function') {
         answer_video_call_callback("ANSWERING_CALL");
     }
@@ -278,7 +296,7 @@ kandy_make_video_call = function (target) {
     var kandyButtonId = jQuery(target).data('container');
     activeContainerId = kandyButtonId;
 
-    KandyAPI.Phone.makeCall(jQuery('#'+kandyButtonId+' .kandyVideoButtonCallOut #callOutUserId').val(),true);
+    kandy.call.makeCall(jQuery('#'+kandyButtonId+' .kandyVideoButtonCallOut #callOutUserId').val(),true);
     changeAnswerButtonState("CALLING", '#'+ kandyButtonId);
     if (typeof make_video_call_callback == 'function') {
         make_video_call_callback(target);
@@ -292,7 +310,7 @@ kandy_answer_voice_call = function (target) {
     var kandyButtonId = jQuery(target).data('container');
     var currentCallId = jQuery('div#'+kandyButtonId).attr('data-call-id');
     activeContainerId = kandyButtonId;
-    KandyAPI.Phone.answerCall(currentCallId, false);
+    kandy.call.answerCall(currentCallId, false);
     if (typeof answer_voice_call_callback == 'function') {
         answer_voice_call_callback(target);
     }
@@ -305,7 +323,7 @@ kandy_answer_voice_call = function (target) {
 kandy_make_voice_call = function (target) {
     var kandyButtonId = jQuery(target).data('container');
     activeContainerId = kandyButtonId;
-    KandyAPI.Phone.makeCall(jQuery('#'+kandyButtonId+' .kandyVideoButtonCallOut #callOutUserId').val(),false);
+    kandy.call.makeCall(jQuery('#'+kandyButtonId+' .kandyVideoButtonCallOut #callOutUserId').val(),false);
     changeAnswerButtonState("CALLING", '#'+kandyButtonId);
 
     if (typeof make_voice_call_callback == 'function') {
@@ -321,14 +339,74 @@ kandy_end_call = function (target) {
     var kandyButtonId = jQuery(target).data('container');
     var currentCallId = jQuery('div#'+kandyButtonId).attr('data-call-id');
 
-    KandyAPI.Phone.endCall(currentCallId);
-
+    kandy.call.endCall(currentCallId);
+    if (callId) {
+        callId = null;
+    }
     if (typeof end_call_callback == 'function') {
         end_call_callback(target);
     }
 
     changeAnswerButtonState("READY_FOR_CALLING", "#"+kandyButtonId);
+
+    // Update screensharing status.
+    isSharing = false;
 };
+
+/*-------------Screen Sharing--------------*/
+
+// Called when the media event is triggered.
+function kandy_on_media_error(error) {
+    switch(error.type)
+    {
+        case kandy.call.MediaErrors.NOT_FOUND:
+            console.log("No WebRTC support was found.");
+            break;
+        case kandy.call.MediaErrors.NO_SCREENSHARING_WARNING:
+            console.log("WebRTC supported, but no screensharing support was found.");
+            break;
+        default:
+            console.log('Other error or warning encountered.');
+            break;
+    }
+}
+
+// Executed when the user clicks on the 'Toggle Screensharing' button.
+toggle_screen_sharing = function () {
+    // Check if we should start or stop sharing.
+    if(callId && isSharing) {
+        // Stop screensharing.
+        kandy.call.stopScreenSharing(callId, kandy_on_stop_success, kandy_on_stop_failure);
+    } else {
+        // Start screensharing.
+        kandy.call.startScreenSharing(callId, kandy_on_start_success, kandy_on_start_failure);
+    }
+};
+
+// What to do on a successful screenshare start.
+function kandy_on_start_success() {
+    console.log('Screensharing started.');
+    jQuery('.btnScreenSharing').val('Stop Screen Sharing');
+    isSharing = true;
+}
+
+// What to do on a failed screenshare start.
+function kandy_on_start_failure() {
+    console.log('Failed to start screensharing.');
+}
+
+// What to do on a successful screenshare stop.
+function kandy_on_stop_success() {
+    console.log('Screensharing stopped.');
+    jQuery('.btnScreenSharing').val('Screen Sharing');
+    isSharing = false;
+}
+
+// What to do on a failed screenshare stop.
+function kandy_on_stop_failure() {
+    console.log('Failed to stop screensharing.');
+}
+/*------------------End screen sharing------------------*/
 
 /**
  * ADDRESS BOOK WIDGET
@@ -417,7 +495,7 @@ kandy_refresh_addressBook = function () {
                     //Is Online
                     if(parseInt(server_timestamp) - parseInt(last_seen) < 10000) {
                         $.ajax({
-                            url: '/kandy/getPresenceStatus',
+                            url: baseUrl + '/kandy/getPresenceStatus',
                             data: {full_user_id : full_user_id, _token : _token},
                             type: 'POST',
                             success: function (res){
@@ -449,7 +527,7 @@ kandy_refresh_addressBook = function () {
  */
 kandy_my_status_changed = function (status) {
     $.ajax({
-        url: '/kandy/updatePresence',
+        url: baseUrl + '/kandy/updatePresence',
         data: {status : status, _token : _token},
         type: 'POST',
         success: function (res){
@@ -539,7 +617,7 @@ kandy_removeFromContacts = function (nickname) {
 kandy_searchDirectoryByUserName = function () {
     var userName = jQuery('.kandyAddressBook .kandyDirectorySearch #kandySearchUserName').val();
     $.ajax({
-        url: "/kandy/getUsersForSearch",
+        url: baseUrl + "/kandy/getUsersForSearch",
         data: {q:userName, _token: _token}
     }).done(function (results) {
         jQuery(".kandyAddressBook .kandyDirSearchResults div:not(:first)").remove();
@@ -591,7 +669,7 @@ var getDisplayNameForChatContent = function (msg) {
             msg.sender.contact_user_name = msg.sender.full_user_id;
         } else {
             $.ajax({
-                url: "/kandy/getNameForChatContent",
+                url: baseUrl + "/kandy/getNameForChatContent",
                 type: "POST",
                 data: {data:msg, _token: _token},
                 async: false
@@ -613,7 +691,7 @@ var getDisplayNameForChatContent = function (msg) {
 var getDisplayNameForContact = function (data) {
     if (data.length) {
         jQuery.ajax({
-            url: "/kandy/getNameForContact",
+            url: baseUrl + "/kandy/getNameForContact",
             data: {data: data, _token: _token},
             async: false,
             type: "POST"
@@ -657,7 +735,7 @@ kandy_loadContacts_chat = function () {
                             //Is Online
                             if (parseInt(server_timestamp) - parseInt(last_seen) < 10000) {
                                 $.ajax({
-                                    url: '/kandy/getPresenceStatus',
+                                    url: baseUrl + '/kandy/getPresenceStatus',
                                     data: {full_user_id: full_user_id, _token: _token},
                                     type: 'POST',
                                     success: function (res) {
@@ -712,7 +790,7 @@ kandy_refresh_chat = function() {
                     //Is Online
                     if(parseInt(server_timestamp) - parseInt(last_seen) < 10000) {
                         $.ajax({
-                            url: '/kandy/getPresenceStatus',
+                            url: baseUrl + '/kandy/getPresenceStatus',
                             data: {full_user_id : full_user_id, _token : _token},
                             type: 'POST',
                             success: function (res){
@@ -1550,7 +1628,7 @@ var kandy_sendSms = function(receiver, sender, message, successCallback, errorCa
 
 var kandy_updateUserStatus = function() {
     $.ajax({
-        url: '/kandy/updateUserStatus',
+        url: baseUrl + '/kandy/updateUserStatus',
         async: false
     });
 };
@@ -1575,7 +1653,7 @@ $(document).ready(function () {
     $(".select2").select2({
         ajax: {
             quietMillis: 100,
-            url: "/kandy/getUsersForSearch",
+            url: baseUrl + "/kandy/getUsersForSearch",
             dataType: 'json',
             delay: 250,
             data: function (params) {

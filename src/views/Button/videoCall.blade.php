@@ -34,4 +34,11 @@
            onclick="kandy_end_call(this)"/>
 </div>
 <!-- end oncall -->
+
+    <div class="kandyVideoButton kandyVideoButtonOnCall">
+        <input data-container="{{$id}}" class="btnScreenSharing" type="button"
+               value="{{$options['onScreenSharing']['btnLabel']}}"
+               onclick="toggle_screen_sharing()"/>
+    </div>
+
 </div>

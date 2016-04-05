@@ -18,7 +18,7 @@ class Kandylaravel
     const RATE_CSS = 'kandy-io/kandy-laravel/assets/css/rateit.css';
 
     // Default KANDY JS from cloud
-    const KANDY_JS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/2.4.2/kandy.js';
+    const KANDY_JS = 'https://kandy-portal.s3.amazonaws.com/public/javascript/kandy/2.5.0/kandy.js';
     const KANDY_JQUERY = 'kandy-io/kandy-laravel/assets/js/jquery.js';
     const KANDY_CO_BROWSE = 'https://kandy-portal.s3.amazonaws.com/public/javascript/cobrowse/1.0.1/kandy.cobrowse.min.js';
 
