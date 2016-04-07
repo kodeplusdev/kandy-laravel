@@ -983,6 +983,12 @@ var getLiContent = function (user, real_id) {
                             <form class="send-message" data-real-id="'+ uid + '" data-user="' + user + '">\
                         <div class="input-message">\
                             <input class="imMessageToSend chat-input" type="text" data-user="' + user + '">\
+                            <div class="send-file">\
+                                <label for="send-file">\
+                                    <span class="icon-file"></span>\
+                                </label>\
+                                <input id="send-file" type="file" />\
+                            </div>\
                         </div>\
                         <div class="button-send">\
                             <input class="btnSendMessage chat-input" type="submit" value="Send" data-user="' + user + '" >\
@@ -1200,7 +1206,7 @@ var kandy_onMessage = function(msg) {
     if(msg){
         msg = getDisplayNameForChatContent(msg);
     }
-    if(msg.messageType == 'chat' && msg.contentType === 'text' && msg.message.mimeType == 'text/plain'){
+    if(msg.messageType == 'chat'){
         // Get user info
         var username = msg.sender.full_user_id;
         if(typeof msg.sender.user_email != "undefined" ){
@@ -1218,11 +1224,24 @@ var kandy_onMessage = function(msg) {
         }
         // Process message
         if ((msg.hasOwnProperty('message'))) {
-            var msg = msg.message.text;
+            var message = msg.message.text;
             var newMessage = '<div class="their-message">\
-                            <b><span class="imUsername">' + displayName + ':</span></b>\
-                            <span class="imMessage">' + msg + '</span>\
-                        </div>';
+                            <b><span class="imUsername">' + displayName + ': </span></b>';
+
+            if (msg.contentType === 'text' && msg.message.mimeType == 'text/plain') {
+                newMessage += '<span class="imMessage">' + message + '</span>';
+            } else {
+                var fileUrl = kandy.messaging.buildFileUrl(msg.message.content_uuid);
+                var html = '';
+                if (msg.contentType == 'image') {
+                    html = '<img src="' + fileUrl + '">';
+                }
+                html += '<a class="icon-download" href="' + fileUrl + '" target="_blank">' + msg.message.content_name + '</a>';
+                newMessage += '<span class="imMessage">' + html + '</span>';
+            }
+
+            newMessage += '</div>';
+
             var messageDiv = jQuery('.kandyChat .kandyMessages[data-user="' + username + '"]');
             messageDiv.append(newMessage);
             messageDiv.scrollTop(messageDiv[0].scrollHeight);
@@ -1230,6 +1249,54 @@ var kandy_onMessage = function(msg) {
     }
 
 };
+
+// Gather the user input then send the image.
+send_file = function () {
+    // Gather user input.
+    var recipient = jQuery(".contacts a.selected").data('content');
+    var file = jQuery("#send-file")[0].files[0];
+
+    if (file.type.indexOf('image') >=0) {
+        kandy.messaging.sendImWithImage(recipient, file, onFileSendSuccess, onFileSendFailure);
+    } else if (file.type.indexOf('audio') >=0) {
+        kandy.messaging.sendImWithAudio(recipient, file, onFileSendSuccess, onFileSendFailure);
+    } else if (file.type.indexOf('video') >=0) {
+        kandy.messaging.sendImWithVideo(recipient, file, onFileSendSuccess, onFileSendFailure);
+    } else if (file.type.indexOf('vcard') >=0) {
+        kandy.messaging.sendImWithContact(recipient, file, onFileSendSuccess, onFileSendFailure);
+    } else {
+        kandy.messaging.sendImWithFile(recipient, file, onFileSendSuccess, onFileSendFailure);
+    }
+};
+
+// What to do on a file send success.
+function onFileSendSuccess(message) {
+    console.log(message.message.content_name + " sent successfully.");
+    var displayName = jQuery('.kandyChat .kandy_current_username').val();
+    var dataHolder = jQuery('.cd-tabs-content > li.selected').data('content');
+    var newMessage = '<div class="my-message">\
+                    <b><span class="imUsername">' + displayName + ': </span></b>';
+
+
+    var fileUrl = kandy.messaging.buildFileUrl(message.message.content_uuid);
+    var html = '';
+    if (message.contentType == 'image') {
+        html = '<img src="' + fileUrl + '">';
+    }
+    html += '<a class="icon-download" href="' + fileUrl + '" target="_blank">' + message.message.content_name + '</a>';
+    newMessage += '<span class="imMessage">' + html + '</span>';
+    newMessage += '</div>';
+
+    var messageDiv = jQuery('.kandyChat .kandyMessages[data-user="' + dataHolder + '"]');
+    messageDiv.append(newMessage);
+    messageDiv.scrollTop(messageDiv[0].scrollHeight);
+}
+
+// What to do on a file send failure.
+function onFileSendFailure() {
+    console.log("File send failure.");
+}
+
 /**
  * Add member to a group
  * @param group_id
@@ -1647,6 +1714,15 @@ $(document).ready(function () {
     if (typeof login == 'function') {
         console.log('login....');
         login();
+    }
+
+    if ($(".kandyChat").length) {
+        $(document).on('change', "input[type=file]", function (e){
+            var fileName = $(this).val();
+            if (fileName != '') {
+                send_file();
+            }
+        });
     }
 
     //update that user is login for chat right now

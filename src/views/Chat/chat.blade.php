@@ -115,6 +115,9 @@
                 selectedContent.find(".imMessageToSend").focus();
                 $(this).parent().find('.toggle').trigger('click');
 
+                var sendFile = jQuery(liContentWrapSelector + ' li[data-content="'+selectedTab+'"] form .icon-file');
+                sendFile.css('display', 'block');
+
                 // Set chat heading
                 $(".chat-with-message").show();
                 $(".chat-friend-name").html(selectedItem.html());
