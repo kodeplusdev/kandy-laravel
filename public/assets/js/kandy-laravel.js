@@ -268,7 +268,7 @@ changeAnswerButtonState = function (state, target) {
             kandyButton.find('.kandyVideoButtonSomeonesCalling').hide();
             kandyButton.find('.kandyVideoButtonCallOut').hide();
             kandyButton.find('.kandyVideoButtonCalling').hide();
-            kandyButton.find('.kandyVideoButtonOnCall').show();
+            kandyButton.find('.kandyVideoButtonOnCall').css('display', 'inline-block');
             break;
     }
 };
@@ -1771,4 +1771,35 @@ $(document).ready(function () {
         $('#inviteModal').foundation('reveal', 'close');
         $('#sessionModal').foundation('reveal', 'close');
     });
+
+    //Full Screen Video Chat
+    $("span.video").each(function (index, value) {
+        $(this).on("DOMSubtreeModified", appendFullScreen);
+    });
+
+    function appendFullScreen(event) {
+        if ($(event.target).find('video').length > 0 && $(event.target).find('.icon-full-screen').length == 0) {
+            $(event.target).off( "DOMSubtreeModified" );
+            $(event.target).append('<span class="icon-full-screen"></span>');
+            $(event.target).on( "DOMSubtreeModified", appendFullScreen );
+        }
+    }
+
+    $(document).on('click', "span.icon-full-screen", function (e) {
+        launchIntoFullscreen($(this).prev('video')[0]);
+    });
+
+    // Find the right method, call on correct element
+    function launchIntoFullscreen(element) {
+        if(element.requestFullscreen) {
+            element.requestFullscreen();
+        } else if(element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+        } else if(element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+        } else if(element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+        }
+    }
+    //End Full Screen Video Call
 });
