@@ -366,6 +366,7 @@
 .kandyChat .input-message {
     float: left;
     width: 87%;
+    position: relative;
 }
 
 .kandyChat .button-send {
@@ -528,4 +529,42 @@ iframe {
 }
 
 
+div.myChatStyle .imMessage {
+    width: auto;
+}
+/*---------------File Sharing------------------*/
+.send-file {
+    position: absolute;
+    right: 4px;
+    top: 5px;
+}
 
+.send-file > input {
+    display: none;
+}
+
+.send-file span.icon-file {
+    background: #c4ccbe url(../img/icon-file-black.png) no-repeat center center;
+    display: none;
+    width: 25px;
+    height: 25px;
+    background-size: 15px 15px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.send-file span.icon-file:hover {
+    background-color: #8b9ba5;
+}
+.imMessage > img {
+    width: 75px;
+    border-radius: 5px;
+    height: 75px;
+    object-fit: cover;
+}
+.imMessage .icon-download {
+    cursor: pointer;
+    color: #007acc;
+    margin-left: 5px;
+    font-size: 13px;
+}
