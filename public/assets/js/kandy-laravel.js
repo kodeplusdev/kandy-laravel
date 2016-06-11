@@ -1618,7 +1618,7 @@ var updateUserGroupStatus = function (){
 var kandy_make_pstn_call = function (target){
     var kandyButtonId = jQuery(target).data('container');
     activeContainerId = kandyButtonId;
-    KandyAPI.Phone.makePSTNCall(jQuery('#'+kandyButtonId+' #psntCallOutNumber').val(), 'demo');
+    kandy.call.makePSTNCall(jQuery('#'+kandyButtonId+' #psntCallOutNumber').val(), 'demo');
     if(typeof kandy_pstn_callback == "function"){
         kandy_pstn_callback();
     }
@@ -1676,7 +1676,7 @@ var kandy_onSessionJoinRequest = function(notification) {
 };
 
 var kandy_sendSms = function(receiver, sender, message, successCallback, errorCallback) {
-    KandyAPI.Phone.sendSMS(
+    kandy.call.sendSMS(
         receiver,
         sender,
         message,
