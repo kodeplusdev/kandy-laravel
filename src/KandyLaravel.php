@@ -66,6 +66,7 @@ class Kandylaravel
     public $password;
     public $apiKey;
     public $userAccessToken;
+    public $errorMessage;
 
     /**
      *
@@ -599,6 +600,9 @@ class Kandylaravel
                     if ($result['success'] == true) {
                         $this->userAccessToken = $result['data'];
                         \Session::set('userAccessToken.' . $kandyUser->user_id, $result['data']);
+                    } else {
+                        $this->userAccessToken = '';
+                        $this->errorMessage = $result['message'];
                     }
                 }
             }
@@ -668,7 +672,12 @@ class Kandylaravel
                         if (password != '') {                           
                             kandy.login('" . $this->apiKey . "', '" . $this->username . "', '" . $this->password . "', kandy_login_success_callback, kandy_login_failed_callback);
                         } else {
-                            kandy.loginSSO('" . $this->userAccessToken . "', kandy_login_success_callback, kandy_login_failed_callback, '');       
+                            var userAccessToken = '" . $this->userAccessToken . "';
+                            if (userAccessToken != '') {
+                                kandy.loginSSO('" . $this->userAccessToken . "', kandy_login_success_callback, kandy_login_failed_callback, '');
+                            } else {
+                                jQuery('body').prepend(jQuery('<div class=\"alert alert-danger alert-custom\">" . $this->errorMessage . "</div>'));
+                            }                                
                         }                      
                     };
                     </script>";

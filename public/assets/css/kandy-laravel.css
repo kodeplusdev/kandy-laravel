@@ -516,3 +516,8 @@ iframe {
 i.toggle:hover {
     cursor: pointer;
 }
+.alert-custom {
+    font-size: 20px;
+    width: 1140px;
+    margin: 55px auto;
+}
