@@ -594,3 +594,9 @@ div.myChatStyle .imMessage {
     height: 100%;
 }
 /*----------End Full Screen-------------*/
+
+.alert-box.round.alert-custom {
+    font-size: 20px;
+    margin: 0 auto;
+    border-radius: 1px;
+}

@@ -37,6 +37,9 @@ class EventHandler {
                     ));
                 }
             }
+            if(\Session::has('userAccessToken.' . $kandyUser->user_id)) {
+                \Session::pull('userAccessToken.' . $kandyUser->user_id);
+            }
             $kandyLaravel = new Kandylaravel();
             $full_user_id = $kandyUser->main_user_id . '@' . $kandyUser->domain_name;
             $kandyLaravel->getLastSeen([$full_user_id]);
@@ -51,6 +54,9 @@ class EventHandler {
             if(!empty($userLogin) && $user->can('admin') == false) {
                 $userLogin->status = Kandylaravel::USER_STATUS_OFFLINE;
                 $userLogin->save();
+            }
+            if(\Session::has('userAccessToken.' . $kandyUser->user_id)) {
+                \Session::pull('userAccessToken.' . $kandyUser->user_id);
             }
             $kandyLaravel = new Kandylaravel();
             $full_user_id = $kandyUser->main_user_id . '@' . $kandyUser->domain_name;

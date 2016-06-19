@@ -65,6 +65,8 @@ class Kandylaravel
     public $username;
     public $password;
     public $apiKey;
+    public $userAccessToken;
+    public $errorMessage;
 
     /**
      * @var bool
@@ -273,6 +275,50 @@ class Kandylaravel
     }
 
     /**
+     * Get user access token
+     *
+     * @param string $userId
+     * @return array A list of message and data
+     * @throws RestClientException
+     */
+    public function getUserAccessToken($userId)
+    {
+        $params = array(
+            'key'               => \Config::get('kandy-laravel::key'),
+            'domain_api_secret' => \Config::get(
+                'kandy-laravel::domain_api_secret'
+            ),
+            'user_id' => $userId
+        );
+
+        $fieldsString = http_build_query($params);
+        $url = Kandylaravel::API_BASE_URL . 'domains/users/accesstokens' . '?'
+            . $fieldsString;
+
+        try {
+            $response = (new RestClient())->get($url)->getContent();
+        } catch (Exception $ex) {
+            return array(
+                'success' => false,
+                'message' => $ex->getMessage()
+            );
+        }
+
+        $response = json_decode($response);
+        if ($response->message == 'success') {
+            return array(
+                'success' => true,
+                'data'    => $response->result->user_access_token,
+            );
+        } else {
+            return array(
+                'success' => false,
+                'message' => $response->message
+            );
+        }
+    }
+
+    /**
      * Get all users from Kandy and import/update to kandy_user
      *
      * @return array A json status and message
@@ -304,7 +350,9 @@ class Kandylaravel
                         $model->api_key = $kandyUser->user_api_key;
                         $model->api_secret = $kandyUser->user_api_secret;
 
-                        $model->password = $kandyUser->user_password;
+                        if (!empty($kandyUser->user_password)) {
+                            $model->password = $kandyUser->user_password;
+                        }
                         $model->updated_at = $now;
                         $model->save();
                     }
@@ -539,6 +587,20 @@ class Kandylaravel
         if ($kandyUser) {
             $this->username = $kandyUser->user_id;
             $this->password = $kandyUser->password;
+            if (empty($kandyUser->password)) {
+                if (\Session::has('userAccessToken.' . $kandyUser->user_id)) {
+                    $this->userAccessToken = \Session::get('userAccessToken.' . $kandyUser->user_id);
+                } else {
+                    $result = $this->getUserAccessToken($kandyUser->user_id);
+                    if ($result['success'] == true) {
+                        $this->userAccessToken = $result['data'];
+                        \Session::set('userAccessToken.' . $kandyUser->user_id, $result['data']);
+                    } else {
+                        $this->userAccessToken = '';
+                        $this->errorMessage = $result['message'];
+                    }
+                }
+            }
         }
         $this->apiKey = \Config::get('kandy-laravel::key');
 
@@ -600,8 +662,22 @@ class Kandylaravel
         $return .= $this->add('script', self::KANDY_JS);
         $return .= "<script>
                     var username = '" . $this->username . "';
+                    var password = '" . $this->password . "';
                     window.login = function() {
-                        kandy.login('" . $this->apiKey . "', '" . $this->username . "', '" . $this->password . "', kandy_login_success_callback, kandy_login_failed_callback);
+                        if (password != '') {                           
+                            kandy.login('" . $this->apiKey . "', '" . $this->username . "', '" . $this->password . "', kandy_login_success_callback, kandy_login_failed_callback);
+                        } else {
+                            var userAccessToken = '" . $this->userAccessToken . "';
+                            if (userAccessToken != '') {
+                                kandy.loginSSO('" . $this->userAccessToken . "', kandy_login_success_callback, kandy_login_failed_callback, '');
+                            } else {
+                                if (jQuery('nav.top-bar').length > 0) {
+                                    jQuery('<div data-alert class=\"alert-box warning round alert-custom\">" . $this->errorMessage . "<a href=\"#\" class=\"close\">&times;</a></div>').insertAfter('nav.top-bar');
+                                } else {
+                                    jQuery('body').prepend(jQuery('<div data-alert class=\"alert-box warning round alert-custom\">" . $this->errorMessage . "<a href=\"#\" class=\"close\">&times;</a></div>'));
+                                }                   
+                            }                                
+                        }                      
                     };
                     </script>";
         $return .= $this->add('script', asset(self::KANDY_JS_CUSTOM));

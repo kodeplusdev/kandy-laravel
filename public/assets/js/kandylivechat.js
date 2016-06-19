@@ -53,10 +53,12 @@ LiveChatUI.changeState = function(state){
 };
 
 var login = function(domainApiKey, userName, password, success_callback, fail_callback) {
+    console.log('login....');
     kandy.login(domainApiKey, userName, password, success_callback, fail_callback);
 };
 
 var loginSSO = function(userAccessToken, success_callback, failure, password) {
+    console.log('login SSO....');
     kandy.loginSSO(userAccessToken, success_callback, failure, password);
 };
 

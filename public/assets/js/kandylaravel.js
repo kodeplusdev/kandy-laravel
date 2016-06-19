@@ -85,7 +85,7 @@ setup = function () {
  * Login Success Callback.
  */
 kandy_login_success_callback = function () {
-
+    console.log('login successful');
     //have kandyAddressBook widget
     if (jQuery(".kandyAddressBook").length) {
         kandy_loadContacts_addressBook();
@@ -117,6 +117,7 @@ kandy_login_success_callback = function () {
  * Login Fail Callback
  */
 kandy_login_failed_callback = function () {
+    console.log('login error');
     if (typeof login_failed_callback == 'function') {
         login_failed_callback();
     }
@@ -1732,6 +1733,7 @@ var heartBeat = function(interval){
 // ======================JQUERY READY =======================
 $(document).ready(function () {
     setup();
+    console.log('login....');
     login();
 
     if ($(".kandyChat").length) {
