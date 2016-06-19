@@ -581,3 +581,9 @@ div.myChatStyle .imMessage {
     height: 100%;
 }
 /*----------End Full Screen-------------*/
+
+.alert-custom {
+    font-size: 20px;
+    width: 1140px;
+    margin: 55px auto;
+}
