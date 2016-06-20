@@ -169,16 +169,21 @@ class KandyController extends \BaseController
             $kandyLaravel = new Kandylaravel();
             $fakeEndTime = PHP_INT_MAX;
             //get all unassigned users
-            $kandyLiveChatUser = \Config::get('kandy-laravel::excluded_kandy_users.liveChat');
             $kandyLiveChatTable = \Config::get('kandy-laravel::kandy_live_chat_table');
             $userLoginTable = 'kandy_user_login';
             if(isset($userInfo['user'])){
                 $user = $userInfo['user'];
             } else {
-                $user = $kandyLaravel->getAnonymousUser();
-                $user->full_user_id = $user->email;
-                if($user) {
-                    \Session::set('kandyLiveChatUserInfo.user', $user);
+                $result = $kandyLaravel->getAnonymousUser();
+                if ($result['success'] == true) {
+                    \Session::set('kandyLiveChatUserInfo.user', $result['user']);
+                    $user = $result['user'];
+                } else {
+                    echo json_encode(array(
+                        'message' => $result['message'],
+                        'status' => 'fail'
+                    ));
+                    exit;
                 }
             }
 
@@ -265,28 +270,28 @@ class KandyController extends \BaseController
     public function checkAgentOnline()
     {
         $fullUserId = \Request::get('full_user_id');
-        if(!empty($fullUserId)) {
-            $userTable = \Config::get('kandy-laravel::user_table');
-            $kandyUserTable = \Config::get('kandy-laravel::kandy_user_table');
-            $kandyLaravel = new Kandylaravel();
-            $kandyLiveChatTable = \Config::get('kandy-laravel::kandy_live_chat_table');
-            $userLoginTable = 'kandy_user_login';
-            $agents = \DB::table($kandyUserTable)
-                ->leftJoin($kandyLiveChatTable, "$kandyUserTable.user_id", '=', "$kandyLiveChatTable.agent_user_id")
-                ->leftJoin($userTable, "$kandyUserTable.main_user_id", '=', "$userTable.id")
-                ->join($userLoginTable, "$kandyUserTable.user_id", '=', "$userLoginTable.kandy_user_id")
-                ->select(\DB::raw("user_id, main_user_id, CONCAT(user_id, '@', domain_name) as full_user_id,
-                $userTable.username as username, MAX($kandyLiveChatTable.end_at) as last_end_chat, (UNIX_TIMESTAMP() - $userLoginTable.time) as last_active"))
-                ->where("$kandyUserTable.type", '=', $kandyLaravel::USER_TYPE_CHAT_AGENT)
-                ->where("$userLoginTable.status", '=', Kandylaravel::USER_STATUS_ONLINE)
-                ->groupBy("$userTable.id")
-                ->having('last_active', '<=',60000)
-                ->orHavingRaw('last_end_chat IS NULL')
-                ->orderBy("last_end_chat", "ASC")
-                ->get();
 
-            if(!empty($agents)) {
-                $newFullUserId = null;
+        $userTable = \Config::get('kandy-laravel::user_table');
+        $kandyUserTable = \Config::get('kandy-laravel::kandy_user_table');
+        $kandyLaravel = new Kandylaravel();
+        $kandyLiveChatTable = \Config::get('kandy-laravel::kandy_live_chat_table');
+        $userLoginTable = 'kandy_user_login';
+        $agents = \DB::table($kandyUserTable)
+            ->leftJoin($kandyLiveChatTable, "$kandyUserTable.user_id", '=', "$kandyLiveChatTable.agent_user_id")
+            ->leftJoin($userTable, "$kandyUserTable.main_user_id", '=', "$userTable.id")
+            ->join($userLoginTable, "$kandyUserTable.user_id", '=', "$userLoginTable.kandy_user_id")
+            ->select(\DB::raw("user_id, main_user_id, CONCAT(user_id, '@', domain_name) as full_user_id,
+                $userTable.username as username, MAX($kandyLiveChatTable.end_at) as last_end_chat, (UNIX_TIMESTAMP() - $userLoginTable.time) as last_active"))
+            ->where("$kandyUserTable.type", '=', $kandyLaravel::USER_TYPE_CHAT_AGENT)
+            ->where("$userLoginTable.status", '=', Kandylaravel::USER_STATUS_ONLINE)
+            ->groupBy("$userTable.id")
+            ->having('last_active', '<=',60000)
+            ->orHavingRaw('last_end_chat IS NULL')
+            ->orderBy("last_end_chat", "ASC")
+            ->get();
+
+        if(!empty($agents)) {
+            if(!empty($fullUserId)) {
                 foreach($agents as $agent) {
                     $newFullUserId = $agent->full_user_id;
                     $agentUser = new KandyUsers();
@@ -297,17 +302,22 @@ class KandyController extends \BaseController
                         break;
                     }
                 }
-                if(!empty($newFullUserId)) {
-                    return \Response::json(array(
-                        'full_user_id' => $newFullUserId,
-                        'isOnline' => true,
-                        'agent' => $agentUser
-                    ));
-                } else {
-                    return \Response::json(array('isOnline' => false));
-                }
+            } else {
+                $agent = $agents[0];
+                $newFullUserId = $agent->full_user_id;
+                $agentUser = new KandyUsers();
+                $agentUser->full_user_id = $newFullUserId;
+                $agentUser->username = $agent->username;
+                $agentUser->main_user_id = $agent->main_user_id;
             }
+
+            return \Response::json(array(
+                'full_user_id' => $newFullUserId,
+                'isOnline' => true,
+                'agent' => $agentUser
+            ));
         }
+
         return \Response::json(array('isOnline' => false));
     }
 

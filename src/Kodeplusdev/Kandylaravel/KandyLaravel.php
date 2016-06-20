@@ -221,14 +221,24 @@ class Kandylaravel
                 $user->user_id = $res->user_name;
                 $user->password = $res->user_password;
                 $user->email = $res->full_user_id;
+                $user->full_user_id = $res->full_user_id;
                 $user->domain_name = $res->domain_name;
                 $user->user_access_token = $res->user_access_token;
-                return $user;
+                return array(
+                    'success' => true,
+                    'user' => $user
+                );
             } else {
-                return false;
+                return array(
+                    'success' => false,
+                    'message' => "Can not create anonymous user"
+                );
             }
         } else {
-            return false;
+            return array(
+                'success' => false,
+                'message' => "Can not create anonymous user"
+            );
         }
     }
 
@@ -660,7 +670,7 @@ class Kandylaravel
             $return .= $this->add('script', asset(self::KANDY_JQUERY));
         }
         $return .= $this->add('script', self::KANDY_JS);
-        $return .= "<script>
+        $return .= "<script type='text/javascript'>
                     var username = '" . $this->username . "';
                     var password = '" . $this->password . "';
                     window.login = function() {

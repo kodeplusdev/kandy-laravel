@@ -17,7 +17,7 @@
 }
 
 #liveChat #messageBox {
-    height: 200px;
+    height: 250px;
     overflow-x: hidden;
     overflow-y: auto;
     display: none;
@@ -30,6 +30,10 @@
 
 #liveChat #messageBox ul li {
     list-style: none;
+}
+
+#liveChat #messageBox > ul {
+    margin: 0 5px;
 }
 
 #liveChat .handle, #liveChat #restoreBtn {
@@ -54,6 +58,7 @@
 
 #liveChat input[type="text"]{
     height: 40px;
+    padding: 0 32px 0 10px;
 }
 
 #liveChat #messageBox .my-message {
@@ -77,8 +82,12 @@
 }
 
 #liveChat .formChat {
-    padding: 20px 20px 0 20px;
+    padding: 0 5px 0 5px;
     display: none;
+}
+
+#liveChat .formChat form {
+    position: relative;
 }
 
 #liveChat #restoreBtn {
@@ -136,4 +145,41 @@
 
 #liveChat #ratingForm .message {
     display: none;
+}
+
+/*---------------File Sharing------------------*/
+.send-file {
+    position: absolute;
+    right: 4px;
+    top: 7px;
+}
+
+.send-file > input {
+    display: none;
+}
+
+.send-file span.icon-file {
+    background: #c4ccbe url(../img/icon-file-black.png) no-repeat center center;
+    display: none;
+    width: 25px;
+    height: 25px;
+    background-size: 15px 15px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.send-file span.icon-file:hover {
+    background-color: #8b9ba5;
+}
+.imMessage > img {
+    width: 75px;
+    border-radius: 5px;
+    height: 75px;
+    object-fit: cover;
+}
+.imMessage .icon-download {
+    cursor: pointer;
+    color: #007acc;
+    margin-left: 5px;
+    font-size: 13px;
 }

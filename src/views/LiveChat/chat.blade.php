@@ -1,5 +1,10 @@
 {{HTML::style(asset(\Kodeplusdev\Kandylaravel\Kandylaravel::KANDY_CSS_LIVE_CHAT))}}
 {{HTML::style(asset(\Kodeplusdev\Kandylaravel\Kandylaravel::RATE_CSS))}}
+
+@if(Auth::check() == true)
+    <?php $user = Auth::user(); ?>
+@endif
+
 <div id="liveChat">
     <div class="header">
         Kandy live chat
@@ -17,10 +22,10 @@
             <form id="customerInfo" method="POST" action="/kandy/registerGuest" >
                 <input type="hidden" name="_token" value="<?= csrf_token() ?>">
                 <label for="customerName">{{$registerForm['name']['label']}}</label>
-                <input type="text" name="customerName" id="customerName" class="{{$registerForm['name']['class']}}" required/>
+                <input type="text" name="customerName" id="customerName" class="{{$registerForm['name']['class']}}" value="@if(!empty($user)){{trim($user->username)}}@endif" required/>
                 <span data-input="customerName" style="display: none" class="error"></span>
                 <label for="customerEmail">{{$registerForm['email']['label']}}</label>
-                <input type="email" name="customerEmail" id="customerEmail" class="{{$registerForm['email']['class']}}" required/>
+                <input type="email" name="customerEmail" id="customerEmail" class="{{$registerForm['email']['class']}}" value="@if(!empty($user)){{trim($user->email)}}@endif" required/>
                 <span data-input="customerEmail" style="display: none" class="error"></span>
                 <button type="submit">Start chat</button>
             </form>
@@ -63,6 +68,12 @@
         <div class="formChat" style="">
             <form id="formChat">
                 <input type="text" value="" name="message" id="messageToSend" placeholder="Type here and press Enter to send">
+                <div class="send-file">
+                    <label for="send-file">
+                        <span class="icon-file"></span>
+                    </label>
+                    <input id="send-file" type="file" />
+                </div>
             </form>
         </div>
     </div>

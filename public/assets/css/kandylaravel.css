@@ -314,7 +314,7 @@
     height: 100%;
     width: 80%;
     float: left;
-    margin: 0;
+    margin: 0 0 30px 0;
 }
 
 .kandyChat .cd-tabs-content li {
@@ -558,7 +558,6 @@ div.myChatStyle .imMessage {
 }
 .imMessage > img {
     width: 75px;
-    border-radius: 5px;
     height: 75px;
     object-fit: cover;
 }
