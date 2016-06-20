@@ -121,11 +121,6 @@
                 // Set chat heading
                 $(".chat-with-message").show();
                 $(".chat-friend-name").html(selectedItem.html());
-
-                //animate tabContentWrapper height when content changes
-                tabContentWrapper.animate({
-                    'height': selectedContentHeight
-                }, 200);
             }
         });
 

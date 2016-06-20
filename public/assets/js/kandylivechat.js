@@ -12,6 +12,7 @@ LiveChatUI.changeState = function(state){
             $('#liveChat #waiting').show();
             $("#liveChat #registerForm").hide();
             $("#liveChat .customerService ,#liveChat #messageBox, #liveChat .formChat").hide();
+            $("div.send-file span.icon-file").css("display", "none");
             break;
         case 'READY':
             $("#liveChat #registerForm").hide();
@@ -20,6 +21,11 @@ LiveChatUI.changeState = function(state){
             $('#liveChat .agentName').html(agent.username);
             $('#liveChat .fullUserId').val(agent.full_user_id);
             $('#liveChat .currentStatus').val(1);
+            if (!agent.full_user_id) {
+                $(".liveChat .icon-file").hide();
+            } else {
+                $("div.send-file span.icon-file").css("display", "block");
+            }
             $("#liveChat #messageBox li.their-message:first-child span.username").html(agent.username);
             $("#liveChat .handle.closeChat").show();
             checkAgentOnline();
@@ -40,6 +46,7 @@ LiveChatUI.changeState = function(state){
         case "RATING":
             $("#liveChat #ratingForm").show();
             $("#liveChat .customerService, #liveChat #messageBox, #liveChat .formChat").hide();
+            $("div.send-file span.icon-file").css("display", "none");
             break;
         case "ENDING_CHAT":
             $("#liveChat #ratingForm form").hide();
@@ -49,6 +56,7 @@ LiveChatUI.changeState = function(state){
         default :
             $('#liveChat #registerForm').show();
             $("#liveChat .customerService, #liveChat #messageBox, #liveChat .formChat").hide();
+            $("div.send-file span.icon-file").css("display", "none");
             checkAgentOnline();
             break;
     }
@@ -70,11 +78,69 @@ var kandy_onMessageUser = function(msg){
             var sender = agent.username;
             var message = msg.message.text;
             var messageBox = $("#messageBox");
-            messageBox.find("ul").append("<li class='their-message'><span class='username'>" + sender + ": </span>" + message + "</li>");
+            var newMessage = "<li class='their-message'><span class='username'>" + sender + ": </span>";
+
+            if (msg.contentType === 'text' && msg.message.mimeType == 'text/plain') {
+                newMessage += '<span class="imMessage">' + message + '</span>';
+            } else {
+                var fileUrl = kandy.messaging.buildFileUrl(msg.message.content_uuid);
+                var html = '';
+                if (msg.contentType == 'image') {
+                    html = '<img src="' + fileUrl + '">';
+                }
+                html += '<a class="icon-download" href="' + fileUrl + '" target="_blank">' + msg.message.content_name + '</a>';
+                newMessage += '<span class="imMessage">' + html + '</span>';
+            }
+
+            newMessage += '</li>';
+
+            messageBox.find("ul").append(newMessage);
             messageBox.scrollTop(messageBox[0].scrollHeight);
         }
     }
 };
+
+// Gather the user input then send the image.
+send_file_live_chat = function () {
+    // Gather user input.
+    var recipient = jQuery('#liveChat .fullUserId').val();
+    var file = jQuery("#send-file")[0].files[0];
+
+    if (file.type.indexOf('image') >=0) {
+        kandy.messaging.sendImWithImage(recipient, file, onLiveChatFileSendSuccess, onLiveChatFileSendFailure);
+    } else if (file.type.indexOf('audio') >=0) {
+        kandy.messaging.sendImWithAudio(recipient, file, onLiveChatFileSendSuccess, onLiveChatFileSendFailure);
+    } else if (file.type.indexOf('video') >=0) {
+        kandy.messaging.sendImWithVideo(recipient, file, onLiveChatFileSendSuccess, onLiveChatFileSendFailure);
+    } else if (file.type.indexOf('vcard') >=0) {
+        kandy.messaging.sendImWithContact(recipient, file, onLiveChatFileSendSuccess, onLiveChatFileSendFailure);
+    } else {
+        kandy.messaging.sendImWithFile(recipient, file, onLiveChatFileSendSuccess, onLiveChatFileSendFailure);
+    }
+};
+
+// What to do on a file send success.
+function onLiveChatFileSendSuccess(message) {
+    console.log(message.message.content_name + " sent successfully.");
+    var messageBox = jQuery("#messageBox");
+    var newMessage = "<li class='my-message'><span class='username'>Me: </span>";
+    var fileUrl = kandy.messaging.buildFileUrl(message.message.content_uuid);
+    var html = '';
+    if (message.contentType == 'image') {
+        html = '<img src="' + fileUrl + '">';
+    }
+    html += '<a class="icon-download" href="' + fileUrl + '" target="_blank">' + message.message.content_name + '</a>';
+    newMessage += '<span class="imMessage">' + html + '</span>';
+    newMessage += '</li>';
+
+    messageBox.find("ul").append(newMessage);
+    messageBox.scrollTop(messageBox[0].scrollHeight);
+}
+
+// What to do on a file send failure.
+function onLiveChatFileSendFailure() {
+    console.log("File send failure.");
+}
 
 var setupUser = function() {
     kandy.setup({
@@ -207,6 +273,16 @@ var heartBeat = function(interval){
 };
 
 $(function(){
+
+    if ($("#liveChat").length) {
+        $(document).on('change', "#liveChat input[type=file]", function (e){
+            var fileName = $(this).val();
+            if (fileName != '') {
+                send_file_live_chat();
+            }
+        });
+    }
+
     var elementsBlock = [];
     //$(window).bind('beforeunload', endChatSession);
     toggleLiveChat();

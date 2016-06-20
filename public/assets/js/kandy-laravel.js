@@ -1253,7 +1253,13 @@ var kandy_onMessage = function(msg) {
 // Gather the user input then send the image.
 send_file = function () {
     // Gather user input.
-    var recipient = jQuery(".contacts a.selected").data('content');
+    var recipient = jQuery(".livechats a.selected").data('real-id');
+    if (typeof recipient == "undefined") {
+        recipient = jQuery(".contacts a.selected").data('content');
+        if (typeof recipient == "undefined") {
+            recipient = jQuery(".cd-tabs-content form.send-message").data('real-id');
+        }
+    }
     var file = jQuery("#send-file")[0].files[0];
 
     if (file.type.indexOf('image') >=0) {
@@ -1717,7 +1723,7 @@ $(document).ready(function () {
     }
 
     if ($(".kandyChat").length) {
-        $(document).on('change', "input[type=file]", function (e){
+        $(document).on('change', ".kandyChat input[type=file]", function (e){
             var fileName = $(this).val();
             if (fileName != '') {
                 send_file();
