@@ -244,25 +244,22 @@ Prepare Kandy css/javascript and log-in Kandy user who is associated with userId
 
 **Kandy Live Chat**
 ```php
-@if(\Auth::check() == false)
-	{{ KandyLiveChat::show(array(
-		'registerForm'  => array(
-			'email' => array(
-				'label' => 'Email *',
-				'class' => '',
-			),
-			'name'  => array(
-				'label' => 'Name *',
-				'class' => ''
-			)
-		),
-		'agentInfo' => array(
-			'avatar'    => asset('packages/kandy-io/kandy-laravel/assets/img/icon-helpdesk.png'),
-			'title'     => 'Support Agent',
-		)
-	))
-}}
-@endif
+{{ KandyLiveChat::show(array(
+    'registerForm'  => array(
+        'email' => array(
+            'label' => 'Email *',
+            'class' => '',
+        ),
+        'name'  => array(
+            'label' => 'Name *',
+            'class' => ''
+        )
+    ),
+    'agentInfo' => array(
+        'avatar'    => asset('packages/kandy-io/kandy-laravel/assets/img/icon-helpdesk.png'),
+        'title'     => 'Support Agent',
+    )
+)) }}
 ```
 
 **Kandy Co-Browsing**
