@@ -5,6 +5,9 @@ namespace Kodeplus\Kandylaravel;
 class EventHandler {
     public function onUserLogin($user)
     {
+        if(\Session::has('kandyLiveChatUserInfo')) {
+            \Session::pull('kandyLiveChatUserInfo');
+        }
         $kandyUser = KandyUsers::where('main_user_id', $user->id)->first();
         //if login user is a chat agent
         if($kandyUser) {
@@ -30,6 +33,9 @@ class EventHandler {
                     ));
                 }
             }
+            if(\Session::has('userAccessToken.' . $kandyUser->user_id)) {
+                \Session::pull('userAccessToken.' . $kandyUser->user_id);
+            }
             $kandyLaravel = new Kandylaravel();
             $full_user_id = $kandyUser->main_user_id . '@' . $kandyUser->domain_name;
             $kandyLaravel->getLastSeen([$full_user_id]);
@@ -37,6 +43,9 @@ class EventHandler {
     }
 
     public function onUserLogout($user){
+        if(\Session::has('kandyLiveChatUserInfo')) {
+            \Session::pull('kandyLiveChatUserInfo');
+        }
         $kandyUser = KandyUsers::where('main_user_id', $user->id)->first();
         //if login user is a chat agent
         if($kandyUser) {
@@ -44,6 +53,9 @@ class EventHandler {
             if(!empty($userLogin) && $user->can('admin') == false) {
                 $userLogin->status = Kandylaravel::USER_STATUS_OFFLINE;
                 $userLogin->save();
+            }
+            if(\Session::has('userAccessToken.' . $kandyUser->user_id)) {
+                \Session::pull('userAccessToken.' . $kandyUser->user_id);
             }
             $kandyLaravel = new Kandylaravel();
             $full_user_id = $kandyUser->main_user_id . '@' . $kandyUser->domain_name;

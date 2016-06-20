@@ -353,6 +353,7 @@
 .kandyChat .input-message {
     float: left;
     width: 87%;
+    position: relative;
 }
 
 .kandyChat .button-send {
@@ -515,4 +516,74 @@ iframe {
 }
 i.toggle:hover {
     cursor: pointer;
+}
+
+div.myChatStyle .imMessage {
+    width: auto;
+}
+/*---------------File Sharing------------------*/
+.send-file {
+    position: absolute;
+    right: 4px;
+    top: 8px;
+}
+
+.send-file > input {
+    display: none;
+}
+
+.send-file span.icon-file {
+    background: #c4ccbe url(../img/icon-file-black.png) no-repeat center center;
+    display: none;
+    width: 25px;
+    height: 25px;
+    background-size: 15px 15px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.send-file span.icon-file:hover {
+    background-color: #8b9ba5;
+}
+.imMessage > img {
+    width: 75px;
+    border-radius: 5px;
+}
+.imMessage .icon-download {
+    cursor: pointer;
+    color: #007acc;
+    margin-left: 5px;
+    font-size: 13px;
+}
+
+/*------------Full Screen-----------*/
+.myVideoStyle .video {
+    position: relative;
+}
+
+.icon-full-screen {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    background: url(../img/full_screen.png) no-repeat center center;
+    background-size: 20px 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.icon-full-screen:hover {
+    cursor: pointer;
+}
+
+/* deeper elements */
+:-webkit-full-screen video {
+    width: 100%;
+    height: 100%;
+}
+/*----------End Full Screen-------------*/
+
+.alert-custom {
+    font-size: 20px;
+    width: 1140px;
+    margin: 55px auto;
 }

@@ -49,19 +49,22 @@ LiveChatUI.changeState = function(state){
         default :
             $('#liveChat #registerForm').show();
             $("#liveChat .customerService, #liveChat #messageBox, #liveChat .formChat").hide();
+            checkAgentOnline();
             break;
     }
 };
 
-var login = function(domainApiKey, userName, password, success_callback, fail_callback) {
-    kandy.login(domainApiKey, userName, password, success_callback, fail_callback);
+var loginLiveChat = function(domainApiKey, userName, password, success_callback, fail_callback) {
+    if (typeof userName != 'undefined') {
+        kandy.login(domainApiKey, userName, password, success_callback, fail_callback);
+    }
 };
 
-var loginSSO = function(userAccessToken, success_callback, failure, password) {
+var loginSSOLiveChat = function(userAccessToken, success_callback, failure, password) {
     kandy.loginSSO(userAccessToken, success_callback, failure, password);
 };
 
-var kandy_onMessage = function(msg){
+var kandy_onMessageUser = function(msg){
     if(msg) {
         if (msg.messageType == 'chat') {
             var sender = agent.username;
@@ -73,10 +76,10 @@ var kandy_onMessage = function(msg){
     }
 };
 
-var setup = function() {
+var setupUser = function() {
     kandy.setup({
         listeners: {
-            message: kandy_onMessage
+            message: kandy_onMessageUser
         }
     });
 };
@@ -85,18 +88,18 @@ var setup = function() {
 var logout = function(){
     kandy.logout();
 };
-var login_success_callback = function (){
-    console.log('login successful')
+var login_chat_success_callback = function (){
+    console.log('login successful');
     LiveChatUI.changeState("READY");
 };
-var login_fail_callback = function (){
-    console.log('login failed')
+var login_chat_fail_callback = function (){
+    console.log('login failed');
     LiveChatUI.changeState("UNAVAILABLE");
 };
 
 var getKandyUsers = function(){
     $.ajax({
-        url:'/kandy/getFreeUser',
+        url: baseUrl + '/kandy/getFreeUser',
         type: 'GET',
         dataType: 'json',
         success: function(res){
@@ -110,14 +113,19 @@ var getKandyUsers = function(){
                 var username = res.user.full_user_id.split('@')[0];
                 if(username.indexOf("anonymous") >= 0) {
                     var user_access_token = res.user.user_access_token;
-                    loginSSO(user_access_token, login_success_callback, login_fail_callback, res.user.password);
+                    console.log('loginSSO ...');
+                    loginSSOLiveChat(user_access_token, login_chat_success_callback, login_chat_fail_callback, res.user.password);
                 } else {
-                    login(res.apiKey, username, res.user.password, login_success_callback, login_fail_callback);
+                    console.log('login ...');
+                    loginLiveChat(res.apiKey, username, res.user.password, login_chat_success_callback, login_chat_fail_callback);
                 }
-                setup();
+                setupUser();
                 agent = res.agent;
                 heartBeat(60000);
             }else{
+                if (res.message) {
+                    console.log('Error! ' + res.message);
+                }
                 if(!checkAvailable){
                     checkAvailable = setInterval(getKandyUsers, 5000);
                 } else {
@@ -134,34 +142,40 @@ var getKandyUsers = function(){
 var checkAgentOnline = function() {
     var current_full_user_id = $('#liveChat .fullUserId').val();
     var current_status = $('#liveChat .currentStatus').val();
-    if(current_full_user_id != '') {
-        $.ajax({
-            url:'/kandy/checkAgentOnline',
-            type: 'GET',
-            data: {full_user_id : current_full_user_id},
-            dataType: 'json',
-            success: function(res){
-                if(res.isOnline == true && ((current_status == 1 && current_full_user_id != res.full_user_id)
-                    || current_status == 0)){
-                    agent = res.agent;
+
+    $.ajax({
+        url: baseUrl + '/kandy/checkAgentOnline',
+        type: 'GET',
+        data: {full_user_id : current_full_user_id},
+        dataType: 'json',
+        success: function(res){
+            if(res.isOnline == true && ((current_status == 1 && current_full_user_id != res.full_user_id)
+                || current_status == 0)){
+                agent = res.agent;
+                if (current_full_user_id != '') {
                     LiveChatUI.changeState('READY');
-                } else if(current_status == 1 && res.isOnline == false) {
+                }
+            } else if(current_status == 1 && res.isOnline == false) {
+                if (current_full_user_id != '') {
                     LiveChatUI.changeState('RECONNECTING');
                 }
-                setTimeout(checkAgentOnline, 10000);
-            },
-            error: function(){
+            }
+
+            setTimeout(checkAgentOnline, 10000);
+        },
+        error: function(){
+            if (current_full_user_id != '') {
                 LiveChatUI.changeState("UNAVAILABLE");
             }
-        });
-    }
+        }
+    });
 };
 
 var endChatSession = function(){
     LiveChatUI.changeState('ENDING_CHAT');
     logout();
     $.ajax({
-        url: '/kandy/endChatSession',
+        url: baseUrl + '/kandy/endChatSession',
         type: 'GET',
         success: function(data){
             console.log(data);
@@ -243,7 +257,7 @@ $(function(){
         var form = $(this);
         e.preventDefault();
         $.ajax({
-            url: form.attr('action'),
+            url: baseUrl + form.attr('action'),
             data: form.serialize(),
             type: 'POST',
             beforeSend: function(xhr) {
@@ -287,7 +301,7 @@ $(function(){
             rateData.comment = rateComment
         }
         $.ajax({
-            url: '/kandy/rateagent',
+            url: baseUrl + '/kandy/rateagent',
             data: rateData,
             type: 'POST',
             success: function (res){

@@ -1,5 +1,5 @@
 # Kandy Package for Laravel 5
-This Laravel package encapsulates Kandy’s JS SDK and Restful APIs. Kandy is a product by GENBAND (www.genband.com) that utilizes WebRTC to enable peer to peer audio and video calls and chat. SMS and PSTN calling support will be added to this package in the near future.
+This Laravel package encapsulates Kandy’s JS SDK and Restful APIs. Kandy is a product by GENBAND (www.genband.com) that utilizes WebRTC to enable peer to peer audio and video calls, chat, SMS and PSTN calling.
 
 With this package, you can enable video and audio calling between two users that are logged into your Laravel application.
 
@@ -23,7 +23,7 @@ Home page: http://www.kandy.io/
     "laravel/framework": "5.1.*",
     "illuminate/html" : "~5.0",
     "toddish/verify": "~5",
-    "kandy-io/kandy-laravel": "2.4.2"
+    "kandy-io/kandy-laravel": "2.5.0"
     ... // Others
 },
 ```
@@ -119,7 +119,7 @@ Prepare Kandy css/javascript and log-in Kandy user who is associated with userId
 
 ### Use Kandy Widget:
 
-**Kandy Video**: Make a Kandy video component (video call)
+**Kandy Video**: Make a Kandy video component (video call) and it is integrated full screen, screen sharing feature.
 ```php
 {!! 
     KandyButton::videoCall(array(
@@ -242,7 +242,7 @@ Prepare Kandy css/javascript and log-in Kandy user who is associated with userId
 !!}
 ```
 	
-**Kandy Chat**: Make a Kandy chat component which help you send instant message to your friend in contact.
+**Kandy Chat**: Make a Kandy chat component which help you send instant message to your friend in contact and it is integrated file sharing feature.
 ```php
 {!! 
     KandyChat::show(
@@ -323,6 +323,13 @@ KandyCoBrowsing::show(array(
     )
 )) !!}
 ```
+
+**Screen Sharing** feature:
+  - Screen sharing can only be used over a secure connection (https).
+  - Before testing it, please install this extension on chrome browser:
+    https://chrome.google.com/webstore/detail/kandyio-screen-sharing/daohbhpgnnlgkipndobecbmahalalhcp
+  - This extension only works on localhost domain. Read more: https://developer.kandy.io/tutorials/javascript/screensharing
+  - Finally, you test it on video call feature.
 
 ## KANDY APIs
 ---
